@@ -38,8 +38,13 @@ export default function AdminDashboard() {
       alert(`Teacher account protocol activated for ID: ${newTeacherId}`);
       setNewTeacherId('');
       setNewTeacherPass('');
-    } catch (err) {
-      alert('Security violation: Could not initialize teacher unit.');
+    } catch (err: any) {
+      console.error("Detailed Teacher Unit Initialization Error:", err);
+      if (err.code === 'permission-denied') {
+        alert('Permission Denied: Your administrative clearance could not be verified by the central database. Please re-login.');
+      } else {
+        alert(`Security violation: ${err.message || 'Could not initialize teacher unit.'}`);
+      }
     } finally {
       setCreatingTeacher(false);
     }
