@@ -51,54 +51,60 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xl z-50 flex items-center justify-center p-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden"
+        className="bg-[#0a0a0a] w-full max-w-lg rounded-[3.5rem] shadow-2xl border border-white/5 overflow-hidden"
       >
-        <div className="p-8 border-b border-neutral-100 flex justify-between items-center bg-white">
-          <h2 className="text-2xl font-bold text-neutral-900">New Assignment</h2>
-          <button onClick={onClose} className="p-2 hover:bg-neutral-100 rounded-full transition-colors">
-            <X className="h-6 w-6 text-neutral-400" />
+        <div className="p-10 border-b border-white/5 flex justify-between items-center bg-[#0a0a0a]/50 backdrop-blur-md">
+          <div>
+            <h2 className="text-3xl font-black text-white uppercase tracking-tighter">New <span className="text-blue-500">Directive</span></h2>
+            <p className="text-[10px] text-neutral-500 font-black uppercase tracking-[0.3em] mt-2 italic shadow-2xl">Operational Task // Uplink-77</p>
+          </div>
+          <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all group">
+            <X className="h-6 w-6 text-neutral-500 group-hover:text-white transition-colors" />
           </button>
         </div>
 
-        <form onSubmit={handleUpload} className="p-8 space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Assignment Title</label>
+        <form onSubmit={handleUpload} className="p-10 space-y-8">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Operational Designation</label>
             <input 
               required
               type="text" 
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="e.g. MISSION_QUANTUM_Z"
+              className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner placeholder:text-neutral-800"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Instructions</label>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Operational Insight</label>
             <textarea 
               rows={3}
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Briefing details..."
+              className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner placeholder:text-neutral-800"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Due Date</label>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Temporal Deadline</label>
             <input 
               required
               type="datetime-local"
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner invert hue-rotate-180 brightness-90 saturate-50"
+              style={{ colorScheme: 'dark' }}
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Attachment (Optional)</label>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Intelligence Artifact (Optional)</label>
             <div className="relative group">
               <input 
                 type="file" 
@@ -108,17 +114,17 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
               />
               <label 
                 htmlFor="file-upload"
-                className="flex items-center justify-center p-8 border-2 border-dashed border-neutral-200 rounded-2xl cursor-pointer group-hover:border-blue-500 transition-all bg-neutral-50"
+                className="flex items-center justify-center p-12 border-2 border-dashed border-white/10 rounded-[2.5rem] cursor-pointer group-hover:border-blue-500 transition-all bg-black/40 shadow-inner group/upload"
               >
                 {file ? (
                   <div className="flex flex-col items-center">
-                    <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
-                    <span className="text-sm font-bold text-neutral-900">{file.name}</span>
+                    <CheckCircle className="h-10 w-10 text-green-500 mb-4 animate-bounce" />
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{file.name}</span>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <Upload className="h-8 w-8 text-neutral-400 mb-2 group-hover:text-blue-600" />
-                    <span className="text-sm font-bold text-neutral-500">Click to upload reference file</span>
+                    <Upload className="h-10 w-10 text-neutral-700 mb-4 group-hover/upload:text-blue-500 transition-colors" />
+                    <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest group-hover/upload:text-neutral-300 transition-colors text-center">Inject Strategic Assets</span>
                   </div>
                 )}
               </label>
@@ -128,9 +134,18 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
           <button
             type="submit"
             disabled={uploading}
-            className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50"
+            className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] active:scale-95 flex items-center justify-center space-x-3"
           >
-            {uploading ? 'Uploading...' : 'Publish Assignment'}
+            {uploading ? (
+              <>
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                  className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
+                />
+                <span>Streaming Data...</span>
+              </>
+            ) : 'Broadcast Directive'}
           </button>
         </form>
       </motion.div>

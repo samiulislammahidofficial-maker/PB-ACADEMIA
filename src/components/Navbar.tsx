@@ -16,42 +16,47 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-neutral-200 sticky top-0 z-50">
+    <nav className="bg-[#050505]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <GraduationCap className="h-8 w-8 text-blue-600" />
-            <span className="font-bold text-xl tracking-tight text-neutral-900">PB ACADEMIA</span>
+          <Link to="/" className="flex items-center space-x-3 group">
+            <motion.div
+              whileHover={{ rotate: 10, scale: 1.1 }}
+              className="relative"
+            >
+              <img src="/logo.png" alt="PB Academia Logo" className="h-10 w-10 object-contain rounded-lg" />
+            </motion.div>
+            <span className="font-black text-xl tracking-tighter text-white uppercase group-hover:text-blue-500 transition-colors">PB ACADEMIA</span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-neutral-600 hover:text-blue-600 transition-colors">Courses</Link>
+          <div className="hidden md:flex items-center space-x-8">
+            <Link to="/" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Intelligence</Link>
             {user ? (
               <>
-                <Link to="/dashboard" className="text-neutral-600 hover:text-blue-600 transition-colors">Dashboard</Link>
-                <div className="flex items-center space-x-4 pl-4 border-l border-neutral-200">
+                <Link to="/dashboard" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Terminal</Link>
+                <div className="flex items-center space-x-4 pl-8 border-l border-white/10">
                   <div className="flex flex-col items-end">
-                    <span className="text-sm font-medium text-neutral-900">{profile?.name}</span>
-                    <span className="text-xs text-neutral-500 capitalize">{profile?.role}</span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</span>
+                    <span className="text-[8px] text-neutral-500 font-bold uppercase tracking-[0.2em]">{profile?.role}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
+                    className="p-2 text-neutral-600 hover:text-red-500 transition-colors"
                     title="Logout"
                   >
-                    <LogOut className="h-5 w-5" />
+                    <LogOut className="h-4 w-4" />
                   </button>
                 </div>
               </>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-neutral-600 hover:text-blue-600 px-3 py-2">Login</Link>
+              <div className="flex items-center space-x-6">
+                <Link to="/login" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Access</Link>
                 <Link
                   to="/register"
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                  className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all shadow-xl shadow-white/5"
                 >
-                  Join Now
+                  Join Force
                 </Link>
               </div>
             )}
@@ -73,23 +78,23 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-white border-b border-neutral-200 px-4 pt-2 pb-6 space-y-2 focus:outline-none"
+            className="md:hidden bg-[#0a0a0a] border-b border-white/5 px-4 pt-2 pb-8 space-y-2"
           >
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-neutral-600">Courses</Link>
+            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Intelligence</Link>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-neutral-600">Dashboard</Link>
+                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Terminal</Link>
                 <button
                   onClick={() => { handleLogout(); setIsOpen(false); }}
-                  className="w-full text-left px-3 py-2 text-red-600 font-medium"
+                  className="w-full text-left px-3 py-4 text-[10px] font-black uppercase tracking-widest text-red-500"
                 >
-                  Logout
+                  Terminate Session
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-neutral-600">Login</Link>
-                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-blue-600 font-medium">Register</Link>
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Access</Link>
+                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-blue-500">Recruit</Link>
               </>
             )}
           </motion.div>

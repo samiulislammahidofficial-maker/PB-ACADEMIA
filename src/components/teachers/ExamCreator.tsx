@@ -69,126 +69,131 @@ export default function ExamCreator({ courseId, onClose }: ExamCreatorProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xl z-50 flex items-center justify-center p-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden"
+        className="bg-[#0a0a0a] w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-2xl border border-white/5 flex flex-col overflow-hidden"
       >
-        <div className="p-6 border-b border-neutral-100 flex justify-between items-center bg-white sticky top-0 z-10">
+        <div className="p-10 border-b border-white/5 flex justify-between items-center bg-[#0a0a0a]/50 backdrop-blur-md sticky top-0 z-10">
           <div>
-            <h2 className="text-2xl font-bold text-neutral-900">Create New Exam</h2>
-            <p className="text-sm text-neutral-500">Design your assessment with mixed question types</p>
+            <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Tactical <span className="text-blue-500">Assessment</span> Designer</h2>
+            <p className="text-[10px] text-neutral-500 font-black uppercase tracking-[0.3em] mt-2 italic">Operation: Evaluation Core // CourseID-{courseId.slice(0,6)}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-neutral-100 rounded-full transition-colors">
-            <X className="h-6 w-6 text-neutral-400" />
+          <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all group">
+            <X className="h-6 w-6 text-neutral-500 group-hover:text-white transition-colors" />
           </button>
         </div>
 
-        <div className="flex-grow overflow-y-auto p-8 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Exam Title</label>
+        <div className="flex-grow overflow-y-auto p-10 space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Operational Title</label>
               <input 
                 type="text" 
-                placeholder="e.g. Midterm Assessment" 
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="e.g. ALPHA_SYNC_01" 
+                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] placeholder:text-neutral-800 shadow-inner"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Duration (Minutes)</label>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Window Duration (Units)</label>
               <input 
                 type="number" 
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner"
                 value={duration}
                 onChange={(e) => setDuration(parseInt(e.target.value))}
               />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-neutral-900">Questions ({questions.length})</h3>
-              <div className="flex gap-2">
+          <div className="space-y-8">
+            <div className="flex items-center justify-between pb-4 border-b border-white/5">
+              <h3 className="font-black text-white uppercase tracking-widest text-sm flex items-center">
+                <div className="h-2 w-2 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
+                Question Array ({questions.length})
+              </h3>
+              <div className="flex gap-3">
                 <button 
                   onClick={() => addQuestion('mcq')}
-                  className="flex items-center space-x-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all"
                 >
                   <HelpCircle className="h-4 w-4" />
                   <span>+ MCQ</span>
                 </button>
                 <button 
                   onClick={() => addQuestion('short_answer')}
-                  className="flex items-center space-x-2 px-3 py-1.5 bg-purple-50 text-purple-600 rounded-lg text-xs font-bold hover:bg-purple-100 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-500/10 text-purple-500 border border-purple-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all"
                 >
                   <Type className="h-4 w-4" />
-                  <span>+ Short Ans</span>
+                  <span>+ ANALYTIC</span>
                 </button>
                 <button 
                   onClick={() => addQuestion('creative')}
-                  className="flex items-center space-x-2 px-3 py-1.5 bg-orange-50 text-orange-600 rounded-lg text-xs font-bold hover:bg-orange-100 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-white transition-all"
                 >
                   <FileText className="h-4 w-4" />
-                  <span>+ Creative</span>
+                  <span>+ CREATIVE</span>
                 </button>
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <AnimatePresence>
                 {questions.map((q, idx) => (
                   <motion.div 
                     key={q.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="p-6 bg-neutral-50 rounded-2xl border border-neutral-200 relative group"
+                    className="p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative group hover:border-white/10 transition-all shadow-2xl"
                   >
                     <button 
                       onClick={() => removeQuestion(q.id!)}
-                      className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                      className="absolute top-6 right-6 p-3 bg-red-500/5 text-red-500/50 hover:bg-red-500 hover:text-white rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-2xl"
                     >
-                      <Trash2 className="h-5 w-5" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
 
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-xs font-black text-neutral-300">#{idx + 1}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          q.type === 'mcq' ? 'bg-blue-100 text-blue-700' : 
-                          q.type === 'short_answer' ? 'bg-purple-100 text-purple-700' : 
-                          'bg-orange-100 text-orange-700'
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-4">
+                        <span className="text-[10px] font-black text-neutral-800 uppercase tabular-nums">DATA_POINT_{idx + 1}</span>
+                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] ${
+                          q.type === 'mcq' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
+                          q.type === 'short_answer' ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20' : 
+                          'bg-orange-500/10 text-orange-500 border border-orange-500/20'
                         }`}>
                           {q.type?.replace('_', ' ')}
                         </span>
                       </div>
 
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Question Text</label>
+                      <div className="space-y-3">
+                        <label className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Intelligence Parameter</label>
                         <textarea 
-                          rows={2}
-                          className="w-full px-4 py-2 bg-white border border-neutral-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          rows={3}
+                          className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] placeholder:text-neutral-800 shadow-inner"
                           value={q.text}
+                          placeholder="Input Directive Content..."
                           onChange={(e) => updateQuestion(q.id!, { text: e.target.value })}
                         />
                       </div>
 
                       {q.type === 'mcq' && q.options && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                           {q.options.map((opt, oIdx) => (
-                            <div key={oIdx} className="flex items-center space-x-2">
+                            <div key={oIdx} className="flex items-center space-x-4 bg-black/50 p-4 rounded-xl border border-white/5 group/opt hover:border-white/20 transition-all shadow-inner">
                               <input 
                                 type="radio" 
                                 name={`correct-${q.id}`}
+                                className="accent-blue-500 w-4 h-4"
                                 checked={q.correctOption === oIdx}
                                 onChange={() => updateQuestion(q.id!, { correctOption: oIdx })}
                               />
                               <input 
                                 type="text"
-                                placeholder={`Option ${oIdx + 1}`}
-                                className="flex-grow px-3 py-2 bg-white border border-neutral-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder={`Neural Path ${oIdx + 1}`}
+                                className="flex-grow bg-transparent outline-none text-white font-black uppercase tracking-widest text-[9px] placeholder:text-neutral-800"
                                 value={opt}
                                 onChange={(e) => {
                                   const newOpts = [...q.options!];
@@ -202,12 +207,13 @@ export default function ExamCreator({ courseId, onClose }: ExamCreatorProps) {
                       )}
 
                       {q.type === 'short_answer' && (
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Expected Answer (Optional for grading help)</label>
+                        <div className="space-y-3">
+                          <label className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Validation Encryption (Optional)</label>
                           <input 
                             type="text"
-                            className="w-full px-4 py-2 bg-white border border-neutral-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner"
                             value={q.correctAnswer}
+                            placeholder="Static Result Hash..."
                             onChange={(e) => updateQuestion(q.id!, { correctAnswer: e.target.value })}
                           />
                         </div>
@@ -220,14 +226,14 @@ export default function ExamCreator({ courseId, onClose }: ExamCreatorProps) {
           </div>
         </div>
 
-        <div className="p-6 border-t border-neutral-100 flex justify-end bg-neutral-50/50">
+        <div className="p-10 border-t border-white/5 flex justify-end bg-black/40 backdrop-blur-md">
           <button 
             onClick={saveExam}
             disabled={loading}
-            className="flex items-center space-x-2 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50"
+            className="flex items-center space-x-4 px-12 py-5 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/30 disabled:opacity-50 group active:scale-95"
           >
-            <Save className="h-5 w-5" />
-            <span>{loading ? 'Saving...' : 'Save Exam & Publish'}</span>
+            <Save className="h-5 w-5 group-hover:scale-110 transition-transform" />
+            <span>{loading ? 'Encrypting Array...' : 'Commit to Database'}</span>
           </button>
         </div>
       </motion.div>

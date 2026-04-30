@@ -77,40 +77,39 @@ export default function CourseView() {
   if (!course) return <div className="p-20 text-center">Course not found.</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
         <div className="lg:col-span-2">
-          {/* ... existing header ... */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <div className="flex items-center space-x-2 text-blue-600 mb-4 font-bold text-xs uppercase tracking-[0.2em]">
-              <BookOpen className="h-4 w-4" />
-              <span>Full Access Course • {profile?.class || 'PB Student'}</span>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+            <div className="flex items-center space-x-3 text-blue-500 mb-6 font-black text-[10px] uppercase tracking-[0.3em]">
+              <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></div>
+              <span>Intelligence Node • {profile?.class || 'PB Operational student'}</span>
             </div>
-            <h1 className="text-5xl font-black text-neutral-900 tracking-tighter leading-tight">{course.title}</h1>
-            <p className="mt-6 text-lg text-neutral-500 leading-relaxed font-medium">{course.description}</p>
+            <h1 className="text-6xl font-black text-white tracking-tighter leading-none uppercase">{course.title}</h1>
+            <p className="mt-8 text-lg text-neutral-400 leading-loose font-bold uppercase tracking-widest">{course.description}</p>
           </motion.div>
 
           {/* Exams Section */}
           {exams.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-2xl font-black text-neutral-900 mb-6 uppercase tracking-tight flex items-center">
-                <ClipboardList className="h-6 w-6 mr-2 text-blue-600" />
-                Active Examinations
+            <div className="mt-20">
+              <h2 className="text-3xl font-black text-white mb-10 uppercase tracking-tighter flex items-center">
+                <ClipboardList className="h-8 w-8 mr-4 text-blue-500" />
+                Strategic Assessments
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {exams.map(exam => (
-                  <div key={exam.id} className="p-6 bg-white border-2 border-neutral-100 rounded-3xl hover:border-blue-600 transition-all group shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
+                  <div key={exam.id} className="p-10 bg-[#0a0a0a] border border-white/5 rounded-[3rem] hover:border-blue-500/50 transition-all group shadow-2xl">
+                    <div className="flex justify-between items-start mb-8">
                       <div>
-                        <h3 className="font-bold text-neutral-900 uppercase tracking-tight">{exam.title}</h3>
-                        <p className="text-xs text-neutral-400 font-bold uppercase tracking-widest mt-1">{exam.durationMinutes} Minutes • {exam.questions?.length || 0} Questions</p>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tight">{exam.title}</h3>
+                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[.2em] mt-3">{exam.durationMinutes} Minutes • {exam.questions?.length || 0} Points</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => navigate(`/exams/${exam.id}`)}
-                      className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-md shadow-blue-50/50"
+                      className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-2xl"
                     >
-                      Start Examination
+                      Initialize Module
                     </button>
                   </div>
                 ))}
@@ -119,68 +118,67 @@ export default function CourseView() {
           )}
 
           {/* Assignments Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-black text-neutral-900 mb-6 uppercase tracking-tight flex items-center">
-              <FileText className="h-6 w-6 mr-2 text-purple-600" />
-              Homework & Projects
+          <div className="mt-20">
+            <h2 className="text-3xl font-black text-white mb-10 uppercase tracking-tighter flex items-center">
+              <FileText className="h-8 w-8 mr-4 text-purple-500" />
+              Directives & Projects
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {assignments.length > 0 ? assignments.map(assign => (
-                <div key={assign.id} className="p-6 bg-white border border-neutral-100 rounded-[2rem] flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-xl hover:shadow-neutral-100 transition-all">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
-                      <FileText className="h-6 w-6" />
+                <div key={assign.id} className="p-10 bg-[#0a0a0a] border border-white/5 rounded-[3rem] flex flex-col md:flex-row md:items-center justify-between gap-8 hover:shadow-[0_0_50px_rgba(59,130,246,0.05)] transition-all">
+                  <div className="flex items-center space-x-6">
+                    <div className="h-16 w-16 bg-purple-500/10 text-purple-500 rounded-[1.5rem] flex items-center justify-center">
+                      <FileText className="h-8 w-8" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-neutral-900 uppercase tracking-tight text-sm">{assign.title}</h3>
-                      <p className="text-xs text-neutral-400 font-medium mt-1">Due: {new Date(assign.dueDate).toLocaleDateString()}</p>
+                      <h3 className="text-lg font-black text-white uppercase tracking-tight">{assign.title}</h3>
+                      <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-2 italic">Target Deadline: {new Date(assign.dueDate).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {assign.fileUrl && (
-                      <a href={assign.fileUrl} target="_blank" rel="noreferrer" className="p-3 bg-neutral-50 text-neutral-400 hover:text-blue-600 rounded-xl transition-colors">
+                      <a href={assign.fileUrl} target="_blank" rel="noreferrer" className="p-4 bg-white/5 text-neutral-400 hover:text-blue-500 rounded-full transition-colors border border-white/5">
                         <Download className="h-5 w-5" />
                       </a>
                     )}
                     <button 
                       onClick={() => setSubmittingAssignment(assign)}
-                      className="px-6 py-3 bg-neutral-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-neutral-800 transition-all flex items-center gap-2"
+                      className="px-10 py-4 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all flex items-center gap-3 shadow-2xl"
                     >
                       <Upload className="h-4 w-4" />
-                      Submit Work
+                      Upload Intent
                     </button>
                   </div>
                 </div>
               )) : (
-                <div className="p-10 text-center bg-neutral-50 rounded-[2rem] border-2 border-dashed border-neutral-100 text-neutral-400 text-sm font-bold uppercase tracking-widest">
-                  No assignments posted yet
+                <div className="p-20 text-center bg-[#050505] rounded-[3rem] border-4 border-dashed border-white/5 text-neutral-600 font-black uppercase tracking-[0.4em] text-[10px]">
+                  No operational directives issued
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Existing Sidebar */}
-        <div className="space-y-8">
-          <div className="bg-white p-8 rounded-[2rem] border border-neutral-100 shadow-xl shadow-blue-50/50">
-            <div className="text-center mb-8">
-              <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Academy Subscription</span>
-              <p className="text-5xl font-black text-neutral-900 mt-2 tracking-tighter">₹{course.price}<span className="text-lg text-neutral-300 font-bold ml-1">/mo</span></p>
+        <div className="space-y-12">
+          <div className="bg-[#0a0a0a] p-12 rounded-[3.5rem] border border-white/5 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-600/10 blur-[100px] rounded-full"></div>
+            <div className="text-center relative z-10 mb-12">
+              <span className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.4em]">Subscription Signal</span>
+              <p className="text-6xl font-black text-white mt-6 tracking-tighter">₹{course.price}<span className="text-lg text-neutral-500 font-bold ml-1 tracking-widest">/U</span></p>
             </div>
             
-            <button className="w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black text-sm hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 uppercase tracking-[0.2em] active:scale-95">
-              Subscribe Now
+            <button className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black text-xs hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/30 uppercase tracking-[0.3em] active:scale-95">
+              Secure Subscription
             </button>
-            <p className="mt-6 text-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Access PB's premium ecosystem</p>
+            <p className="mt-8 text-center text-[8px] text-neutral-600 font-black uppercase tracking-[0.5em]">Dhaka Academic Unit Access Only</p>
           </div>
 
-          <div className="bg-neutral-900 text-white p-10 rounded-[3rem] relative overflow-hidden">
+          <div className="bg-white/5 p-12 rounded-[3.5rem] border border-white/5 relative overflow-hidden backdrop-blur-3xl">
             <div className="relative z-10">
-              <h3 className="font-black text-xl mb-3 tracking-tight uppercase">Need Help?</h3>
-              <p className="text-neutral-400 text-xs font-medium leading-relaxed">Reach out to your teachers or PB Academia support team for any queries regarding course materials or technical issues.</p>
-              <button className="mt-8 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Support Center</button>
+              <h3 className="font-black text-xl text-white mb-4 tracking-tighter uppercase">Protocol Support</h3>
+              <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest leading-loose">Need technical or academic uplink? Contact DHaka Control Center.</p>
+              <button className="mt-10 w-full py-4 border border-white/10 hover:bg-white/5 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Support Terminal</button>
             </div>
-            <div className="absolute top-0 right-0 -mr-12 -mt-12 h-40 w-40 bg-blue-600 rounded-full blur-3xl opacity-20"></div>
           </div>
         </div>
       </div>
@@ -188,26 +186,26 @@ export default function CourseView() {
       {/* Assignment Submission Modal */}
       <AnimatePresence>
         {submittingAssignment && (
-          <div className="fixed inset-0 bg-neutral-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-[#050505]/95 backdrop-blur-2xl z-50 flex items-center justify-center p-4">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden p-10 text-center"
+              className="bg-[#0a0a0a] w-full max-w-xl rounded-[4rem] shadow-[0_0_100px_rgba(37,99,235,0.1)] overflow-hidden p-16 text-center border border-white/5"
             >
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-2xl font-black text-neutral-900 uppercase tracking-tight">Submit Work</h2>
-                <button onClick={() => setSubmittingAssignment(null)} className="p-2 hover:bg-neutral-100 rounded-full">
-                  <X className="h-6 w-6 text-neutral-400" />
+              <div className="flex justify-between items-center mb-12">
+                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Submit Directive</h2>
+                <button onClick={() => setSubmittingAssignment(null)} className="p-3 bg-white/5 hover:bg-red-500 hover:text-white rounded-full transition-all">
+                  <X className="h-6 w-6" />
                 </button>
               </div>
 
-              <div className="mb-8">
-                <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-2">{submittingAssignment.title}</p>
-                <p className="text-neutral-500 text-xs">Upload your completed work in PDF, DOCX, or Image format.</p>
+              <div className="mb-12">
+                <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] mb-4">{submittingAssignment.title}</p>
+                <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest leading-loose">Upload operational deliverable in PDF or verified image format.</p>
               </div>
 
-              <div className="relative group mb-8">
+              <div className="relative group mb-12">
                 <input 
                   type="file" 
                   className="hidden" 
@@ -216,17 +214,17 @@ export default function CourseView() {
                 />
                 <label 
                   htmlFor="assign-upload"
-                  className="flex flex-col items-center justify-center p-12 border-4 border-dashed border-neutral-100 rounded-[2.5rem] cursor-pointer group-hover:border-blue-200 transition-all bg-neutral-50"
+                  className="flex flex-col items-center justify-center p-16 border-2 border-dashed border-white/5 rounded-[3rem] cursor-pointer group-hover:border-blue-500/50 transition-all bg-black/20"
                 >
                   {file ? (
                     <>
-                      <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                      <span className="text-sm font-black text-neutral-900 uppercase tracking-tight">{file.name}</span>
+                      <CheckCircle className="h-16 w-16 text-green-500 mb-6" />
+                      <span className="text-sm font-black text-white uppercase tracking-tight">{file.name}</span>
                     </>
                   ) : (
                     <>
-                      <Upload className="h-12 w-12 text-neutral-200 mb-4 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">Select Assignment File</span>
+                      <Upload className="h-16 w-16 text-neutral-700 mb-6 group-hover:text-blue-500 transition-colors" />
+                      <span className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.5em]">Select Deliverable File</span>
                     </>
                   )}
                 </label>
@@ -235,9 +233,9 @@ export default function CourseView() {
               <button
                 disabled={!file || uploading}
                 onClick={handleAssignmentSubmit}
-                className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 disabled:opacity-50 uppercase tracking-[0.2em] text-sm"
+                className="w-full py-6 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.3em] text-xs"
               >
-                {uploading ? 'Processing Submission...' : 'Finalize Submission'}
+                {uploading ? 'Processing Signal...' : 'Confirm Submission'}
               </button>
             </motion.div>
           </div>

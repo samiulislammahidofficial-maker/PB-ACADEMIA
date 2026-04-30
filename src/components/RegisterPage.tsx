@@ -99,37 +99,43 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-neutral-50 px-4 py-12">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#050505] px-4 py-12">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-neutral-100 p-10"
+        className="max-w-md w-full bg-[#0a0a0a] rounded-[3rem] shadow-2xl border border-white/5 p-12"
       >
-        <div className="text-center mb-10">
-          <Link to="/" className="inline-flex items-center justify-center h-16 w-16 bg-blue-100 rounded-2xl mb-6">
-            <GraduationCap className="h-8 w-8 text-blue-600" />
+        <div className="text-center mb-12">
+          <Link to="/" className="inline-flex items-center justify-center mb-8 group">
+            <motion.div
+              whileHover={{ rotate: -360 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+              className="h-24 w-24 bg-white/5 p-4 rounded-3xl border border-white/5"
+            >
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            </motion.div>
           </Link>
-          <h2 className="text-3xl font-black text-neutral-900 uppercase tracking-tighter">PB ACADEMIA Enrollment</h2>
-          <p className="text-neutral-500 mt-2 font-bold uppercase tracking-widest text-[10px]">Secure Learning Ecosystem</p>
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Recruitment</h2>
+          <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">Secure Enrollment Phase</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-xs font-bold uppercase tracking-widest text-center">
+          <div className="mb-8 p-5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-3xl text-[9px] font-black uppercase tracking-[0.2em] text-center italic">
             {error}
           </div>
         )}
 
         {step === 'account' ? (
           <>
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="grid grid-cols-3 gap-3 mb-6 p-1.5 bg-neutral-100 rounded-2xl border border-neutral-200">
+            <form onSubmit={handleRegister} className="space-y-6">
+              <div className="grid grid-cols-3 gap-3 mb-8 p-1.5 bg-black/40 rounded-2xl border border-white/5">
                 {(['student', 'teacher', 'admin'] as const).map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setFormData({...formData, role: r})}
-                    className={`py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                      formData.role === r ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'
+                    className={`py-4 rounded-xl text-[8px] font-black uppercase tracking-[0.2em] transition-all ${
+                      formData.role === r ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-600 hover:text-neutral-400'
                     }`}
                   >
                     {r}
@@ -137,116 +143,112 @@ export default function RegisterPage() {
                 ))}
               </div>
 
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+              <div className="relative group">
+                <User className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Full Name"
+                  placeholder="System Identity Name"
                   required
-                  className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                  className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
               </div>
 
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+              <div className="relative group">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="System Email"
                   required
-                  className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                  className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
-                  <input
-                    type="password"
-                    placeholder="Key"
-                    required
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none text-sm font-bold"
-                    value={formData.password}
-                    onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  />
-                </div>
-                <div className="relative">
-                  <input
-                    type="password"
-                    placeholder="Verify Key"
-                    required
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none text-sm font-bold"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                  />
-                </div>
+                <input
+                  type="password"
+                  placeholder="Access Key"
+                  required
+                  className="w-full px-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold text-sm"
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                />
+                <input
+                  type="password"
+                  placeholder="Verify Key"
+                  required
+                  className="w-full px-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold text-sm"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                />
               </div>
 
               <button
                 type="button"
                 onClick={() => setStep('profile')}
-                className="w-full py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 uppercase tracking-[0.2em] text-sm"
+                className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 uppercase tracking-[0.3em] text-[10px]"
               >
-                Continue to Details
+                Proceed to Intelligence Setup
               </button>
             </form>
 
-            <div className="mt-8 flex items-center justify-center space-x-2">
-              <div className="h-px bg-neutral-100 flex-grow"></div>
-              <span className="text-[10px] font-black text-neutral-300 uppercase tracking-widest">Social Verification</span>
-              <div className="h-px bg-neutral-100 flex-grow"></div>
+            <div className="mt-10 flex items-center justify-center space-x-4">
+              <div className="h-px bg-white/5 flex-grow"></div>
+              <span className="text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Unified Identity</span>
+              <div className="h-px bg-white/5 flex-grow"></div>
             </div>
 
             <button
               onClick={handleGoogleSignIn}
-              className="w-full mt-8 py-4 bg-white border-2 border-neutral-100 text-neutral-900 font-black rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center space-x-3 shadow-sm uppercase tracking-widest text-[10px]"
+              className="w-full mt-10 py-5 bg-white/5 border border-white/10 text-white font-black rounded-3xl hover:bg-white/10 transition-all flex items-center justify-center space-x-4 shadow-sm uppercase tracking-[0.3em] text-[8px]"
             >
-              <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-              <span>Verify with Google</span>
+              <img src="https://www.google.com/favicon.ico" className="w-3 h-3 grayscale contrast-200" alt="Google" />
+              <span>Register via Google Port</span>
             </button>
           </>
         ) : (
-          <form onSubmit={googleUser ? handleCompleteProfile : handleRegister} className="space-y-4">
-            <div className="relative">
-              <School className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+          <form onSubmit={googleUser ? handleCompleteProfile : handleRegister} className="space-y-6">
+            <div className="relative group">
+              <School className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
               <input
                 type="text"
-                placeholder="Institutional Name"
+                placeholder="Institutional HQ Name"
                 required
-                className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+                className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold"
                 value={formData.schoolName}
                 onChange={(e) => setFormData({...formData, schoolName: e.target.value})}
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="relative group">
+                <Phone className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Contact Number"
+                  placeholder="Signal Contact"
                   required
-                  className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none text-sm font-bold"
+                  className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold text-xs"
                   value={formData.mobileNumber}
                   onChange={(e) => setFormData({...formData, mobileNumber: e.target.value})}
                 />
               </div>
-              <div className="relative">
-                <Book className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+              <div className="relative group">
+                <Book className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
                 <select
                   required
-                  className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none text-[10px] font-black uppercase tracking-widest appearance-none"
+                  className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none text-[8px] font-black uppercase tracking-widest appearance-none text-white cursor-pointer"
                   value={formData.className}
                   onChange={(e) => setFormData({...formData, className: e.target.value})}
                 >
-                  <option value="">Current Grade</option>
-                  <option value="8">Class 8</option>
-                  <option value="9">Class 9</option>
-                  <option value="10">Class 10</option>
-                  <option value="11">Class 11</option>
-                  <option value="12">Class 12</option>
+                  <option value="" className="bg-[#0a0a0a]">Current Cohort</option>
+                  <option value="8" className="bg-[#0a0a0a]">Sector 08</option>
+                  <option value="9" className="bg-[#0a0a0a]">Sector 09</option>
+                  <option value="10" className="bg-[#0a0a0a]">Sector 10 (SSC)</option>
+                  <option value="11" className="bg-[#0a0a0a]">Sector 11 (HSC I)</option>
+                  <option value="12" className="bg-[#0a0a0a]">Sector 12 (HSC II)</option>
                 </select>
               </div>
             </div>
@@ -254,22 +256,22 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-100 disabled:opacity-50 uppercase tracking-[0.2em] text-sm mt-4"
+              className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 uppercase tracking-[0.3em] text-[10px] mt-6"
             >
-              {loading ? 'Processing System Access...' : 'Finalize Registration'}
+              {loading ? 'Committing Data...' : 'Confirm Operational Access'}
             </button>
             <button 
               type="button" 
               onClick={() => setStep('account')}
-              className="w-full text-center text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:text-neutral-600 transition-colors"
+              className="w-full text-center text-[8px] font-black text-neutral-600 uppercase tracking-widest hover:text-white transition-colors"
             >
-              Back to Credentials
+              Reconfigure Credentials
             </button>
           </form>
         )}
 
-        <p className="mt-10 text-center text-neutral-400 text-[10px] font-black uppercase tracking-widest">
-          Verified Student? <Link to="/login" className="text-blue-600 hover:underline">Secure Login</Link>
+        <p className="mt-12 text-center text-neutral-500 text-[9px] font-black uppercase tracking-[0.2em]">
+          Already in intelligence? <Link to="/login" className="text-blue-500 hover:underline">Verify Identity</Link>
         </p>
       </motion.div>
     </div>

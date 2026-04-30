@@ -41,120 +41,114 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">PB ACADEMIA Administration</h1>
-          <p className="text-neutral-500 mt-1 uppercase tracking-widest text-[10px] font-bold">System Management Control Panel</p>
-          <button onClick={initializeData} className="mt-4 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">Init Sample Data</button>
+          <h1 className="text-5xl font-black text-white tracking-tighter leading-none uppercase">PB ACADEMIA <br/><span className="text-blue-500">ROOT CONTROL</span></h1>
+          <p className="text-neutral-500 mt-4 uppercase tracking-[0.4em] text-[8px] font-black italic">Advanced Governance Terminal // Protocol 7.4.x</p>
+          <button onClick={initializeData} className="mt-8 text-[8px] font-black text-blue-500 bg-white/5 border border-white/5 px-6 py-2 rounded-full uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-2xl">Init Neural Samples</button>
         </div>
-        <div className="flex bg-neutral-100 p-1.5 rounded-2xl border border-neutral-200">
-          <button 
-            onClick={() => setActiveTab('users')}
-            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'users' ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-500 hover:text-neutral-900'}`}
-          >
-            Users
-          </button>
-          <button 
-            onClick={() => setActiveTab('courses')}
-            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'courses' ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-500 hover:text-neutral-900'}`}
-          >
-            Courses
-          </button>
-          <button 
-            onClick={() => setActiveTab('settings')}
-            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'settings' ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-500 hover:text-neutral-900'}`}
-          >
-            Settings
-          </button>
+        <div className="flex bg-black p-1.5 rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-2xl">
+          {(['users', 'courses', 'settings'] as const).map(tab => (
+            <button 
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-8 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white/10 text-white shadow-inner' : 'text-neutral-500 hover:text-neutral-400'}`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
 
       {activeTab === 'users' && (
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-12"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><Users className="h-6 w-6" /></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-blue-500/10 text-blue-500 rounded-[1.5rem]"><Users className="h-8 w-8" /></div>
                 <div>
-                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Total Users</p>
-                  <p className="text-2xl font-bold text-neutral-900">{users.length}</p>
+                  <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Total Intelligence</p>
+                  <p className="text-4xl font-black text-white mt-1 tracking-tighter">{users.length}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-green-50 text-green-600 rounded-2xl"><UserCheck className="h-6 w-6" /></div>
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-green-500/10 text-green-500 rounded-[1.5rem]"><UserCheck className="h-8 w-8" /></div>
                 <div>
-                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Students</p>
-                  <p className="text-2xl font-bold text-neutral-900">{users.filter(u => u.role === 'student').length}</p>
+                  <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Sector 8-12 Units</p>
+                  <p className="text-4xl font-black text-white mt-1 tracking-tighter">{users.filter(u => u.role === 'student').length}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><Shield className="h-6 w-6" /></div>
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-red-500/10 text-red-500 rounded-[1.5rem]"><Shield className="h-8 w-8" /></div>
                 <div>
-                  <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Faculty</p>
-                  <p className="text-2xl font-bold text-neutral-900">{users.filter(u => u.role === 'teacher').length}</p>
+                  <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Staff Clearance</p>
+                  <p className="text-4xl font-black text-white mt-1 tracking-tighter">{users.filter(u => u.role === 'teacher').length}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-neutral-50 flex flex-col sm:flex-row justify-between items-center bg-neutral-50/50 gap-4">
-              <div className="relative w-full sm:w-96">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden">
+            <div className="p-10 border-b border-white/5 flex flex-col lg:flex-row justify-between items-center bg-black/20 gap-8">
+              <div className="relative w-full lg:w-[450px] group">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Search users by name or email..." 
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+                  placeholder="Scan neural patterns (name/email)..." 
+                  className="w-full pl-16 pr-8 py-5 bg-black/40 border border-white/5 rounded-2xl outline-none focus:border-blue-500/50 transition-all text-[10px] font-black text-white uppercase tracking-widest placeholder:text-neutral-700"
                 />
               </div>
-              <button className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center space-x-2 text-sm shadow-md hover:bg-blue-700 active:scale-95 transition-all">
+              <button className="w-full lg:w-auto px-12 py-5 bg-blue-600 text-white rounded-3xl font-black flex items-center justify-center space-x-4 text-[10px] uppercase tracking-widest shadow-2xl shadow-blue-500/20 hover:bg-blue-700 transition-all">
                 <Plus className="h-4 w-4" />
-                <span>Add Teacher</span>
+                <span>Initialize Staff Profile</span>
               </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-neutral-50 border-b border-neutral-100">
+                <thead className="bg-[#050505] border-b border-white/5">
                   <tr>
-                    <th className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Name</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Email</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Role</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Joined</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest text-center">Actions</th>
+                    <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Operational Entity</th>
+                    <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Uplink Signal</th>
+                    <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Clearance</th>
+                    <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Deployment</th>
+                    <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em] text-center">Protocol</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-white/5">
                   {users.map((user, i) => (
-                    <tr key={i} className="hover:bg-neutral-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                    <tr key={i} className="hover:bg-white/[0.01] transition-colors group">
+                      <td className="px-10 py-8">
+                        <div className="flex items-center space-x-6">
+                          <div className="h-14 w-14 rounded-2xl bg-blue-500/10 border border-white/5 flex items-center justify-center text-blue-500 font-black text-lg group-hover:bg-blue-600 group-hover:text-white transition-all shadow-2xl">
                             {user.name.charAt(0)}
                           </div>
-                          <span className="font-bold text-neutral-900 text-sm uppercase tracking-tight">{user.name}</span>
+                          <span className="font-black text-white text-md uppercase tracking-tight">{user.name}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-neutral-600 font-mono italic">{user.email}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                          user.role === 'admin' ? 'bg-red-50 text-red-600' :
-                          user.role === 'teacher' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'
+                      <td className="px-10 py-8 text-[10px] text-neutral-500 font-black tracking-widest italic">{user.email}</td>
+                      <td className="px-10 py-8">
+                        <span className={`px-5 py-2 rounded-full text-[8px] font-black uppercase tracking-[0.2em] shadow-2xl ${
+                          user.role === 'admin' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                          user.role === 'teacher' ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
                         }`}>
                           {user.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-xs text-neutral-400">{new Date(user.createdAt).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-center">
-                        <button className="text-neutral-400 hover:text-neutral-900 transition-colors p-1.5 rounded-lg hover:bg-neutral-100">
+                      <td className="px-10 py-8 text-[9px] text-neutral-600 font-black uppercase tracking-widest">{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td className="px-10 py-8 text-center text-white">
+                        <button className="text-neutral-700 hover:text-white transition-all p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5">
                           <MoreVertical className="h-4 w-4" />
                         </button>
                       </td>
@@ -168,10 +162,12 @@ export default function AdminDashboard() {
       )}
 
       {activeTab !== 'users' && (
-        <div className="py-20 text-center">
-          <Settings className="h-12 w-12 text-neutral-200 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-neutral-900">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h3>
-          <p className="text-neutral-400">This module is correctly configured but has no data for display yet.</p>
+        <div className="py-40 text-center flex flex-col items-center">
+          <div className="p-10 bg-white/5 rounded-full mb-8 animate-pulse">
+            <Settings className="h-16 w-16 text-neutral-800" />
+          </div>
+          <h3 className="text-xl font-black text-white uppercase tracking-widest">{activeTab} Module Locked</h3>
+          <p className="text-neutral-600 text-[10px] font-black uppercase tracking-[.4em] mt-4">Module fully configured. Waiting for neural synchronization.</p>
         </div>
       )}
     </div>

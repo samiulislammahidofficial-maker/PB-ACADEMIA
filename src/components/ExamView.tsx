@@ -87,23 +87,23 @@ export default function ExamView() {
 
   if (submitted) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-xl mx-auto px-4 py-32 text-center">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-neutral-100"
+          className="bg-[#0a0a0a] p-16 rounded-[4rem] shadow-[0_0_100px_rgba(37,99,235,0.1)] border border-white/5"
         >
-          <div className="h-24 w-24 bg-green-50 text-green-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
-            <CheckCircle className="h-12 w-12" />
+          <div className="h-32 w-32 bg-blue-500/10 text-blue-500 rounded-[2.5rem] flex items-center justify-center mx-auto mb-12 shadow-2xl">
+            <CheckCircle className="h-16 w-16" />
           </div>
-          <h1 className="text-3xl font-black text-neutral-900 mb-4 uppercase tracking-tight">Submission Successful</h1>
-          <p className="text-neutral-500 mb-10 font-medium">Your answers have been uploaded to PB ACADEMIA's secure database.</p>
+          <h1 className="text-4xl font-black text-white mb-6 uppercase tracking-tighter leading-tight">Data Uplink <br/> Successful</h1>
+          <p className="text-neutral-500 mb-12 font-bold uppercase tracking-widest text-[10px] leading-loose">Your strategic assessment has been synchronized with PB ACADEMIA's secure neural grid.</p>
           
           <button 
             onClick={() => navigate('/dashboard')}
-            className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+            className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black uppercase tracking-[0.3em] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/30 text-[10px]"
           >
-            Return to Dashboard
+            Re-establish Dashboard Link
           </button>
         </motion.div>
       </div>
@@ -111,49 +111,52 @@ export default function ExamView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="flex justify-between items-center mb-10">
+    <div className="max-w-6xl mx-auto px-4 py-20">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
         <div>
-          <h1 className="text-3xl font-black text-neutral-900 uppercase tracking-tighter">{exam.title}</h1>
-          <div className="flex items-center space-x-2 mt-2">
-            <span className="px-2 py-0.5 bg-neutral-100 text-[10px] font-bold text-neutral-500 rounded uppercase tracking-widest">Official Assessment</span>
-            <span className="text-neutral-400 text-[10px]">•</span>
-            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{exam.questions.length} Questions</span>
+          <h1 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">{exam.title}</h1>
+          <div className="flex items-center space-x-4 mt-6">
+            <span className="px-4 py-1.5 bg-white/5 text-[9px] font-black text-blue-500 border border-white/10 rounded-full uppercase tracking-[0.2em]">Live Operation Active</span>
+            <div className="h-1.5 w-1.5 rounded-full bg-neutral-800"></div>
+            <span className="text-[9px] font-black text-neutral-500 uppercase tracking-[0.2em]">{exam.questions.length} Deployment Nodes</span>
           </div>
         </div>
-        <div className={`flex items-center space-x-3 px-8 py-3 rounded-2xl border-4 font-mono font-black text-lg ${
-          timeLeft < 300 ? 'bg-red-50 border-red-200 text-red-600 animate-pulse' : 'bg-white border-neutral-100 text-neutral-900 shadow-sm'
+        <div className={`flex items-center space-x-6 px-12 py-5 rounded-[2rem] border-2 font-mono font-black text-2xl transition-all shadow-2xl ${
+          timeLeft < 300 ? 'bg-red-500/10 border-red-500 text-red-500 animate-pulse' : 'bg-[#0a0a0a] border-white/5 text-white'
         }`}>
-          <Clock className="h-6 w-6" />
+          <Clock className="h-8 w-8 text-blue-500" />
           <span>{formatTime(timeLeft)}</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         <div className="lg:col-span-3">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQ}
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              className="bg-white p-12 rounded-[3.5rem] border border-neutral-100 shadow-2xl shadow-neutral-200/50 relative"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-[#0a0a0a] p-16 rounded-[4rem] border border-white/5 shadow-2xl relative overflow-hidden"
             >
-              <div className="mb-10 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="h-10 w-10 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-sm">{currentQ + 1}</span>
-                  <span className="px-3 py-1 bg-neutral-50 text-neutral-400 rounded-lg text-[10px] font-black uppercase tracking-[0.2em]">
-                    {currentQuestion.type?.replace('_', ' ')}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] rounded-full"></div>
+              <div className="mb-12 flex items-center justify-between relative z-10">
+                <div className="flex items-center space-x-4">
+                  <span className="h-16 w-16 bg-blue-600 text-white rounded-[1.5rem] flex items-center justify-center font-black text-2xl shadow-2xl shadow-blue-500/30">
+                    {String(currentQ + 1).padStart(2, '0')}
+                  </span>
+                  <span className="px-5 py-2 bg-white/5 text-neutral-400 rounded-full text-[9px] font-black uppercase tracking-[0.3em] border border-white/5">
+                    Mode: {currentQuestion.type?.replace('_', ' ')}
                   </span>
                 </div>
-                <div className="text-[10px] font-bold text-neutral-300 uppercase tracking-widest">{currentQuestion.points} Points</div>
+                <div className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em]">{currentQuestion.points} Value Points</div>
               </div>
               
-              <h2 className="text-2xl font-bold text-neutral-900 leading-tight mb-12">
+              <h2 className="text-3xl font-black text-white leading-tight mb-16 relative z-10">
                 {currentQuestion.text}
               </h2>
 
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 {currentQuestion.type === 'mcq' && currentQuestion.options?.map((option, idx) => (
                   <button
                     key={idx}
@@ -162,25 +165,25 @@ export default function ExamView() {
                       newAns[currentQ] = idx;
                       setAnswers(newAns);
                     }}
-                    className={`w-full p-6 text-left rounded-3xl border-2 transition-all flex items-center justify-between group ${
+                    className={`w-full p-8 text-left rounded-[2rem] border-2 transition-all flex items-center justify-between group shadow-xl ${
                       answers[currentQ] === idx 
-                      ? 'border-blue-600 bg-blue-50/50 text-blue-900 shadow-sm' 
-                      : 'border-neutral-50 bg-neutral-50/50 text-neutral-500 hover:border-neutral-200 hover:bg-white'
+                      ? 'border-blue-600 bg-blue-600/5 text-white' 
+                      : 'border-white/5 bg-white/[0.02] text-neutral-500 hover:border-white/10 hover:bg-white/[0.04]'
                     }`}
                   >
-                    <span className="font-bold text-sm uppercase tracking-tight">{option}</span>
-                    <div className={`h-8 w-8 rounded-2xl border flex items-center justify-center transition-colors ${
-                      answers[currentQ] === idx ? 'bg-blue-600 border-blue-600' : 'border-neutral-200 group-hover:border-neutral-300'
+                    <span className="font-bold text-sm uppercase tracking-tight leading-relaxed">{option}</span>
+                    <div className={`h-10 w-10 rounded-2xl border flex items-center justify-center transition-all ${
+                      answers[currentQ] === idx ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-500/50' : 'border-white/10 group-hover:border-white/20'
                     }`}>
-                      {answers[currentQ] === idx && <div className="h-2 w-2 bg-white rounded-full"></div>}
+                      {answers[currentQ] === idx && <div className="h-2.5 w-2.5 bg-white rounded-full"></div>}
                     </div>
                   </button>
                 ))}
 
                 {(currentQuestion.type === 'short_answer' || currentQuestion.type === 'creative') && (
                   <textarea 
-                    className="w-full p-6 bg-neutral-50 border-2 border-neutral-100 rounded-[2rem] outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all min-h-[200px] font-medium"
-                    placeholder="Enter your response here..."
+                    className="w-full p-10 bg-black/40 border-2 border-white/5 rounded-[3rem] outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 transition-all min-h-[300px] font-bold text-white placeholder:text-neutral-700"
+                    placeholder="Enter strategic response..."
                     value={answers[currentQ] === -1 ? '' : answers[currentQ].toString()}
                     onChange={(e) => {
                       const newAns = [...answers];
@@ -193,49 +196,49 @@ export default function ExamView() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="mt-12 flex justify-between items-center">
+          <div className="mt-16 flex justify-between items-center px-4">
             <button
               disabled={currentQ === 0}
               onClick={() => setCurrentQ(prev => prev - 1)}
-              className="flex items-center space-x-2 px-8 py-4 rounded-2xl bg-white border border-neutral-100 text-neutral-400 font-black hover:text-neutral-900 transition-all disabled:opacity-20 uppercase tracking-widest text-[10px]"
+              className="flex items-center space-x-3 px-12 py-5 rounded-full bg-white/5 border border-white/5 text-neutral-500 font-black hover:text-white hover:border-white/10 transition-all disabled:opacity-0 uppercase tracking-widest text-[9px]"
             >
-              <ChevronLeft className="h-4 w-4" />
-              <span>Back</span>
+              <ChevronLeft className="h-5 w-5" />
+              <span>Retreat Step</span>
             </button>
 
             {currentQ === exam.questions.length - 1 ? (
               <button
                 onClick={handleSubmit}
-                className="px-12 py-4 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-xl shadow-red-100"
+                className="px-16 py-5 bg-red-600 text-white rounded-full font-black uppercase tracking-[0.3em] hover:bg-red-700 transition-all shadow-2xl shadow-red-500/30 text-[10px]"
               >
-                Submit Examination
+                Execute Submission
               </button>
             ) : (
               <button
                 onClick={() => setCurrentQ(prev => prev + 1)}
-                className="flex items-center space-x-2 px-10 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
+                className="flex items-center space-x-3 px-16 py-5 bg-blue-600 text-white rounded-full font-black uppercase tracking-[0.3em] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/30 text-[10px]"
               >
-                <span>Nest Stage</span>
-                <ChevronRight className="h-4 w-4" />
+                <span>Nest Node</span>
+                <ChevronRight className="h-5 w-5" />
               </button>
             )}
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm">
-            <h3 className="font-extrabold text-neutral-900 mb-6 text-xs uppercase tracking-[0.2em] opacity-30">Map</h3>
-            <div className="grid grid-cols-4 gap-3">
+        <div className="space-y-8">
+          <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+            <h3 className="font-black text-neutral-700 mb-8 text-[9px] uppercase tracking-[0.5em] text-center italic">Operational Map</h3>
+            <div className="grid grid-cols-4 gap-4">
               {exam.questions.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentQ(i)}
-                  className={`h-12 w-12 rounded-2xl flex items-center justify-center font-black text-sm transition-all border-2 ${
+                  className={`h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xs transition-all border-2 ${
                     currentQ === i 
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-100' 
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xl shadow-blue-500/30 rotate-12 scale-110' 
                     : answers[i] !== -1 
-                    ? 'bg-blue-50 text-blue-600 border-blue-200' 
-                    : 'bg-neutral-50 text-neutral-200 border-neutral-50'
+                    ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' 
+                    : 'bg-white/5 text-neutral-700 border-transparent hover:border-white/10'
                   }`}
                 >
                   {i + 1}
@@ -244,12 +247,12 @@ export default function ExamView() {
             </div>
           </div>
 
-          <div className="bg-neutral-900 p-8 rounded-[2.5rem] text-white">
-            <div className="flex items-center space-x-2 text-blue-400 mb-4">
-              <Info className="h-4 w-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Protocol</span>
+          <div className="bg-white/5 p-10 rounded-[3rem] border border-white/5 backdrop-blur-xl">
+            <div className="flex items-center space-x-3 text-blue-500 mb-6">
+              <Info className="h-5 w-5" />
+              <span className="text-[9px] font-black uppercase tracking-[0.4em]">Protocol Info</span>
             </div>
-            <p className="text-xs text-neutral-400 leading-relaxed font-medium">Ensure you have a stable connection. Once submitted, answers cannot be modified. Creative answers will be graded by your instructor within 48 hours.</p>
+            <p className="text-[10px] text-neutral-500 leading-loose font-bold uppercase tracking-widest italic text-center">Stability required. No manual reversal after sync. Creative modules require manual instructor verification.</p>
           </div>
         </div>
       </div>

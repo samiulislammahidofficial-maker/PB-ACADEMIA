@@ -8,6 +8,6 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased text-neutral-900 bg-neutral-50;
+    @apply font-sans antialiased text-neutral-100 bg-[#050505];
   }
 }
