@@ -87,56 +87,67 @@ export default function AdminDashboard() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="space-y-12"
         >
-          <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
-            <div className="text-center mb-10">
-              <div className="h-16 w-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-6">
-                <Shield className="h-8 w-8" />
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+              <div className="text-center mb-10">
+                <div className="h-16 w-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-6">
+                  <Shield className="h-8 w-8" />
+                </div>
+                <h2 className="text-2xl font-black text-white uppercase tracking-widest">Commission Teacher Unit</h2>
+                <p className="text-neutral-500 text-[9px] font-black uppercase tracking-[0.3em] mt-2">Initialize secure access credentials for academic staff</p>
               </div>
-              <h2 className="text-2xl font-black text-white uppercase tracking-widest">Commission Teacher Unit</h2>
-              <p className="text-neutral-500 text-[9px] font-black uppercase tracking-[0.3em] mt-2">Initialize secure access credentials for academic staff</p>
+
+              <form onSubmit={handleCreateTeacher} className="space-y-6">
+                <div>
+                  <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Teacher Unique ID</label>
+                  <div className="relative">
+                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-primary font-black">#</span>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="e.g. PHY_PRO_01"
+                      className="w-full pl-12 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
+                      value={newTeacherId}
+                      onChange={(e) => setNewTeacherId(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Secure Security Key</label>
+                  <div className="relative">
+                    <Key className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600" />
+                    <input 
+                      type="password" 
+                      required
+                      placeholder="••••••••"
+                      className="w-full pl-16 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
+                      value={newTeacherPass}
+                      onChange={(e) => setNewTeacherPass(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={creatingTeacher}
+                  className="w-full py-6 bg-brand-primary text-white rounded-3xl font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  {creatingTeacher ? 'Generating Protocol...' : 'Initialize Academic Unit'}
+                </button>
+              </form>
             </div>
+          </div>
 
-            <form onSubmit={handleCreateTeacher} className="space-y-6">
-              <div>
-                <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Teacher Unique ID</label>
-                <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-primary font-black">#</span>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="e.g. PHY_PRO_01"
-                    className="w-full pl-12 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
-                    value={newTeacherId}
-                    onChange={(e) => setNewTeacherId(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Secure Security Key</label>
-                <div className="relative">
-                  <Key className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600" />
-                  <input 
-                    type="password" 
-                    required
-                    placeholder="••••••••"
-                    className="w-full pl-16 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
-                    value={newTeacherPass}
-                    onChange={(e) => setNewTeacherPass(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <button 
-                type="submit"
-                disabled={creatingTeacher}
-                className="w-full py-6 bg-brand-primary text-white rounded-3xl font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
-              >
-                {creatingTeacher ? 'Generating Protocol...' : 'Initialize Academic Unit'}
-              </button>
-            </form>
+          <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden mt-12">
+            <div className="p-10 border-b border-white/5 bg-black/20">
+              <h3 className="text-sm font-black text-white uppercase tracking-widest">Active Teacher Units</h3>
+            </div>
+            <div className="p-10 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest">
+              Teacher records are strictly indexed for security. Use the commission form above to add staff.
+            </div>
           </div>
         </motion.div>
       )}
@@ -241,7 +252,7 @@ export default function AdminDashboard() {
         </motion.div>
       )}
 
-      {activeTab !== 'users' && (
+      {(activeTab === 'courses' || activeTab === 'settings') && (
         <div className="py-40 text-center flex flex-col items-center">
           <div className="p-10 bg-white/5 rounded-full mb-8 animate-pulse">
             <Settings className="h-16 w-16 text-neutral-800" />
