@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { auth, signOut } from '../lib/firebase';
-import { GraduationCap, LogOut, User, Menu, X } from 'lucide-react';
+import { LogOut, Menu, X, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -16,47 +16,55 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-brand-20/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+    <nav className="bg-white sticky top-0 z-50 border-b border-neutral-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <Link to="/" className="flex items-center space-x-3 group">
             <motion.div
-              whileHover={{ rotate: 10, scale: 1.1 }}
-              className="relative"
+              whileHover={{ rotate: 5, scale: 1.05 }}
+              className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-brand-primary/10 shadow-sm"
             >
-              <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="PB Academia Logo" className="h-10 w-10 object-contain rounded-lg" />
+              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="PB Academia Logo" className="w-full h-full object-cover" />
             </motion.div>
-            <span className="font-display font-black text-xl tracking-tighter text-white uppercase group-hover:text-brand-10 transition-colors">PB ACADEMIA</span>
+            <span className="font-display font-bold text-xl sm:text-2xl md:text-3xl tracking-tight text-neutral-900 group-hover:text-brand-primary transition-colors">PB ACADEMIA</span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Intelligence</Link>
+          <div className="hidden md:flex items-center space-x-10">
+            <Link to="/" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">Home</Link>
+            <Link to="/courses" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">Programs</Link>
+            <Link to="/about" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">About</Link>
+            
             {user ? (
-              <>
-                <Link to="/dashboard" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Terminal</Link>
-                <div className="flex items-center space-x-4 pl-8 border-l border-white/10">
+              <div className="flex items-center space-x-6">
+                <Link 
+                  to="/dashboard" 
+                  className="px-6 py-2.5 bg-brand-primary text-white rounded-xl font-bold text-sm hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center space-x-2"
+                >
+                  <span>Dashboard</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+                <div className="flex items-center space-x-3 pl-6 border-l border-neutral-100">
                   <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</span>
-                    <span className="text-[8px] text-neutral-500 font-bold uppercase tracking-[0.2em]">{profile?.role}</span>
+                    <span className="text-xs font-bold text-neutral-900">{profile?.name}</span>
+                    <span className="text-[10px] text-neutral-400 font-medium capitalize">{profile?.role}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-neutral-600 hover:text-red-500 transition-colors"
-                    title="Logout"
+                    className="p-2 text-neutral-400 hover:text-brand-secondary transition-colors"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-5 w-5" />
                   </button>
                 </div>
-              </>
+              </div>
             ) : (
               <div className="flex items-center space-x-6">
-                <Link to="/login" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">Access</Link>
-                <Link
-                  to="/register"
-                  className="bg-white text-black px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-neutral-200 transition-all shadow-xl shadow-white/5"
+                <Link to="/login" className="text-sm font-bold text-neutral-600 hover:text-brand-primary transition-colors">Sign In</Link>
+                <Link 
+                  to="/register" 
+                  className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold text-sm hover:shadow-xl hover:shadow-brand-primary/30 transition-all"
                 >
-                  Join Force
+                  Get Started
                 </Link>
               </div>
             )}
@@ -78,23 +86,24 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-[#0a0a0a] border-b border-white/5 px-4 pt-2 pb-8 space-y-2"
+            className="md:hidden bg-white border-b border-neutral-100 px-4 pt-2 pb-8 space-y-2"
           >
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Intelligence</Link>
+            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Home</Link>
+            <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Programs</Link>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Terminal</Link>
+                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-brand-primary font-bold">Dashboard</Link>
                 <button
                   onClick={() => { handleLogout(); setIsOpen(false); }}
-                  className="w-full text-left px-3 py-4 text-[10px] font-black uppercase tracking-widest text-red-500"
+                  className="w-full text-left px-3 py-4 text-sm font-semibold text-brand-secondary"
                 >
-                  Terminate Session
+                  Logout
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">Access</Link>
-                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-blue-500">Recruit</Link>
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Login</Link>
+                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-brand-primary">Sign Up</Link>
               </>
             )}
           </motion.div>

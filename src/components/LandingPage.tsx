@@ -1,201 +1,152 @@
 import { motion } from 'motion/react';
-import { BookOpen, Award, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Award, Users, ArrowRight, Video, QrCode, ClipboardList, Info, BookCheck, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const features = [
-  {
-    icon: <BookOpen className="h-6 w-6" />,
-    title: "Curated Courses",
-    description: "Structured content for Class 8-12 mapped to your school curriculum."
-  },
-  {
-    icon: <Award className="h-6 w-6" />,
-    title: "Regular Exams",
-    description: "Compete with peers and track your performance with monthly tests."
-  },
-  {
-    icon: <Users className="h-6 w-6" />,
-    title: "Expert Mentors",
-    description: "Learn from teachers who care about your growth and academic success."
-  }
-];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-};
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-48 bg-brand-70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-24 items-center">
+    <div className="flex flex-col overflow-hidden bg-white">
+      {/* Hero Section - Inspired by the "Get Our Free App" screenshot style but for web */}
+      <section className="relative pt-20 pb-32 bg-brand-dark overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary via-transparent to-transparent"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="lg:grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8 }}
             >
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex items-center space-x-4 mb-8"
-              >
-                <div className="h-[2px] w-12 bg-brand-10"></div>
-                <span className="text-[10px] font-black text-brand-10 uppercase tracking-[0.4em]">Established 2024 // Dhaka</span>
-              </motion.div>
-              <h1 className="text-7xl md:text-9xl font-display font-black text-white tracking-tighter leading-[0.85] uppercase">
-                PB <br /> <span className="text-brand-10">ACADEMIA</span>
+              <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight">
+                Unlock Your <br />
+                <span className="text-brand-primary">Academic Potential</span>
               </h1>
-              <p className="mt-12 text-lg text-neutral-400 max-w-lg font-bold uppercase tracking-widest leading-loose">
-                The elite coaching protocol for students of class 8 to 12. 
-                Integrating global academic standards with local excellence.
+              <p className="mt-8 text-lg text-neutral-300 max-w-lg leading-relaxed">
+                Join thousands of students achieving excellence with PB Academia. 
+                Expert mentors, live interactive classes, and personalized learning.
               </p>
-              <div className="mt-16 flex flex-col sm:flex-row gap-8">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    to="/register"
-                    className="px-12 py-6 bg-brand-10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-700 transition-all flex items-center justify-center shadow-2xl shadow-brand-10/30"
-                  >
-                    Initiate Protocol <ArrowRight className="ml-3 h-4 w-4" />
-                  </Link>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <a
-                    href="https://facebook.com/pbacademia"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-12 py-6 bg-brand-20 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
-                  >
-                    Uplink FB
-                  </a>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    to="/login"
-                    className="px-12 py-6 bg-brand-20 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
-                  >
-                    Verify ID
-                  </Link>
-                </motion.div>
+              
+              <div className="mt-12 flex items-center space-x-8">
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center space-x-4">
+                  <QrCode className="h-12 w-12 text-white" />
+                  <div>
+                    <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Scan to join</p>
+                    <p className="text-sm text-white font-bold">Dhaka Node</p>
+                  </div>
+                </div>
+                <Link
+                  to="/register"
+                  className="px-8 py-4 bg-brand-primary text-white rounded-2xl font-bold text-sm hover:scale-105 transition-all shadow-xl shadow-brand-primary/20"
+                >
+                  Start Learning Now
+                </Link>
               </div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, rotate: 5, scale: 0.9 }}
-              animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-              className="mt-24 lg:mt-0 relative"
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+              className="mt-16 lg:mt-0 relative"
             >
-              <div className="aspect-square bg-neutral-900 rounded-[4rem] overflow-hidden shadow-[0_0_150px_rgba(59,130,246,0.15)] relative border border-white/5 group">
+              <div className="relative z-10 bg-white/5 p-4 rounded-[3rem] border border-white/10 backdrop-blur-sm">
                 <img 
-                  src="https://images.unsplash.com/photo-1513258496099-48168024adb0?q=80&w=2070&auto=format&fit=crop" 
-                  alt="High quality education" 
-                  className="object-cover w-full h-full grayscale opacity-30 mix-blend-overlay group-hover:scale-110 transition-transform duration-1000"
+                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop" 
+                  alt="Student Dashboard Preview" 
+                  className="rounded-[2.5rem] shadow-2xl"
                 />
-                <div className="absolute inset-0 flex items-center justify-center p-12">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1 }}
-                    className="bg-brand-20/80 backdrop-blur-2xl p-12 rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-10 to-transparent"></div>
-                    <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="Logo Large" className="h-24 w-24 mx-auto mb-10 object-contain drop-shadow-[0_0_20px_rgba(37,99,235,0.5)]" />
-                    <div className="flex items-center justify-center space-x-3 text-brand-10 mb-8">
-                      <div className="h-2 w-2 bg-brand-10 rounded-full animate-ping"></div>
-                      <span className="font-black text-[10px] uppercase tracking-[0.4em]">Node Active: Dhaka_Central</span>
-                    </div>
-                    <p className="text-white font-black leading-tight uppercase tracking-tight text-2xl italic px-4">"Academic Excellence Redefined for the Next Generation."</p>
-                  </motion.div>
-                </div>
               </div>
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-primary/20 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-brand-secondary/20 rounded-full blur-3xl"></div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features with Staggered Animation */}
-      <section className="py-48 bg-brand-20">
+      {/* Philosophy Section - Inspired by the student illustration screenshot */}
+      <section className="py-24 bg-brand-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-32"
-          >
-            <h2 className="text-6xl font-display font-black text-white uppercase tracking-tighter">Strategic Impact</h2>
-            <p className="mt-6 text-neutral-500 font-black uppercase tracking-[0.4em] text-[10px]">Tier-1 Instructional Core</p>
-          </motion.div>
-          
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-16"
-          >
-            {features.map((feature, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="bg-brand-70 p-12 rounded-[3.5rem] border border-white/5 hover:border-brand-10/50 transition-all group relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 p-8 opacity-5">
-                   <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="" className="h-20 w-20 grayscale" />
-                </div>
-                <div className="h-20 w-20 bg-brand-10/10 text-brand-10 rounded-3xl flex items-center justify-center mb-10 group-hover:bg-brand-10 group-hover:text-white transition-all duration-500">
-                  {feature.icon}
-                </div>
-                <h3 className="text-2xl font-display font-black text-white mb-6 uppercase tracking-tight">{feature.title}</h3>
-                <p className="text-neutral-500 font-bold leading-relaxed uppercase text-[11px] tracking-widest">{feature.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="order-2 lg:order-1">
+              <img 
+                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop" 
+                alt="Student Illustration" 
+                className="rounded-[3rem] shadow-xl"
+              />
+            </div>
+            <div className="order-1 lg:order-2">
+              <span className="text-brand-secondary font-bold uppercase tracking-widest text-xs">Our Commitment</span>
+              <h2 className="mt-4 text-4xl md:text-5xl font-display font-bold text-neutral-900 leading-tight">
+                No matter the situation, <br />
+                <span className="text-brand-primary text-3xl italic">Your preparation won't stop.</span>
+              </h2>
+              <p className="mt-8 text-neutral-600 leading-relaxed text-lg">
+                We provide a seamless learning experience that adapts to your needs. 
+                Our platform ensures that students of Class 8-12 get the best-in-class 
+                academic support, anytime, anywhere.
+              </p>
+              <ul className="mt-10 space-y-4">
+                {['Expert faculty from top institutions', 'Interactive doubt-clearing sessions', 'Performance analysis reports'].map((item) => (
+                  <li key={item} className="flex items-center space-x-3 text-neutral-700 font-medium">
+                    <div className="h-5 w-5 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center">
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Classes Section */}
-      <section className="py-32 bg-brand-70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-black text-white mb-20 uppercase tracking-tighter">Strategic Cohorts</h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            {['Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12'].map((cls) => (
-              <div key={cls} className="px-12 py-8 bg-brand-20 text-white rounded-[2rem] font-black text-2xl border border-white/5 hover:border-brand-10 shadow-2xl hover:shadow-brand-10/10 transition-all cursor-default uppercase tracking-tighter">
-                {cls}
+      {/* Programs Section - Inspired by the purple header screenshot */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-brand-primary">Our Programs</h2>
+            <p className="mt-6 text-neutral-500 font-medium max-w-lg mx-auto">Select the program that fits your academic goals and start your journey towards excellence.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              { title: "Secondary Core", classes: "Class 8 - 10", desc: "Building a strong foundation for future success.", img: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=2070&auto=format&fit=crop" },
+              { title: "Higher Secondary", classes: "Class 11 - 12", desc: "Advanced preparation for board exams and beyond.", img: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop" },
+              { title: "Admission Program", classes: "University Prep", desc: "Strategic planning for competitive entrance tests.", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2070&auto=format&fit=crop" }
+            ].map((program, i) => (
+              <div key={i} className="bg-white rounded-[3rem] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-2xl transition-all group">
+                <div className="h-64 overflow-hidden relative">
+                  <img src={program.img} alt={program.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-bold text-brand-primary uppercase tracking-widest shadow-lg">
+                    {program.classes}
+                  </div>
+                </div>
+                <div className="p-10">
+                  <h3 className="text-2xl font-bold text-neutral-900 mb-4">{program.title}</h3>
+                  <p className="text-neutral-500 text-sm leading-relaxed mb-8">{program.desc}</p>
+                  <Link to="/register" className="flex items-center space-x-2 text-brand-primary font-bold hover:space-x-4 transition-all">
+                    <span>Enroll Now</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-32 bg-brand-70">
+      {/* CTA Section */}
+      <section className="pb-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-brand-10 rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.2)]">
-            <div className="relative z-10">
-              <h2 className="text-5xl font-black mb-8 uppercase tracking-tighter leading-tight">Authorize Your <br /> Future Success</h2>
-              <p className="text-blue-100 font-bold uppercase tracking-widest text-[10px] mb-12 max-w-md mx-auto leading-loose">Join the most advanced academic network. Admission restricted to high-potential candidates.</p>
-              <Link
-                to="/register"
-                className="inline-flex items-center px-12 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-neutral-100 transition-all shadow-2xl"
-              >
-                Access Signal
-              </Link>
-            </div>
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white/10 rounded-full blur-3xl opacity-50"></div>
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-black/20 rounded-full blur-3xl opacity-50"></div>
+          <div className="bg-brand-primary rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">Ready to start?</h2>
+            <p className="text-brand-surface/80 text-lg mb-12 max-w-lg mx-auto">Join the most advanced academic network and authorize your future success today.</p>
+            <Link
+              to="/register"
+              className="inline-flex items-center px-10 py-4 bg-white text-brand-primary rounded-2xl font-bold hover:scale-105 transition-all shadow-xl"
+            >
+              Get Operative Access
+            </Link>
           </div>
         </div>
       </section>

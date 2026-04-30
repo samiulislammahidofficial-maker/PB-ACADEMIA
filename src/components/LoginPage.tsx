@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, googleProvider, signInWithPopup, db, getDoc, doc } from '../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { GraduationCap, Mail, Lock, User, Shield, Briefcase } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ChevronRight, Grapes as Google } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../lib/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -27,143 +26,113 @@ export default function LoginPage() {
     setError('');
     
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      
-      const docRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists() && docSnap.data().role !== selectedRole) {
-        setError(`Unauthorized: Your account is not registered as a ${selectedRole}.`);
-        return;
-      }
-      
+      await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError('Invalid credentials or system rejection.');
+      setError('Invalid email or password. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const docRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(docRef);
-      
-      if (!docSnap.exists()) {
-        // If they bypass registration page, we redirect them to register to fill the form
-        navigate('/register');
-      } else {
-        navigate('/dashboard');
-      }
-    } catch (err: any) {
-      setError(err.message);
+      await signInWithPopup(auth, googleProvider);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('System authentication failed.');
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-brand-70 px-4 py-12">
+    <div className="min-h-screen bg-[#FDFCFE] flex items-center justify-center p-4">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-brand-20 rounded-[3rem] shadow-2xl border border-white/5 p-12"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md w-full bg-white rounded-[3rem] shadow-2xl shadow-brand-primary/10 border border-neutral-100 p-10 md:p-14"
       >
-        <div className="text-center mb-12">
-          <Link to="/" className="inline-flex items-center justify-center mb-8 group">
+        <div className="text-center mb-10">
+          <Link to="/" className="inline-block mb-6">
             <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              className="h-24 w-24 bg-white/5 p-4 rounded-3xl border border-white/5"
+              whileHover={{ scale: 1.1 }}
+              className="h-20 w-20 bg-brand-surface rounded-full overflow-hidden border-4 border-white shadow-xl flex items-center justify-center p-1"
             >
-              <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover rounded-full" />
             </motion.div>
           </Link>
-          <h2 className="text-4xl font-display font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Access Terminal</h2>
-          <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">Secure Authentication Protocol</p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3 mb-10 p-1.5 bg-black/40 rounded-2xl border border-white/5">
-          <button 
-            onClick={() => setSelectedRole('student')}
-            className={`flex flex-col items-center py-4 rounded-xl transition-all ${selectedRole === 'student' ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-600 hover:text-neutral-400'}`}
-          >
-            <User className="h-4 w-4 mb-2" />
-            <span className="text-[8px] font-black uppercase tracking-[0.2em]">Student</span>
-          </button>
-          <button 
-            onClick={() => setSelectedRole('teacher')}
-            className={`flex flex-col items-center py-4 rounded-xl transition-all ${selectedRole === 'teacher' ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-600 hover:text-neutral-400'}`}
-          >
-            <Briefcase className="h-4 w-4 mb-2" />
-            <span className="text-[8px] font-black uppercase tracking-[0.2em]">Staff</span>
-          </button>
-          <button 
-            onClick={() => setSelectedRole('admin')}
-            className={`flex flex-col items-center py-4 rounded-xl transition-all ${selectedRole === 'admin' ? 'bg-white/10 text-white shadow-xl' : 'text-neutral-600 hover:text-neutral-400'}`}
-          >
-            <Shield className="h-4 w-4 mb-2" />
-            <span className="text-[8px] font-black uppercase tracking-[0.2em]">Root</span>
-          </button>
+          <h2 className="text-3xl font-display font-bold text-neutral-900">Welcome Back</h2>
+          <p className="text-neutral-500 mt-2 font-medium">Log in to access your dashboard</p>
         </div>
 
         {error && (
-          <div className="mb-8 p-5 bg-red-500/10 border border-red-500/20 text-red-500 rounded-3xl text-[9px] font-black uppercase tracking-[0.2em] text-center">
-            {error}
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center space-x-3 text-red-600 text-sm font-medium"
+          >
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <span>{error}</span>
+          </motion.div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <div className="relative group">
-            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
-            <input
-              type="email"
-              placeholder="System Email"
-              required
-              className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <div>
+            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+              <input
+                type="email"
+                required
+                className="w-full pl-12 pr-4 py-4 bg-neutral-50 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm font-medium"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="relative group">
-            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600 group-focus-within:text-blue-500 transition-colors" />
-            <input
-              type="password"
-              placeholder="Access Key"
-              required
-              className="w-full pl-14 pr-6 py-5 bg-black/20 border border-white/5 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-white font-bold"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+
+          <div>
+            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+              <input
+                type="password"
+                required
+                className="w-full pl-12 pr-4 py-4 bg-neutral-50 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm font-medium"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-5 bg-brand-10 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-brand-10/20 disabled:opacity-50 uppercase tracking-[0.3em] text-[10px]"
+            className="w-full py-4 bg-brand-primary text-white font-bold rounded-2xl hover:bg-brand-primary/90 transition-all shadow-xl shadow-brand-primary/20 disabled:opacity-50 flex items-center justify-center space-x-2"
           >
-            {submitting ? 'Authorizing...' : `Direct Access: ${selectedRole}`}
+            <span>{submitting ? 'Signing in...' : 'Sign In'}</span>
+            <ChevronRight className="h-4 w-4" />
           </button>
         </form>
 
-        <div className="mt-10 flex items-center justify-center space-x-4">
-          <div className="h-px bg-white/5 flex-grow"></div>
-          <span className="text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Unified Identity</span>
-          <div className="h-px bg-white/5 flex-grow"></div>
+        <div className="mt-8">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-100"></div></div>
+            <div className="relative flex justify-center text-xs"><span className="px-4 bg-white text-neutral-400 font-bold uppercase tracking-widest">Or continue with</span></div>
+          </div>
+
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full py-4 border border-neutral-200 text-neutral-700 font-bold rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center space-x-3"
+          >
+            <img src="https://www.google.com/favicon.ico" className="h-5 w-5" alt="Google" />
+            <span>Google Account</span>
+          </button>
         </div>
 
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full mt-10 py-5 bg-white/5 border border-white/10 text-white font-black rounded-3xl hover:bg-white/10 transition-all flex items-center justify-center space-x-4 shadow-sm uppercase tracking-[0.3em] text-[8px]"
-        >
-          <img src="https://www.google.com/favicon.ico" className="w-3 h-3 grayscale contrast-200" alt="Google" />
-          <span>Verify via Google Protocol</span>
-        </button>
-
-        <p className="mt-12 text-center text-neutral-500 text-[9px] font-black uppercase tracking-[0.2em] leading-loose">
-          Not in the system? <Link to="/register" className="text-blue-500 hover:underline">Apply for Entry</Link>
+        <p className="mt-10 text-center text-sm text-neutral-500 font-medium">
+          New here? <Link to="/register" className="text-brand-primary font-bold hover:underline">Create an account</Link>
         </p>
       </motion.div>
     </div>

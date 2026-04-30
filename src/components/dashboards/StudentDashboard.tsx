@@ -1,237 +1,156 @@
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, getDocs, where, limit, orderBy } from '../../lib/firebase';
+import { db, collection, query, getDocs, limit } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
-import { Course, Exam, Assignment } from '../../types';
-import { BookOpen, Award, Clock, ChevronRight, Play, Calendar, AlertCircle, Shield } from 'lucide-react';
+import { Course } from '../../types';
+import { 
+  BookOpen, Award, Clock, ChevronRight, Video, ClipboardList, 
+  MessageSquare, BookCheck, Info, Users, LayoutDashboard, 
+  PlusCircle, FileText, Monitor, GraduationCap, BarChart2, 
+  Wallet, Headphones, ArrowRight
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, LineChart, Line 
-} from 'recharts';
+
+const sidebarItems = [
+  { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", active: true },
+  { icon: <PlusCircle className="h-5 w-5" />, label: "Add Course" },
+  { icon: <FileText className="h-5 w-5" />, label: "Course & Content" },
+  { icon: <Monitor className="h-5 w-5" />, label: "Master Class" },
+  { icon: <GraduationCap className="h-5 w-5" />, label: "Foundation Class" },
+  { icon: <Clock className="h-5 w-5" />, label: "Past Classes" },
+  { icon: <ClipboardList className="h-5 w-5" />, label: "Past Exams" },
+  { icon: <BookOpen className="h-5 w-5" />, label: "Practice Exam" },
+  { icon: <BookCheck className="h-5 w-5" />, label: "Solve Sheet" },
+  { icon: <BarChart2 className="h-5 w-5" />, label: "Performance" },
+  { icon: <MessageSquare className="h-5 w-5" />, label: "Q&A Service" },
+  { icon: <Wallet className="h-5 w-5" />, label: "Due Payment" },
+  { icon: <Headphones className="h-5 w-5" />, label: "Discussion Group" },
+];
+
+const features = [
+  { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600" },
+  { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600" },
+  { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600" },
+  { icon: <BookCheck className="h-6 w-6" />, title: "Solve Sheets", color: "bg-purple-50 text-purple-600" },
+  { icon: <MessageSquare className="h-6 w-6" />, title: "Q&A Service", color: "bg-pink-50 text-pink-600" },
+  { icon: <Info className="h-6 w-6" />, title: "Course Content", color: "bg-indigo-50 text-indigo-600" },
+  { icon: <Users className="h-6 w-6" />, title: "Discussion", color: "bg-teal-50 text-teal-600" },
+  { icon: <Award className="h-6 w-6" />, title: "Certificates", color: "bg-yellow-50 text-yellow-600" }
+];
 
 export default function StudentDashboard() {
   const { profile } = useAuth();
-  const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
-  const [upcomingExams, setUpcomingExams] = useState<Exam[]>([]);
-  const [upcomingAssignments, setUpcomingAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock progress data for visualization
-  const progressData = [
-    { name: 'Physics', completed: 85, total: 100 },
-    { name: 'Chemistry', completed: 62, total: 100 },
-    { name: 'Biology', completed: 45, total: 100 },
-    { name: 'Math', completed: 92, total: 100 },
-  ];
-
-  const activityData = [
-    { day: 'Mon', hours: 2 },
-    { day: 'Tue', hours: 4 },
-    { day: 'Wed', hours: 3 },
-    { day: 'Thu', hours: 5 },
-    { day: 'Fri', hours: 2 },
-    { day: 'Sat', hours: 6 },
-    { day: 'Sun', hours: 4 },
-  ];
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Enrolled Courses
-        const coursesSnap = await getDocs(query(collection(db, 'courses'), limit(3)));
-        const courses: Course[] = [];
-        coursesSnap.forEach((doc) => courses.push({ id: doc.id, ...doc.data() } as Course));
-        setEnrolledCourses(courses);
-
-        // Upcoming Exams
-        const examsSnap = await getDocs(query(collection(db, 'exams'), limit(2)));
-        const exams: Exam[] = [];
-        examsSnap.forEach((doc) => exams.push({ id: doc.id, ...doc.data() } as Exam));
-        setUpcomingExams(exams);
-
-        // Upcoming Assignments
-        const assignmentsSnap = await getDocs(query(collection(db, 'assignments'), limit(2)));
-        const assignments: Assignment[] = [];
-        assignmentsSnap.forEach((doc) => assignments.push({ id: doc.id, ...doc.data() } as Assignment));
-        setUpcomingAssignments(assignments);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // Simulate loading
+    setTimeout(() => setLoading(false), 800);
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-        <div>
-          <h1 className="text-5xl font-display font-black text-white uppercase tracking-tighter">
-            Operational <span className="text-brand-10">Status</span>
-          </h1>
-          <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">
-            Active Session: {profile?.name} • Protocol {profile?.uid?.slice(0, 8)}
-          </p>
+    <div className="min-h-screen bg-[#FDFCFE] flex">
+      {/* Sidebar */}
+      <aside className="w-72 bg-white border-r border-neutral-100 flex flex-col hidden lg:flex sticky top-20 h-[calc(100vh-80px)]">
+        <div className="p-6 border-b border-neutral-50 mb-4">
+          <div className="flex items-center space-x-3">
+             <div className="h-10 w-10 bg-brand-surface rounded-full overflow-hidden border border-neutral-100 shadow-sm">
+                <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover" />
+              </div>
+              <span className="font-display font-bold text-lg text-neutral-900 tracking-tight">PB Academia</span>
+          </div>
         </div>
-        <div className="bg-brand-10/10 border border-brand-10/20 text-brand-10 px-8 py-4 rounded-2xl shadow-2xl flex items-center space-x-4">
-          <Award className="h-5 w-5" />
-          <span className="font-black text-[10px] uppercase tracking-[0.2em]">Merit Rank #{Math.floor(Math.random() * 100) + 1}</span>
+        <div className="flex-1 overflow-y-auto py-2 px-4">
+          <div className="space-y-1">
+            {sidebarItems.map((item, i) => (
+              <button
+                key={i}
+                className={`w-full flex items-center space-x-4 px-4 py-3 rounded-xl transition-all ${
+                  item.active 
+                    ? 'bg-brand-primary/10 text-brand-primary' 
+                    : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+                }`}
+              >
+                <span className={item.active ? 'text-brand-primary' : 'text-neutral-400'}>
+                  {item.icon}
+                </span>
+                <span className="text-sm font-bold tracking-tight">{item.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="p-3 bg-blue-500/10 text-blue-500 rounded-2xl"><BookOpen className="h-6 w-6" /></div>
-            <span className="text-3xl font-black text-white tracking-tighter">12</span>
+      {/* Main Content */}
+      <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
+        <div className="max-w-5xl">
+          <div className="mb-12 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-display font-bold text-neutral-900">Welcome Back, {profile?.name}!</h1>
+              <p className="text-neutral-500 mt-2 font-medium">Ready to continue your learning journey today?</p>
+            </div>
+            <div className="h-12 w-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400 hover:bg-neutral-200 transition-colors cursor-pointer">
+              <Users className="h-6 w-6" />
+            </div>
           </div>
-          <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Intel Cleared</p>
-        </div>
-        <div className="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="p-3 bg-green-500/10 text-green-500 rounded-2xl"><Award className="h-6 w-6" /></div>
-            <span className="text-3xl font-black text-white tracking-tighter">85%</span>
-          </div>
-          <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Combat Rating</p>
-        </div>
-        <div className="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="p-3 bg-purple-500/10 text-purple-500 rounded-2xl"><Clock className="h-6 w-6" /></div>
-            <span className="text-3xl font-black text-white tracking-tighter">{upcomingExams.length + upcomingAssignments.length}</span>
-          </div>
-          <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Strategic Tasks</p>
-        </div>
-        <div className="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="p-3 bg-orange-500/10 text-orange-500 rounded-2xl"><Calendar className="h-6 w-6" /></div>
-            <span className="text-3xl font-black text-white tracking-tighter">14</span>
-          </div>
-          <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.2em]">Active Streak</p>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
-              <h2 className="text-xl font-display font-black text-white mb-10 uppercase tracking-tight flex items-center">
-            <div className="h-2 w-2 rounded-full bg-brand-10 mr-3 animate-pulse"></div>
-            Sync Completion Metrics
-          </h2>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={progressData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#171717" />
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#737373', textAnchor: 'middle' }} width={80} />
-                <Tooltip 
-                  cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                  contentStyle={{ backgroundColor: '#050505', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                />
-                <Bar dataKey="completed" fill="#2563eb" radius={[0, 10, 10, 0]} barSize={12} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+          {/* Quick Actions / Featured */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            <div className="bg-brand-primary p-8 rounded-[2.5rem] text-white shadow-xl shadow-brand-primary/20 relative overflow-hidden group cursor-pointer">
+              <div className="relative z-10">
+                <Video className="h-8 w-8 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Live Class</h3>
+                <p className="text-brand-surface/70 text-sm font-medium">Physics: Quantum Mechanics 101 starts in 15 mins</p>
+                <div className="mt-8 flex items-center text-sm font-bold underline decoration-brand-surface/30 group-hover:decoration-white transition-all">
+                  Join Now <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
+            </div>
 
-        <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
-          <h2 className="text-xl font-black text-white mb-10 uppercase tracking-tight flex items-center">
-            <div className="h-2 w-2 rounded-full bg-purple-500 mr-3 animate-pulse"></div>
-            System Intensity Log
-          </h2>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={activityData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#171717" />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#737373' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#737373' }} />
-                <Tooltip 
-                   contentStyle={{ backgroundColor: '#050505', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                />
-                <Line type="monotone" dataKey="hours" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#050505' }} activeDot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+            <div className="bg-emerald-500 p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group cursor-pointer">
+              <div className="relative z-10">
+                <ClipboardList className="h-8 w-8 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Live Exam</h3>
+                <p className="text-emerald-50/70 text-sm font-medium">Weekly Assessment #14 is now active</p>
+                <div className="mt-8 flex items-center text-sm font-bold underline decoration-emerald-50/30 group-hover:decoration-white transition-all">
+                  Start Test <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2 space-y-12">
-          <section>
+            <div className="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+              <BarChart2 className="h-8 w-8 text-brand-primary mb-4" />
+              <h3 className="text-xl font-bold text-neutral-900 mb-2">Performance</h3>
+              <p className="text-neutral-500 text-sm font-medium">You are in the top 5% of your class this week.</p>
+              <div className="mt-8 text-brand-primary text-sm font-bold">View detailed analytics</div>
+            </div>
+          </div>
+
+          {/* Explore Services Section */}
+          <div className="mb-12">
             <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-display font-black text-white uppercase tracking-tighter">Engagement Matrix</h2>
-              <Link to="/courses" className="text-[10px] font-black text-blue-500 uppercase tracking-widest hover:underline">Deploy Intel</Link>
+              <h2 className="text-2xl font-display font-bold text-neutral-900 tracking-tight">Explore Services</h2>
+              <span className="text-sm font-bold text-brand-primary cursor-pointer hover:underline">View All Protocols</span>
             </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {loading ? (
-                <div className="p-20 text-center animate-pulse text-neutral-700 font-black uppercase tracking-[0.5em]">Establishing Uplink...</div>
-              ) : enrolledCourses.length > 0 ? (
-                enrolledCourses.map((course) => (
-                  <Link key={course.id} to={`/courses/${course.id}`} className="block group">
-                    <motion.div 
-                      whileHover={{ scale: 1.02, x: 10 }}
-                      className="bg-[#0a0a0a] p-8 rounded-[2.5rem] border border-white/5 shadow-2xl hover:border-blue-500/30 transition-all flex items-center"
-                    >
-                      <div className="h-20 w-20 bg-blue-500/5 text-blue-500 rounded-[1.5rem] mr-8 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                        <BookOpen className="h-8 w-8" />
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="text-lg font-black text-white group-hover:text-blue-500 transition-colors uppercase tracking-tight">{course.title}</h3>
-                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-2">{course.description}</p>
-                      </div>
-                      <div className="ml-4 p-4 rounded-full bg-white/5 text-white/20 group-hover:bg-blue-500 group-hover:text-white transition-all shadow-xl">
-                        <ChevronRight className="h-5 w-5" />
-                      </div>
-                    </motion.div>
-                  </Link>
-                ))
-              ) : (
-                <div className="text-center py-20 bg-[#050505] rounded-[3rem] border-4 border-dashed border-white/5">
-                  <p className="text-neutral-600 font-black uppercase tracking-[0.3em] text-[10px]">No active operations currently detected</p>
-                  <Link to="/" className="inline-block mt-8 text-[10px] font-black text-white bg-blue-600 px-10 py-4 rounded-full uppercase tracking-widest hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20">Operational Recruitment</Link>
-                </div>
-              )}
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {features.map((feature, i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -5 }}
+                  className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col items-center group transition-all hover:shadow-lg"
+                >
+                  <div className={`h-14 w-14 ${feature.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    {feature.icon}
+                  </div>
+                  <span className="text-xs font-bold text-neutral-800 tracking-tight text-center">{feature.title}</span>
+                </motion.div>
+              ))}
             </div>
-          </section>
+          </div>
         </div>
-
-        <div className="space-y-12">
-          <section>
-            <h2 className="text-3xl font-display font-black text-white mb-8 uppercase tracking-tighter">Tactical Window</h2>
-            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl space-y-10">
-              {upcomingExams.length > 0 || upcomingAssignments.length > 0 ? (
-                <>
-                  {upcomingExams.map(exam => (
-                    <div key={exam.id} className="relative pl-8 border-l-4 border-blue-500">
-                      <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2">High Priority Checkpoint</p>
-                      <h4 className="font-black text-white uppercase tracking-tight text-md mb-3">{exam.title}</h4>
-                      <div className="flex items-center space-x-3 text-neutral-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
-                        <Clock className="h-3 w-3" />
-                        <span>Target: T-MINUS 24H</span>
-                      </div>
-                      <Link to={`/exams/${exam.id}`} className="block text-center text-[10px] font-black text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl uppercase tracking-widest transition-all">Engage Objective</Link>
-                    </div>
-                  ))}
-                  {upcomingAssignments.map(assign => (
-                    <div key={assign.id} className="relative pl-8 border-l-4 border-white/10">
-                      <p className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em] mb-2">Operational Task</p>
-                      <h4 className="font-black text-white uppercase tracking-tight text-md mb-3">{assign.title}</h4>
-                      <p className="text-[10px] text-neutral-400 font-black uppercase tracking-widest mt-1 italic">Deliverable: {new Date(assign.dueDate).toLocaleDateString()}</p>
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <div className="text-center py-16 flex flex-col items-center justify-center space-y-6 opacity-20">
-                  <Shield className="h-12 w-12 text-white" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Area Secured: No Pending Tasks</p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
