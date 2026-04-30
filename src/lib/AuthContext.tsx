@@ -75,8 +75,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(firebaseUser);
       setProfile(customProfile);
       localStorage.setItem('pb_custom_auth', JSON.stringify({ role, identifier }));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Custom login failed:", error);
+      if (error.code === 'auth/operation-not-allowed') {
+        throw new Error('CONFIG_ERROR: Anonymous authentication is not enabled in the Firebase Console. Please enable it in the Authentication > Sign-in method tab.');
+      }
       throw error;
     } finally {
       setLoading(false);

@@ -60,12 +60,14 @@ export default function LoginPage() {
       navigate('/dashboard');
     } catch (err: any) {
       console.error("Login trace:", err);
-      if (err.code === 'auth/operation-not-allowed') {
-        setError('Authentication method disabled. Contact system administrator.');
+      if (err.message.includes('CONFIG_ERROR')) {
+        setError(err.message.replace('CONFIG_ERROR: ', ''));
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Anonymous login is disabled. Please enable it in your Firebase Console (Authentication > Sign-in method).');
       } else if (err.code === 'auth/network-request-failed') {
         setError('Network connectivity lost. Check your connection.');
       } else {
-        setError('Invalid credentials or access denied.');
+        setError('Invalid credentials or access denied. Ensure Anonymous Auth is enabled if using Admin/Teacher roles.');
       }
     } finally {
       setSubmitting(false);
