@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isRole(role) {
+      return isSignedIn() && getUserData().role == role;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && (isOwner(userId) || isRole('admin'));
+      allow delete: if isRole('admin');
+    }
+
+    // Courses
+    match /courses/{courseId} {
+      allow read: if isSignedIn();
+      allow write: if isRole('admin') || isRole('teacher');
+    }
+
+    // Exams
+    match /exams/{examId} {
+      allow read: if isSignedIn();
+      allow write: if isRole('teacher') || isRole('admin');
+    }
+
+    // Results
+    match /results/{resultId} {
+      allow read: if isSignedIn() && (isOwner(resource.data.studentId) || isRole('teacher') || isRole('admin'));
+      allow create: if isSignedIn() && isRole('student') && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isRole('admin') || isRole('teacher');
+    }
+
+    // Attendance
+    match /attendance/{attendanceId} {
+      allow read: if isSignedIn() && (isRole('teacher') || isRole('admin') || isRole('student'));
+      allow write: if isRole('teacher') || isRole('admin');
+    }
+
+    // Materials
+    match /materials/{materialId} {
+      allow read: if isSignedIn();
+      allow write: if isRole('teacher') || isRole('admin');
+    }
+
+    // Assignments
+    match /assignments/{assignmentId} {
+      allow read: if isSignedIn();
+      allow write: if isRole('teacher') || isRole('admin');
+    }
+
+    // Assignment Submissions
+    match /assignmentSubmissions/{submissionId} {
+      allow read: if isSignedIn() && (isRole('teacher') || isRole('admin') || resource.data.studentId == request.auth.uid);
+      allow create: if isSignedIn() && isRole('student');
+      allow update: if isRole('teacher') || isRole('admin');
+    }
+  }
+}

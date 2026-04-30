@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing role and metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["student", "teacher", "admin"] },
+        "schoolName": { "type": "string" },
+        "mobileNumber": { "type": "string" },
+        "class": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Educational course offered by the academy",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "teacherId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "price", "teacherId"]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "An exam created by a teacher",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "courseId": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "questions": { "type": "array" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "durationMinutes": { "type": "number" }
+      },
+      "required": ["title", "courseId", "teacherId", "questions"]
+    },
+    "Result": {
+      "title": "Result",
+      "description": "Student result for an exam",
+      "type": "object",
+      "properties": {
+        "examId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "score": { "type": "number" },
+        "answers": { "type": "object" },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["examId", "studentId", "score"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Attendance record for a class or session",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "presentStudents": { "type": "array" },
+        "notes": { "type": "string" }
+      },
+      "required": ["courseId", "date"]
+    },
+    "Material": {
+      "title": "Material",
+      "description": "Study material or assignment uploaded by teacher",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "courseId": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileType": { "type": "string" },
+        "uploadedBy": { "type": "string" },
+        "uploadedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "courseId", "fileUrl"]
+    },
+    "Assignment": {
+      "title": "Assignment",
+      "description": "A homework task or project assigned by a teacher",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "courseId": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "fileUrl": { "type": "string" },
+        "fileType": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "courseId", "teacherId", "dueDate"]
+    },
+    "AssignmentSubmission": {
+      "title": "AssignmentSubmission",
+      "description": "A student's submission for an assignment",
+      "type": "object",
+      "properties": {
+        "assignmentId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileType": { "type": "string" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "grade": { "type": "number" },
+        "feedback": { "type": "string" }
+      },
+      "required": ["assignmentId", "studentId", "fileUrl"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Available courses"
+    },
+    "/exams/{examId}": {
+      "schema": "Exam",
+      "description": "Exams for courses"
+    },
+    "/results/{resultId}": {
+      "schema": "Result",
+      "description": "Student exam results"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Class attendance records"
+    },
+    "/materials/{materialId}": {
+      "schema": "Material",
+      "description": "Course materials"
+    },
+    "/assignments/{assignmentId}": {
+      "schema": "Assignment",
+      "description": "Assignments and homework"
+    },
+    "/assignmentSubmissions/{submissionId}": {
+      "schema": "AssignmentSubmission",
+      "description": "Student assignment submissions"
+    }
+  }
+}
