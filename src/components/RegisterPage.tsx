@@ -4,6 +4,7 @@ import { auth, db, setDoc, doc, googleProvider, signInWithPopup, getDoc } from '
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { GraduationCap, Mail, Lock, User, School, Phone, Book, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../lib/AuthContext';
 
 export default function RegisterPage() {
   const [step, setStep] = useState<'account' | 'profile'>('account');
@@ -21,6 +22,13 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && user && !googleUser && step === 'account') {
+      navigate('/dashboard');
+    }
+  }, [user, authLoading, navigate, googleUser, step]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,11 +107,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#050505] px-4 py-12">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-brand-70 px-4 py-12">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-[#0a0a0a] rounded-[3rem] shadow-2xl border border-white/5 p-12"
+        className="max-w-md w-full bg-brand-20 rounded-[3rem] shadow-2xl border border-white/5 p-12"
       >
         <div className="text-center mb-12">
           <Link to="/" className="inline-flex items-center justify-center mb-8 group">
@@ -112,10 +120,10 @@ export default function RegisterPage() {
               transition={{ duration: 1, ease: "easeInOut" }}
               className="h-24 w-24 bg-white/5 p-4 rounded-3xl border border-white/5"
             >
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="Logo" className="w-full h-full object-contain" />
             </motion.div>
           </Link>
-          <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Recruitment</h2>
+          <h2 className="text-4xl font-display font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Recruitment</h2>
           <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">Secure Enrollment Phase</p>
         </div>
 
@@ -189,7 +197,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setStep('profile')}
-                className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 uppercase tracking-[0.3em] text-[10px]"
+                className="w-full py-5 bg-brand-10 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-brand-10/20 uppercase tracking-[0.3em] text-[10px]"
               >
                 Proceed to Intelligence Setup
               </button>
@@ -256,7 +264,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 uppercase tracking-[0.3em] text-[10px] mt-6"
+              className="w-full py-5 bg-brand-10 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-brand-10/20 uppercase tracking-[0.3em] text-[10px] mt-6"
             >
               {loading ? 'Committing Data...' : 'Confirm Operational Access'}
             </button>

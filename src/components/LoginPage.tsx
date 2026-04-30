@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, googleProvider, signInWithPopup, db, getDoc, doc } from '../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { GraduationCap, Mail, Lock, User, Shield, Briefcase } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useAuth } from '../lib/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedRole, setSelectedRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate('/dashboard');
+    }
+  }, [user, authLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setError('');
     
     try {
@@ -34,7 +42,7 @@ export default function LoginPage() {
     } catch (err: any) {
       setError('Invalid credentials or system rejection.');
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -57,11 +65,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#050505] px-4 py-12">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-brand-70 px-4 py-12">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md w-full bg-[#0a0a0a] rounded-[3rem] shadow-2xl border border-white/5 p-12"
+        className="max-w-md w-full bg-brand-20 rounded-[3rem] shadow-2xl border border-white/5 p-12"
       >
         <div className="text-center mb-12">
           <Link to="/" className="inline-flex items-center justify-center mb-8 group">
@@ -70,10 +78,10 @@ export default function LoginPage() {
               transition={{ duration: 1, ease: "easeInOut" }}
               className="h-24 w-24 bg-white/5 p-4 rounded-3xl border border-white/5"
             >
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="Logo" className="w-full h-full object-contain" />
             </motion.div>
           </Link>
-          <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Access Terminal</h2>
+          <h2 className="text-4xl font-display font-black text-white uppercase tracking-tighter leading-tight">PB ACADEMIA <br/> Access Terminal</h2>
           <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">Secure Authentication Protocol</p>
         </div>
 
@@ -133,10 +141,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.3em] text-[10px]"
+            disabled={submitting}
+            className="w-full py-5 bg-brand-10 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-brand-10/20 disabled:opacity-50 uppercase tracking-[0.3em] text-[10px]"
           >
-            {loading ? 'Authorizing...' : `Direct Access: ${selectedRole}`}
+            {submitting ? 'Authorizing...' : `Direct Access: ${selectedRole}`}
           </button>
         </form>
 

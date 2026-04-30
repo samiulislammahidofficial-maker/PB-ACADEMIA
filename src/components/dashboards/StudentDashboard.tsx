@@ -69,14 +69,14 @@ export default function StudentDashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div>
-          <h1 className="text-5xl font-black text-white uppercase tracking-tighter">
-            Operational <span className="text-blue-500">Status</span>
+          <h1 className="text-5xl font-display font-black text-white uppercase tracking-tighter">
+            Operational <span className="text-brand-10">Status</span>
           </h1>
           <p className="text-neutral-500 mt-3 font-bold uppercase tracking-[0.3em] text-[10px]">
             Active Session: {profile?.name} • Protocol {profile?.uid?.slice(0, 8)}
           </p>
         </div>
-        <div className="bg-blue-600/10 border border-blue-500/20 text-blue-500 px-8 py-4 rounded-2xl shadow-2xl flex items-center space-x-4">
+        <div className="bg-brand-10/10 border border-brand-10/20 text-brand-10 px-8 py-4 rounded-2xl shadow-2xl flex items-center space-x-4">
           <Award className="h-5 w-5" />
           <span className="font-black text-[10px] uppercase tracking-[0.2em]">Merit Rank #{Math.floor(Math.random() * 100) + 1}</span>
         </div>
@@ -115,8 +115,8 @@ export default function StudentDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
-          <h2 className="text-xl font-black text-white mb-10 uppercase tracking-tight flex items-center">
-            <div className="h-2 w-2 rounded-full bg-blue-500 mr-3 animate-pulse"></div>
+              <h2 className="text-xl font-display font-black text-white mb-10 uppercase tracking-tight flex items-center">
+            <div className="h-2 w-2 rounded-full bg-brand-10 mr-3 animate-pulse"></div>
             Sync Completion Metrics
           </h2>
           <div className="h-[300px]">
@@ -129,7 +129,7 @@ export default function StudentDashboard() {
                   cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                   contentStyle={{ backgroundColor: '#050505', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
                 />
-                <Bar dataKey="completed" fill="#3b82f6" radius={[0, 10, 10, 0]} barSize={12} />
+                <Bar dataKey="completed" fill="#2563eb" radius={[0, 10, 10, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -149,7 +149,7 @@ export default function StudentDashboard() {
                 <Tooltip 
                    contentStyle={{ backgroundColor: '#050505', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
                 />
-                <Line type="monotone" dataKey="hours" stroke="#8b5cf6" strokeWidth={4} dot={{ r: 4, fill: '#8b5cf6', strokeWidth: 2, stroke: '#050505' }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="hours" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#050505' }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -160,7 +160,7 @@ export default function StudentDashboard() {
         <div className="lg:col-span-2 space-y-12">
           <section>
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Engagement Matrix</h2>
+          <h2 className="text-3xl font-display font-black text-white uppercase tracking-tighter">Engagement Matrix</h2>
               <Link to="/courses" className="text-[10px] font-black text-blue-500 uppercase tracking-widest hover:underline">Deploy Intel</Link>
             </div>
 
@@ -199,7 +199,7 @@ export default function StudentDashboard() {
 
         <div className="space-y-12">
           <section>
-            <h2 className="text-3xl font-black text-white mb-8 uppercase tracking-tighter">Tactical Window</h2>
+            <h2 className="text-3xl font-display font-black text-white mb-8 uppercase tracking-tighter">Tactical Window</h2>
             <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl space-y-10">
               {upcomingExams.length > 0 || upcomingAssignments.length > 0 ? (
                 <>

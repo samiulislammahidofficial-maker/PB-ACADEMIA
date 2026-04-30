@@ -16,7 +16,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-[#050505]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+    <nav className="bg-brand-20/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <Link to="/" className="flex items-center space-x-3 group">
@@ -24,9 +24,9 @@ export default function Navbar() {
               whileHover={{ rotate: 10, scale: 1.1 }}
               className="relative"
             >
-              <img src="/logo.png" alt="PB Academia Logo" className="h-10 w-10 object-contain rounded-lg" />
+              <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="PB Academia Logo" className="h-10 w-10 object-contain rounded-lg" />
             </motion.div>
-            <span className="font-black text-xl tracking-tighter text-white uppercase group-hover:text-blue-500 transition-colors">PB ACADEMIA</span>
+            <span className="font-display font-black text-xl tracking-tighter text-white uppercase group-hover:text-brand-10 transition-colors">PB ACADEMIA</span>
           </Link>
 
           {/* Desktop Nav */}

@@ -39,7 +39,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col overflow-hidden">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-48 bg-[#050505]">
+      <section className="relative pt-32 pb-48 bg-brand-70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-24 items-center">
             <motion.div
@@ -53,11 +53,11 @@ export default function LandingPage() {
                 transition={{ delay: 0.5 }}
                 className="flex items-center space-x-4 mb-8"
               >
-                <div className="h-[2px] w-12 bg-blue-500"></div>
-                <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Established 2024 // Dhaka</span>
+                <div className="h-[2px] w-12 bg-brand-10"></div>
+                <span className="text-[10px] font-black text-brand-10 uppercase tracking-[0.4em]">Established 2024 // Dhaka</span>
               </motion.div>
-              <h1 className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-[0.85] uppercase">
-                PB <br /> <span className="text-blue-500">ACADEMIA</span>
+              <h1 className="text-7xl md:text-9xl font-display font-black text-white tracking-tighter leading-[0.85] uppercase">
+                PB <br /> <span className="text-brand-10">ACADEMIA</span>
               </h1>
               <p className="mt-12 text-lg text-neutral-400 max-w-lg font-bold uppercase tracking-widest leading-loose">
                 The elite coaching protocol for students of class 8 to 12. 
@@ -67,7 +67,7 @@ export default function LandingPage() {
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link
                     to="/register"
-                    className="px-12 py-6 bg-blue-600 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-700 transition-all flex items-center justify-center shadow-2xl shadow-blue-500/30"
+                    className="px-12 py-6 bg-brand-10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-700 transition-all flex items-center justify-center shadow-2xl shadow-brand-10/30"
                   >
                     Initiate Protocol <ArrowRight className="ml-3 h-4 w-4" />
                   </Link>
@@ -77,7 +77,7 @@ export default function LandingPage() {
                     href="https://facebook.com/pbacademia"
                     target="_blank"
                     rel="noreferrer"
-                    className="px-12 py-6 bg-white/5 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
+                    className="px-12 py-6 bg-brand-20 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
                   >
                     Uplink FB
                   </a>
@@ -85,7 +85,7 @@ export default function LandingPage() {
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link
                     to="/login"
-                    className="px-12 py-6 bg-white/5 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
+                    className="px-12 py-6 bg-brand-20 border border-white/10 text-white rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-md"
                   >
                     Verify ID
                   </Link>
@@ -109,12 +109,12 @@ export default function LandingPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1 }}
-                    className="bg-black/80 backdrop-blur-2xl p-12 rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden"
+                    className="bg-brand-20/80 backdrop-blur-2xl p-12 rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
-                    <img src="/logo.png" alt="Logo Large" className="h-24 w-24 mx-auto mb-10 object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.5)]" />
-                    <div className="flex items-center justify-center space-x-3 text-blue-500 mb-8">
-                      <div className="h-2 w-2 bg-blue-500 rounded-full animate-ping"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-10 to-transparent"></div>
+                    <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="Logo Large" className="h-24 w-24 mx-auto mb-10 object-contain drop-shadow-[0_0_20px_rgba(37,99,235,0.5)]" />
+                    <div className="flex items-center justify-center space-x-3 text-brand-10 mb-8">
+                      <div className="h-2 w-2 bg-brand-10 rounded-full animate-ping"></div>
                       <span className="font-black text-[10px] uppercase tracking-[0.4em]">Node Active: Dhaka_Central</span>
                     </div>
                     <p className="text-white font-black leading-tight uppercase tracking-tight text-2xl italic px-4">"Academic Excellence Redefined for the Next Generation."</p>
@@ -127,7 +127,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features with Staggered Animation */}
-      <section className="py-48 bg-[#0a0a0a]">
+      <section className="py-48 bg-brand-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -135,7 +135,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-32"
           >
-            <h2 className="text-6xl font-black text-white uppercase tracking-tighter">Strategic Impact</h2>
+            <h2 className="text-6xl font-display font-black text-white uppercase tracking-tighter">Strategic Impact</h2>
             <p className="mt-6 text-neutral-500 font-black uppercase tracking-[0.4em] text-[10px]">Tier-1 Instructional Core</p>
           </motion.div>
           
@@ -150,15 +150,15 @@ export default function LandingPage() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="bg-[#050505] p-12 rounded-[3.5rem] border border-white/5 hover:border-blue-500/50 transition-all group relative overflow-hidden"
+                className="bg-brand-70 p-12 rounded-[3.5rem] border border-white/5 hover:border-brand-10/50 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-8 opacity-5">
-                   <img src="/logo.png" alt="" className="h-20 w-20 grayscale" />
+                   <img src="https://i.ibb.co.com/zhjhrK7K/PB-Academia-logo-1.png" alt="" className="h-20 w-20 grayscale" />
                 </div>
-                <div className="h-20 w-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mb-10 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
+                <div className="h-20 w-20 bg-brand-10/10 text-brand-10 rounded-3xl flex items-center justify-center mb-10 group-hover:bg-brand-10 group-hover:text-white transition-all duration-500">
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-black text-white mb-6 uppercase tracking-tight">{feature.title}</h3>
+                <h3 className="text-2xl font-display font-black text-white mb-6 uppercase tracking-tight">{feature.title}</h3>
                 <p className="text-neutral-500 font-bold leading-relaxed uppercase text-[11px] tracking-widest">{feature.description}</p>
               </motion.div>
             ))}
@@ -167,12 +167,12 @@ export default function LandingPage() {
       </section>
 
       {/* Classes Section */}
-      <section className="py-32 bg-[#050505]">
+      <section className="py-32 bg-brand-70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-black text-white mb-20 uppercase tracking-tighter">Strategic Cohorts</h2>
           <div className="flex flex-wrap justify-center gap-8">
             {['Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12'].map((cls) => (
-              <div key={cls} className="px-12 py-8 bg-[#0a0a0a] text-white rounded-[2rem] font-black text-2xl border border-white/5 hover:border-blue-500 shadow-2xl hover:shadow-blue-500/10 transition-all cursor-default uppercase tracking-tighter">
+              <div key={cls} className="px-12 py-8 bg-brand-20 text-white rounded-[2rem] font-black text-2xl border border-white/5 hover:border-brand-10 shadow-2xl hover:shadow-brand-10/10 transition-all cursor-default uppercase tracking-tighter">
                 {cls}
               </div>
             ))}
@@ -181,9 +181,9 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-32">
+      <section className="py-32 bg-brand-70">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-blue-600 rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.2)]">
+          <div className="bg-brand-10 rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.2)]">
             <div className="relative z-10">
               <h2 className="text-5xl font-black mb-8 uppercase tracking-tighter leading-tight">Authorize Your <br /> Future Success</h2>
               <p className="text-blue-100 font-bold uppercase tracking-widest text-[10px] mb-12 max-w-md mx-auto leading-loose">Join the most advanced academic network. Admission restricted to high-potential candidates.</p>
