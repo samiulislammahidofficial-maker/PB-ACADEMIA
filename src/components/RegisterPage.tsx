@@ -17,7 +17,7 @@ export default function RegisterPage() {
     schoolName: '',
     mobileNumber: '',
     className: '',
-    role: 'student' as 'student' | 'teacher' | 'admin'
+    role: 'student' as const
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

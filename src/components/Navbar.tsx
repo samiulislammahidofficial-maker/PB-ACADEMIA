@@ -6,12 +6,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Navbar() {
-  const { user, profile } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await logout();
     navigate('/');
   };
 

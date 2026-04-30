@@ -9,10 +9,11 @@ import { useAuth } from '../lib/AuthContext';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, loginCustom } = useAuth();
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -26,16 +27,46 @@ export default function LoginPage() {
     setError('');
     
     try {
+      if (role === 'admin') {
+        if (email === 'PB_ACADEMIA' && password === 'ami_admin') {
+          await loginCustom('admin', 'PB_ACADEMIA');
+          navigate('/dashboard');
+          return;
+        } else {
+          setError('Invalid Admin credentials.');
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      if (role === 'teacher') {
+        const teacherRef = doc(db, 'teacher_credentials', email);
+        const teacherSnap = await getDoc(teacherRef);
+        
+        if (teacherSnap.exists() && teacherSnap.data().password === password) {
+          await loginCustom('teacher', email);
+          navigate('/dashboard');
+        } else {
+          setError('Invalid Teacher ID or Security Key.');
+        }
+        setSubmitting(false);
+        return;
+      }
+
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError('Invalid email or password. Please try again.');
+      setError('Invalid credentials. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    if (role !== 'student') {
+      setError('Social login is strictly reserved for Students.');
+      return;
+    }
     try {
       await signInWithPopup(auth, googleProvider);
       navigate('/dashboard');
@@ -61,7 +92,24 @@ export default function LoginPage() {
             </motion.div>
           </Link>
           <h2 className="text-3xl font-display font-bold text-neutral-900">Welcome Back</h2>
-          <p className="text-neutral-500 mt-2 font-medium">Log in to access your dashboard</p>
+          <p className="text-neutral-500 mt-2 font-medium">Select your department to enter</p>
+        </div>
+
+        {/* Role Selector */}
+        <div className="flex bg-neutral-50 p-1.5 rounded-2xl mb-10 border border-neutral-100">
+          {(['student', 'teacher', 'admin'] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => setRole(r)}
+              className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                role === r 
+                  ? 'bg-white text-brand-primary shadow-sm border border-neutral-100' 
+                  : 'text-neutral-400 hover:text-neutral-600'
+              }`}
+            >
+              {r}
+            </button>
+          ))}
         </div>
 
         {error && (
@@ -77,14 +125,16 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">
+              {role === 'student' ? 'Email Address' : 'Operational ID'}
+            </label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
               <input
-                type="email"
+                type={role === 'student' ? 'email' : 'text'}
                 required
                 className="w-full pl-12 pr-4 py-4 bg-neutral-50 border border-neutral-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-sm font-medium"
-                placeholder="you@example.com"
+                placeholder={role === 'student' ? "you@example.com" : "Enter ID"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -92,7 +142,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">Password</label>
+            <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">Security Key</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
               <input
@@ -111,29 +161,39 @@ export default function LoginPage() {
             disabled={submitting}
             className="w-full py-4 bg-brand-primary text-white font-bold rounded-2xl hover:bg-brand-primary/90 transition-all shadow-xl shadow-brand-primary/20 disabled:opacity-50 flex items-center justify-center space-x-2"
           >
-            <span>{submitting ? 'Signing in...' : 'Sign In'}</span>
+            <span>{submitting ? 'Authenticating...' : `Enter ${role.charAt(0).toUpperCase() + role.slice(1)} Hub`}</span>
             <ChevronRight className="h-4 w-4" />
           </button>
         </form>
 
-        <div className="mt-8">
-          <div className="relative mb-8">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-100"></div></div>
-            <div className="relative flex justify-center text-xs"><span className="px-4 bg-white text-neutral-400 font-bold uppercase tracking-widest">Or continue with</span></div>
-          </div>
+        {role === 'student' && (
+          <>
+            <div className="mt-8">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-100"></div></div>
+                <div className="relative flex justify-center text-xs"><span className="px-4 bg-white text-neutral-400 font-bold uppercase tracking-widest">Or continue with</span></div>
+              </div>
 
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full py-4 border border-neutral-200 text-neutral-700 font-bold rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center space-x-3"
-          >
-            <img src="https://www.google.com/favicon.ico" className="h-5 w-5" alt="Google" />
-            <span>Google Account</span>
-          </button>
-        </div>
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full py-4 border border-neutral-200 text-neutral-700 font-bold rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center space-x-3"
+              >
+                <img src="https://www.google.com/favicon.ico" className="h-5 w-5" alt="Google" />
+                <span>Google Account</span>
+              </button>
+            </div>
 
-        <p className="mt-10 text-center text-sm text-neutral-500 font-medium">
-          New here? <Link to="/register" className="text-brand-primary font-bold hover:underline">Create an account</Link>
-        </p>
+            <p className="mt-10 text-center text-sm text-neutral-500 font-medium">
+              New student? <Link to="/register" className="text-brand-primary font-bold hover:underline">Create an account</Link>
+            </p>
+          </>
+        )}
+
+        {role !== 'student' && (
+          <p className="mt-10 text-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
+            Identity verification required. Access restricted to authorized personnel.
+          </p>
+        )}
       </motion.div>
     </div>
   );

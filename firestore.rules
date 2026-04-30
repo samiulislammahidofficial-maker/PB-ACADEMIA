@@ -74,5 +74,11 @@ service cloud.firestore {
       allow create: if isSignedIn() && isRole('student');
       allow update: if isRole('teacher') || isRole('admin');
     }
+
+    // Teacher Credentials
+    match /teacher_credentials/{teacherId} {
+      allow read: if isRole('admin') || isRole('teacher');
+      allow write: if isRole('admin');
+    }
   }
 }

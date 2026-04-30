@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import { db, collection, getDocs, addDoc } from '../../lib/firebase';
+import { db, collection, getDocs, addDoc, setDoc, doc } from '../../lib/firebase';
 import { UserProfile } from '../../types';
-import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical } from 'lucide-react';
+import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical, Key } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'users' | 'courses' | 'settings'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'teachers' | 'courses' | 'settings'>('users');
+  const [newTeacherId, setNewTeacherId] = useState('');
+  const [newTeacherPass, setNewTeacherPass] = useState('');
+  const [creatingTeacher, setCreatingTeacher] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -22,6 +25,25 @@ export default function AdminDashboard() {
     };
     fetchUsers();
   }, []);
+
+  const handleCreateTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeacherId || !newTeacherPass) return;
+    setCreatingTeacher(true);
+    try {
+      await setDoc(doc(db, 'teacher_credentials', newTeacherId), {
+        password: newTeacherPass,
+        createdAt: new Date().toISOString()
+      });
+      alert(`Teacher account protocol activated for ID: ${newTeacherId}`);
+      setNewTeacherId('');
+      setNewTeacherPass('');
+    } catch (err) {
+      alert('Security violation: Could not initialize teacher unit.');
+    } finally {
+      setCreatingTeacher(false);
+    }
+  };
 
   const initializeData = async () => {
     const courses = [
@@ -49,7 +71,7 @@ export default function AdminDashboard() {
           <button onClick={initializeData} className="mt-8 text-[8px] font-black text-blue-500 bg-white/5 border border-white/5 px-6 py-2 rounded-full uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-2xl">Init Neural Samples</button>
         </div>
         <div className="flex bg-black p-1.5 rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-2xl">
-          {(['users', 'courses', 'settings'] as const).map(tab => (
+          {(['users', 'teachers', 'courses', 'settings'] as const).map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -60,6 +82,64 @@ export default function AdminDashboard() {
           ))}
         </div>
       </div>
+
+      {activeTab === 'teachers' && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-2xl mx-auto"
+        >
+          <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+            <div className="text-center mb-10">
+              <div className="h-16 w-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-6">
+                <Shield className="h-8 w-8" />
+              </div>
+              <h2 className="text-2xl font-black text-white uppercase tracking-widest">Commission Teacher Unit</h2>
+              <p className="text-neutral-500 text-[9px] font-black uppercase tracking-[0.3em] mt-2">Initialize secure access credentials for academic staff</p>
+            </div>
+
+            <form onSubmit={handleCreateTeacher} className="space-y-6">
+              <div>
+                <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Teacher Unique ID</label>
+                <div className="relative">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-primary font-black">#</span>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="e.g. PHY_PRO_01"
+                    className="w-full pl-12 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
+                    value={newTeacherId}
+                    onChange={(e) => setNewTeacherId(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[9px] font-black text-neutral-500 uppercase tracking-widest mb-3 ml-2">Secure Security Key</label>
+                <div className="relative">
+                  <Key className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-600" />
+                  <input 
+                    type="password" 
+                    required
+                    placeholder="••••••••"
+                    className="w-full pl-16 pr-6 py-5 bg-black border border-white/5 rounded-2xl outline-none focus:border-brand-primary/50 transition-all text-xs font-black text-white uppercase tracking-widest placeholder:text-neutral-800"
+                    value={newTeacherPass}
+                    onChange={(e) => setNewTeacherPass(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                disabled={creatingTeacher}
+                className="w-full py-6 bg-brand-primary text-white rounded-3xl font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {creatingTeacher ? 'Generating Protocol...' : 'Initialize Academic Unit'}
+              </button>
+            </form>
+          </div>
+        </motion.div>
+      )}
 
       {activeTab === 'users' && (
         <motion.div 

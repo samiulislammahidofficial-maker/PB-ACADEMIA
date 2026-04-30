@@ -112,12 +112,26 @@
         "feedback": { "type": "string" }
       },
       "required": ["assignmentId", "studentId", "fileUrl"]
+    },
+    "TeacherCredential": {
+      "title": "TeacherCredential",
+      "description": "Security credentials for teachers managed by admin",
+      "type": "object",
+      "properties": {
+        "password": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["password"]
     }
   },
   "firestore": {
     "/users/{userId}": {
       "schema": "User",
       "description": "User profiles"
+    },
+    "/teacher_credentials/{teacherId}": {
+      "schema": "TeacherCredential",
+      "description": "Secure teacher login credentials"
     },
     "/courses/{courseId}": {
       "schema": "Course",
