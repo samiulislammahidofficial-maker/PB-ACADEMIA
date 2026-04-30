@@ -26,9 +26,12 @@ export default function LoginPage() {
     setSubmitting(true);
     setError('');
     
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+    
     try {
       if (role === 'admin') {
-        if (email === 'PB_ACADEMIA' && password === 'ami_admin') {
+        if (trimmedEmail === 'PB_ACADEMIA' && trimmedPassword === 'ami_admin') {
           await loginCustom('admin', 'PB_ACADEMIA');
           navigate('/dashboard');
           return;
@@ -40,11 +43,11 @@ export default function LoginPage() {
       }
 
       if (role === 'teacher') {
-        const teacherRef = doc(db, 'teacher_credentials', email);
+        const teacherRef = doc(db, 'teacher_credentials', trimmedEmail);
         const teacherSnap = await getDoc(teacherRef);
         
-        if (teacherSnap.exists() && teacherSnap.data().password === password) {
-          await loginCustom('teacher', email);
+        if (teacherSnap.exists() && teacherSnap.data().password === trimmedPassword) {
+          await loginCustom('teacher', trimmedEmail);
           navigate('/dashboard');
         } else {
           setError('Invalid Teacher ID or Security Key.');
@@ -53,10 +56,17 @@ export default function LoginPage() {
         return;
       }
 
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
       navigate('/dashboard');
     } catch (err: any) {
-      setError('Invalid credentials. Please try again.');
+      console.error("Login trace:", err);
+      if (err.code === 'auth/operation-not-allowed') {
+        setError('Authentication method disabled. Contact system administrator.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network connectivity lost. Check your connection.');
+      } else {
+        setError('Invalid credentials or access denied.');
+      }
     } finally {
       setSubmitting(false);
     }

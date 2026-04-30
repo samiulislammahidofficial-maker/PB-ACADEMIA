@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db, onAuthStateChanged, doc, getDoc, onSnapshot } from './firebase';
+import { auth, db, onAuthStateChanged, doc, getDoc, onSnapshot, setDoc } from './firebase';
 import { User as FirebaseUser, signInAnonymously } from 'firebase/auth';
 
 export type UserRole = 'student' | 'teacher' | 'admin';
@@ -43,14 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Persistence check for custom login
+  // Persistence check for custom login - deprecated in favor of Firebase persistence
   useEffect(() => {
     const savedCustom = localStorage.getItem('pb_custom_auth');
     if (savedCustom) {
+      // We still use this as a hint for initial load if Firebase is slow
       const data = JSON.parse(savedCustom);
-      setUser(data.user);
-      setProfile(data.profile);
-      setLoading(false);
+      if (data.profile) setProfile(data.profile);
     }
   }, []);
 
@@ -75,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(firebaseUser);
       setProfile(customProfile);
-      localStorage.setItem('pb_custom_auth', JSON.stringify({ user: firebaseUser, profile: customProfile }));
+      localStorage.setItem('pb_custom_auth', JSON.stringify({ role, identifier }));
     } catch (error) {
       console.error("Custom login failed:", error);
       throw error;
@@ -95,9 +94,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let unsubscribeProfile: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
-      // If we have a custom user and no firebase user, don't trigger logout yet
-      if (!firebaseUser && user?.isCustom) return;
-
       setUser(firebaseUser);
       
       if (unsubscribeProfile) {
@@ -125,7 +121,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setProfile(null);
         setLoading(false);
-        localStorage.removeItem('pb_custom_auth');
       }
     });
 
@@ -133,7 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       unsubscribeAuth();
       if (unsubscribeProfile) unsubscribeProfile();
     };
-  }, [user?.isCustom]);
+  }, []);
 
   const value = {
     user,
