@@ -27,7 +27,9 @@ export default function ExamView() {
         const data = snap.data() as Exam;
         setExam({ id: snap.id, ...data });
         setTimeLeft(data.durationMinutes * 60);
-        setAnswers(new Array(data.questions.length).fill(-1));
+        if (data.questions) {
+          setAnswers(new Array(data.questions.length).fill(-1));
+        }
       }
       setLoading(false);
     };
@@ -83,7 +85,75 @@ export default function ExamView() {
   if (loading) return <div className="p-20 text-center font-bold text-neutral-400 animate-pulse">Loading Examination...</div>;
   if (!exam) return <div className="p-20 text-center">Exam not found or unavailable.</div>;
 
-  const currentQuestion = exam.questions[currentQ];
+  // Handle tactical exam types (CQ / MCQ via link)
+  if (exam.examType === 'CQ' || exam.examType === 'MCQ') {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
+          <div>
+            <h1 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">{exam.title}</h1>
+            <div className="flex items-center space-x-4 mt-6">
+              <span className="px-4 py-1.5 bg-white/5 text-[9px] font-black text-blue-500 border border-white/10 rounded-full uppercase tracking-[0.2em]">Operational Module: {exam.examType}</span>
+            </div>
+          </div>
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="px-8 py-3 bg-white/5 text-neutral-500 rounded-xl font-black uppercase tracking-widest text-[9px] hover:text-white transition-all"
+          >
+            Exit Terminal
+          </button>
+        </div>
+
+        <div className="bg-[#0a0a0a] rounded-[4rem] border border-white/5 p-16 shadow-2xl">
+          {exam.examType === 'CQ' ? (
+            <div className="space-y-12">
+              <div className="aspect-[3/4] w-full max-w-4xl mx-auto bg-black rounded-[3rem] border border-white/5 overflow-hidden">
+                {exam.questionUrl ? (
+                  <iframe src={exam.questionUrl} className="w-full h-full" title="Question Paper" />
+                ) : (
+                  <div className="h-full flex items-center justify-center text-neutral-700 font-black uppercase tracking-widest text-xs">
+                    Synchronizing Question Data...
+                  </div>
+                )}
+              </div>
+              <div className="text-center">
+                <p className="text-neutral-500 font-bold uppercase tracking-widest text-xs mb-8">
+                  সৃজনশীল পরীক্ষার সমাধান জমা দিতে আপনার ড্যাশবোর্ড থেকে সংশ্লিষ্ট কোর্সে যান।
+                </p>
+                <button 
+                  onClick={() => navigate(`/courses/${exam.courseId}`)}
+                  className="px-12 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-blue-500/30"
+                >
+                  কোর্স ড্যাশবোর্ডে ফিরে যান (জমা দিতে)
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="py-20 text-center">
+              <div className="h-24 w-24 bg-purple-600/10 text-purple-500 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-2xl">
+                <Info className="h-10 w-10 text-purple-600" />
+              </div>
+              <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-6">MCQ লিঙ্ক ডিটেক্ট করা হয়েছে</h2>
+              <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest leading-relaxed mb-12 max-w-md mx-auto">
+                এটি একটি অনলাইন MCQ পরীক্ষা। নিচের বাটনে ক্লিক করে গুগোল ফর্মটি পূরণ করুন।
+              </p>
+              <a 
+                href={exam.googleFormLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-16 py-6 bg-purple-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] inline-block shadow-2xl shadow-purple-600/30 hover:scale-105 transition-all"
+              >
+                গুগল ফর্ম ওপেন করুন
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = exam.questions?.[currentQ];
+  if (!currentQuestion) return <div className="p-20 text-center">Invalid question mapping.</div>;
 
   if (submitted) {
     return (

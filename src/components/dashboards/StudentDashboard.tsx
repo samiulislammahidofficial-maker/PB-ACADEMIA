@@ -1,5 +1,5 @@
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, getDocs, limit } from '../../lib/firebase';
+import { db, collection, query, getDocs, limit, onSnapshot, orderBy, where } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
 import { Course } from '../../types';
 import { 
@@ -31,7 +31,7 @@ const features = [
   { icon: <Rocket className="h-6 w-6" />, title: "QuizBlust", color: "bg-blue-600 text-white", link: "/quizblust" },
   { icon: <Brain className="h-6 w-6" />, title: "Brain Teasers", color: "bg-indigo-600 text-white", link: "/brain-teasers" },
   { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600" },
-  { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600" },
+  { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600", link: "/quizblust" },
   { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600" },
   { icon: <BookCheck className="h-6 w-6" />, title: "Solve Sheets", color: "bg-purple-50 text-purple-600" },
   { icon: <MessageSquare className="h-6 w-6" />, title: "Q&A Service", color: "bg-pink-50 text-pink-600" },
@@ -40,13 +40,46 @@ const features = [
 ];
 
 export default function StudentDashboard() {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [liveExams, setLiveExams] = useState<any[]>([]);
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => setLoading(false), 800);
-  }, []);
+    if (!user) return;
+
+    // Fetch live/upcoming exams from all sources
+    const q = query(
+      collection(db, 'exams'),
+      orderBy('startTime', 'desc'),
+      limit(10)
+    );
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const list: any[] = [];
+      const now = new Date();
+      snap.forEach(doc => {
+        const data = doc.data();
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(startTime.getTime() + (data.durationMinutes || 60) * 60000);
+        
+        // Include if live or upcoming
+        if (now <= endTime) {
+          list.push({ id: doc.id, ...data });
+        }
+      });
+      setLiveExams(list);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const activeExam = liveExams.find(e => {
+    const start = new Date(e.startTime);
+    const end = new Date(start.getTime() + (e.durationMinutes || 60) * 60000);
+    const now = new Date();
+    return now >= start && now <= end;
+  });
 
   return (
     <div className="min-h-screen bg-[#050505] flex">
@@ -133,10 +166,15 @@ export default function StudentDashboard() {
                   <ClipboardList className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">লাইভ পরীক্ষা</h3>
-                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">অ্যাসেসমেন্ট #১৪ বর্তমানে সক্রিয়</p>
-                <div className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform">
-                  অংশ নাও <ArrowRight className="ml-2 h-4 w-4" />
-                </div>
+                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">
+                  {activeExam ? `${activeExam.title} বর্তমানে সক্রিয়` : liveExams.length > 0 ? `${liveExams.length}টি আসন্ন পরীক্ষা শিডিউল করা আছে` : 'বর্তমানে কোনো সক্রিয় পরীক্ষা নেই'}
+                </p>
+                <Link 
+                  to={activeExam ? (activeExam.isQuizBlust ? "/quizblust" : `/courses/${activeExam.courseId}`) : "/quizblust"}
+                  className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform"
+                >
+                  {activeExam ? 'অংশ নাও' : 'শিডিউল দেখো'} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </div>
             </div>
 
