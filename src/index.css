@@ -6,11 +6,11 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-brand-primary: #5d3fd3;
-  --color-brand-secondary: #ff4b2b;
-  --color-brand-surface: #f3f1ff;
-  --color-brand-green: #f0fff4;
-  --color-brand-dark: #1a1a2e;
+  --color-brand-primary: #2563eb;
+  --color-brand-secondary: #f97316;
+  --color-brand-surface: #0f172a;
+  --color-brand-green: #10b981;
+  --color-brand-dark: #020617;
 }
 
 @layer base {

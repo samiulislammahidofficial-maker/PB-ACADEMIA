@@ -22,7 +22,7 @@ export default function LandingPage() {
     return () => clearInterval(timer);
   }, []);
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className="flex flex-col overflow-hidden bg-brand-dark">
       {/* Hero Section - Inspired by the "Get Our Free App" screenshot style but for web */}
       <section className="relative pt-20 pb-32 bg-brand-dark overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -35,13 +35,13 @@ export default function LandingPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight">
+              <h1 className="text-6xl md:text-8xl font-display font-black text-white leading-[0.95] tracking-tighter">
                 তোমার <br />
-                <span className="text-brand-primary">একাডেমিক সম্ভাবনা</span> <br />
+                <span className="text-brand-primary">একাডেমিক</span> <br />
                 উন্মোচন করো
               </h1>
-              <p className="mt-8 text-lg text-neutral-300 max-w-lg leading-relaxed">
-                PB Academia-এর সাথে হাজার হাজার মেধাবী তোমার বন্ধুদের সাথে যোগ দাও। 
+              <p className="mt-10 text-xl text-neutral-400 max-w-lg leading-relaxed font-medium">
+                PB Academia-এর সাথে হাজার হাজার মেধাবী বন্ধুদের সাথে যোগ দাও। 
                 সেরা মেন্টর, লাইভ ক্লাস এবং পার্সোনালাইজড লার্নিং-এর মাধ্যমে তোমার উজ্জ্বল ভবিষ্যৎ নিশ্চিত করো।
               </p>
               
@@ -141,7 +141,7 @@ export default function LandingPage() {
                   <img 
                     src={moments[currentMoment]} 
                     alt={`Moment ${currentMoment + 1}`} 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover transition-transform duration-[3000ms] scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
                 </motion.div>
@@ -173,12 +173,12 @@ export default function LandingPage() {
               />
             </div>
             <div className="order-1 lg:order-2">
-              <span className="text-brand-secondary font-bold uppercase tracking-widest text-[10px]">আমাদের প্রতিশ্রুতি</span>
-              <h2 className="mt-4 text-4xl md:text-5xl font-display font-bold text-white leading-tight uppercase tracking-tighter">
-                পরিস্থিতি যাই হোক না কেন, <br />
-                <span className="text-brand-primary text-3xl italic">তোমার প্রস্তুতি থামবে না।</span>
+              <span className="text-brand-secondary font-black uppercase tracking-[0.3em] text-xs">আমাদের প্রতিশ্রুতি</span>
+              <h2 className="mt-6 text-5xl md:text-7xl font-display font-black text-white leading-[1.1] uppercase tracking-tighter">
+                পরিস্থিতি যাই হোক না <br />
+                <span className="text-brand-primary italic">কেন, প্রস্তুতি থামবে না।</span>
               </h2>
-              <p className="mt-8 text-neutral-400 leading-relaxed text-md">
+              <p className="mt-10 text-neutral-400 leading-relaxed text-xl font-medium">
                 আমরা একটি নিরবচ্ছিন্ন শিক্ষার অভিজ্ঞতা প্রদান করি যা তোমার প্রয়োজনের সাথে খাপ খায়। আমাদের প্ল্যাটফর্মটি নিশ্চিত করে যে ৮ম থেকে ১২শ শ্রেণীর শিক্ষার্থীরা যে কোনও সময়, যে কোনও জায়গায় সেরা একাডেমিক সহযোগিতা পায়।
               </p>
               <ul className="mt-10 space-y-4">
@@ -240,19 +240,19 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 gap-20 items-center">
             <div>
-              <span className="text-brand-primary font-black uppercase tracking-[0.3em] text-[10px]">Headquarters</span>
-              <h2 className="text-4xl md:text-6xl font-display font-bold text-white uppercase tracking-tighter mt-4 mb-8">
+              <span className="text-brand-primary font-black uppercase tracking-[0.3em] text-xs">Headquarters</span>
+              <h2 className="text-5xl md:text-7xl font-display font-black text-white uppercase tracking-tighter mt-4 mb-10 leading-none">
                 আমাদের <span className="text-brand-primary">ক্যাম্পাস</span>
               </h2>
               
-              <div className="space-y-8">
-                <div className="flex items-start space-x-6">
-                  <div className="h-12 w-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-blue-500 shrink-0">
-                    <MapPin className="h-6 w-6" />
+              <div className="space-y-10">
+                <div className="flex items-start space-x-8">
+                  <div className="h-14 w-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-brand-primary shrink-0 transition-transform hover:scale-110">
+                    <MapPin className="h-7 w-7" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-tight text-sm mb-1">অবস্থান</h4>
-                    <p className="text-neutral-400 text-sm leading-relaxed">
+                    <h4 className="text-white font-black uppercase tracking-tight text-lg mb-2">অবস্থান</h4>
+                    <p className="text-neutral-400 text-lg leading-relaxed font-medium">
                       ১২ গ্রীন কর্নার (ইমানুয়েল ব্যাপ্টিস্ট চার্চের বিপরীতে), ঢাকা-১২০৫ <br />
                       12 Green Corner (Opposite of Immanuel Baptist Church), Dhaka-1205
                     </p>
@@ -267,44 +267,42 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-6">
-                  <div className="h-12 w-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-emerald-500 shrink-0">
-                    <Phone className="h-6 w-6" />
+                <div className="flex items-start space-x-8">
+                  <div className="h-14 w-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-emerald-500 shrink-0 transition-transform hover:scale-110">
+                    <Phone className="h-7 w-7" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-tight text-sm mb-1">ফোন</h4>
-                    <p className="text-neutral-400 text-sm font-bold">01784-323041</p>
+                    <h4 className="text-white font-black uppercase tracking-tight text-lg mb-2">ফোন</h4>
+                    <p className="text-neutral-400 text-lg font-black tracking-widest">01784-323041</p>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-6">
-                  <div className="h-12 w-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-orange-500 shrink-0">
-                    <Mail className="h-6 w-6" />
+                <div className="flex items-start space-x-8">
+                  <div className="h-14 w-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-orange-500 shrink-0 transition-transform hover:scale-110">
+                    <Mail className="h-7 w-7" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-tight text-sm mb-1">ইমেইল</h4>
-                    <p className="text-neutral-400 text-sm">pbacademia25@gmail.com</p>
-                    <p className="text-neutral-400 text-sm">admin@pbacademia.top</p>
+                    <h4 className="text-white font-black uppercase tracking-tight text-lg mb-2">ইমেইল</h4>
+                    <p className="text-neutral-400 text-lg font-medium">pbacademia25@gmail.com</p>
+                    <p className="text-neutral-400 text-lg font-medium">admin@pbacademia.top</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="relative mt-16 lg:mt-0">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="relative z-10 p-4 bg-white/5 border border-white/10 rounded-[4rem] backdrop-blur-sm shadow-2xl"
-              >
-                <img 
-                  src="https://i.ibb.co.com/prWFBywQ/Gemini-Generated-Image-3drk3j3drk3j3drk.png" 
-                  alt="PB Academia Campus" 
-                  className="rounded-[3.5rem] w-full h-full object-cover"
-                />
-              </motion.div>
-              <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
-              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-brand-primary/20 rounded-full blur-[100px]"></div>
+              <div className="relative z-10 bg-white/5 p-6 rounded-[3.5rem] border border-white/10 backdrop-blur-md shadow-2xl overflow-hidden aspect-video">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14608.272186834165!2d90.37039014605929!3d23.744956667950293!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b93d7907f1f3%3A0xe5f8664156d1c49!2sPB%20Academia!5e0!3m2!1sen!2sbd!4v1714584200000!5m2!1sen!2sbd" 
+                  className="w-full h-full grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+                  style={{ border: 0 }} 
+                  allowFullScreen={true}
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+              <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-600/10 rounded-full blur-[120px]"></div>
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-brand-primary/10 rounded-full blur-[120px]"></div>
             </div>
           </div>
         </div>

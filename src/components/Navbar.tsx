@@ -16,62 +16,62 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white sticky top-0 z-50 border-b border-neutral-100">
+    <nav className="bg-brand-dark sticky top-0 z-50 border-b border-white/5 backdrop-blur-xl bg-opacity-80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <Link to="/" className="flex items-center space-x-3 group">
             <motion.div
               whileHover={{ rotate: 5, scale: 1.05 }}
-              className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-brand-primary/10 shadow-sm"
+              className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-brand-primary/20 shadow-sm"
             >
               <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="PB Academia Logo" className="w-full h-full object-cover rounded-full scale-125" />
             </motion.div>
-            <span className="font-display font-bold text-xl sm:text-2xl md:text-3xl tracking-tight text-neutral-900 group-hover:text-brand-primary transition-colors">PB ACADEMIA</span>
+            <span className="font-display font-black text-xl sm:text-2xl md:text-3xl tracking-tighter text-white group-hover:text-brand-primary transition-colors">PB ACADEMIA</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-10">
-            <Link to="/" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">হোম</Link>
-            <Link to="/courses" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">প্রোগ্রামসমূহ</Link>
-            <Link to="/quizblust" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center space-x-1">
+            <Link to="/" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">হোম</Link>
+            <Link to="/courses" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">প্রোগ্রামসমূহ</Link>
+            <Link to="/quizblust" className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors flex items-center space-x-1">
               <span className="relative">
                 QUIZBLUST
-                <span className="absolute -top-1 -right-4 h-2 w-2 bg-red-500 rounded-full animate-ping"></span>
-                <span className="absolute -top-1 -right-4 h-2 w-2 bg-red-500 rounded-full"></span>
+                <span className="absolute -top-1 -right-4 h-1.5 w-1.5 bg-blue-500 rounded-full animate-ping"></span>
+                <span className="absolute -top-1 -right-4 h-1.5 w-1.5 bg-blue-500 rounded-full"></span>
               </span>
             </Link>
-            <Link to="/about" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">আমাদের সম্পর্কে</Link>
+            <Link to="/about" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">আমাদের সম্পর্কে</Link>
             
             {user ? (
               <div className="flex items-center space-x-6">
                 <Link 
                   to="/dashboard" 
-                  className="px-6 py-2.5 bg-brand-primary text-white rounded-xl font-bold text-sm hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center space-x-2"
+                  className="px-6 py-2.5 bg-brand-primary text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:shadow-xl hover:shadow-brand-primary/30 transition-all flex items-center space-x-2"
                 >
                   <span>ড্যাশবোর্ড</span>
                   <ChevronRight className="h-4 w-4" />
                 </Link>
-                <div className="flex items-center space-x-3 pl-6 border-l border-neutral-100">
+                <div className="flex items-center space-x-3 pl-6 border-l border-white/10">
                   <div className="flex flex-col items-end">
-                    <span className="text-xs font-bold text-neutral-900">{profile?.name}</span>
-                    <span className="text-[10px] text-neutral-400 font-medium capitalize">{profile?.role}</span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-tight">{profile?.name}</span>
+                    <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-widest">{profile?.role}</span>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-neutral-400 hover:text-brand-secondary transition-colors"
+                    className="p-2 text-neutral-500 hover:text-brand-secondary transition-colors"
                   >
-                    <LogOut className="h-5 w-5" />
+                    <LogOut className="h-4 w-4" />
                   </button>
                 </div>
               </div>
             ) : (
               <div className="flex items-center space-x-6">
-                <Link to="/login" className="text-sm font-bold text-neutral-600 hover:text-brand-primary transition-colors">লগইন</Link>
+                <Link to="/login" className="text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">লগইন</Link>
                 <Link 
                   to="/register" 
-                  className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold text-sm hover:shadow-xl hover:shadow-brand-primary/30 transition-all"
+                  className="px-8 py-3 bg-brand-primary text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:shadow-2xl hover:shadow-brand-primary/40 transition-all"
                 >
-                  শুরু করুন
+                  শুরু করো
                 </Link>
               </div>
             )}
@@ -93,25 +93,25 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-white border-b border-neutral-100 px-4 pt-2 pb-8 space-y-2"
+            className="md:hidden bg-brand-dark border-b border-white/5 px-4 pt-2 pb-8 space-y-2"
           >
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">হোম</Link>
-            <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">প্রোগ্রামসমূহ</Link>
-            <Link to="/quizblust" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-blue-600">QUIZBLUST</Link>
+            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">হোম</Link>
+            <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">প্রোগ্রামসমূহ</Link>
+            <Link to="/quizblust" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-blue-500">QUIZBLUST</Link>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-brand-primary font-bold">ড্যাশবোর্ড</Link>
+                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-brand-primary">ড্যাশবোর্ড</Link>
                 <button
                   onClick={() => { handleLogout(); setIsOpen(false); }}
-                  className="w-full text-left px-3 py-4 text-sm font-semibold text-brand-secondary"
+                  className="w-full text-left px-3 py-4 text-[10px] font-black uppercase tracking-widest text-brand-secondary"
                 >
                   লগ আউট
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">লগইন</Link>
-                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-brand-primary">শুরু করুন</Link>
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">লগইন</Link>
+                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-[10px] font-black uppercase tracking-widest text-brand-primary">শুরু করুন</Link>
               </>
             )}
           </motion.div>
