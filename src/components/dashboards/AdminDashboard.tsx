@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db, collection, getDocs, addDoc, setDoc, doc } from '../../lib/firebase';
 import { UserProfile } from '../../types';
 import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical, Key } from 'lucide-react';

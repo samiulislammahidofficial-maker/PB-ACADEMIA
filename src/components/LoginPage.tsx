@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, googleProvider, signInWithPopup, db, getDoc, doc } from '../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Mail, Lock, AlertCircle, ChevronRight, Grapes as Google } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../lib/AuthContext';
 

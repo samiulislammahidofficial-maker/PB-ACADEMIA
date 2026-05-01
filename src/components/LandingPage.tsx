@@ -18,27 +18,28 @@ export default function LandingPage() {
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight">
-                Unlock Your <br />
-                <span className="text-brand-primary">Academic Potential</span>
+                আপনার <br />
+                <span className="text-brand-primary">একাডেমিক সম্ভাবনা</span> <br />
+                উন্মোচন করুন
               </h1>
               <p className="mt-8 text-lg text-neutral-300 max-w-lg leading-relaxed">
-                Join thousands of students achieving excellence with PB Academia. 
-                Expert mentors, live interactive classes, and personalized learning.
+                PB Academia-এর সাথে হাজার হাজার মেধাবী শিক্ষার্থীদের সাথে যোগ দিন। 
+                সেরা মেন্টর, লাইভ ক্লাস এবং পার্সোনালাইজড লার্নিং-এর মাধ্যমে আপনার উজ্জ্বল ভবিষ্যৎ নিশ্চিত করুন।
               </p>
               
               <div className="mt-12 flex items-center space-x-8">
                 <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center space-x-4">
                   <QrCode className="h-12 w-12 text-white" />
                   <div>
-                    <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">Scan to join</p>
-                    <p className="text-sm text-white font-bold">Dhaka Node</p>
+                    <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">স্ক্যান করুন</p>
+                    <p className="text-sm text-white font-bold">ঢাকা নোড</p>
                   </div>
                 </div>
                 <Link
                   to="/register"
                   className="px-8 py-4 bg-brand-primary text-white rounded-2xl font-bold text-sm hover:scale-105 transition-all shadow-xl shadow-brand-primary/20"
                 >
-                  Start Learning Now
+                  এখনই শুরু করুন
                 </Link>
               </div>
             </motion.div>
@@ -75,18 +76,20 @@ export default function LandingPage() {
               />
             </div>
             <div className="order-1 lg:order-2">
-              <span className="text-brand-secondary font-bold uppercase tracking-widest text-xs">Our Commitment</span>
+              <span className="text-brand-secondary font-bold uppercase tracking-widest text-xs">আমাদের প্রতিশ্রুতি</span>
               <h2 className="mt-4 text-4xl md:text-5xl font-display font-bold text-neutral-900 leading-tight">
-                No matter the situation, <br />
-                <span className="text-brand-primary text-3xl italic">Your preparation won't stop.</span>
+                পরিস্থিতি যাই হোক না কেন, <br />
+                <span className="text-brand-primary text-3xl italic">আপনার প্রস্তুতি থামবে না।</span>
               </h2>
               <p className="mt-8 text-neutral-600 leading-relaxed text-lg">
-                We provide a seamless learning experience that adapts to your needs. 
-                Our platform ensures that students of Class 8-12 get the best-in-class 
-                academic support, anytime, anywhere.
+                আমরা একটি নিরবচ্ছিন্ন শিক্ষার অভিজ্ঞতা প্রদান করি যা আপনার প্রয়োজনের সাথে খাপ খায়। আমাদের প্ল্যাটফর্মটি নিশ্চিত করে যে অষ্টম থেকে দ্বাদশ শ্রেণীর শিক্ষার্থীরা যে কোনও সময়, যে কোনও জায়গায় সেরা একাডেমিক সহযোগিতা পায়।
               </p>
               <ul className="mt-10 space-y-4">
-                {['Expert faculty from top institutions', 'Interactive doubt-clearing sessions', 'Performance analysis reports'].map((item) => (
+                {[
+                  'দেশের প্রথিতযশা প্রতিষ্ঠানের বিশেষজ্ঞ শিক্ষকবৃন্দ', 
+                  'ইন্টারেক্টিভ ডাউট-ক্লিয়ারিং সেশন', 
+                  'পারফরম্যান্স অ্যানালাইসিস রিপোর্ট'
+                ].map((item) => (
                   <li key={item} className="flex items-center space-x-3 text-neutral-700 font-medium">
                     <div className="h-5 w-5 bg-brand-primary/10 text-brand-primary rounded-full flex items-center justify-center">
                       <ArrowRight className="h-3 w-3" />
@@ -104,15 +107,15 @@ export default function LandingPage() {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-brand-primary">Our Programs</h2>
-            <p className="mt-6 text-neutral-500 font-medium max-w-lg mx-auto">Select the program that fits your academic goals and start your journey towards excellence.</p>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-brand-primary uppercase tracking-tight">আমাদের প্রোগ্রামসমূহ</h2>
+            <p className="mt-6 text-neutral-500 font-medium max-w-lg mx-auto">আপনার একাডেমিক লক্ষ্যের সাথে সামঞ্জস্যপূর্ণ প্রোগ্রামটি নির্বাচন করুন এবং সফলতার যাত্রা শুরু করুন।</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-10">
             {[
-              { title: "Secondary Core", classes: "Class 8 - 10", desc: "Building a strong foundation for future success.", img: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=2070&auto=format&fit=crop" },
-              { title: "Higher Secondary", classes: "Class 11 - 12", desc: "Advanced preparation for board exams and beyond.", img: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop" },
-              { title: "Admission Program", classes: "University Prep", desc: "Strategic planning for competitive entrance tests.", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2070&auto=format&fit=crop" }
+              { title: "সেকেন্ডারি কোর", classes: "অষ্টম - দশম শ্রেণী", desc: "ভবিষ্যতের সফলতার জন্য একটি শক্তিশালী ভিত্তি তৈরি করা।", img: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=2070&auto=format&fit=crop" },
+              { title: "হায়ার সেকেন্ডারি", classes: "একাদশ - দ্বাদশ শ্রেণী", desc: "বোর্ড পরীক্ষা এবং তার পরবর্তী ধাপের জন্য উন্নত প্রস্তুতি।", img: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop" },
+              { title: "অ্যাডমিশন প্রোগ্রাম", classes: "বিশ্ববিদ্যালয় প্রস্তুতি", desc: "প্রতিযোগিতামূলক ভর্তি পরীক্ষার জন্য কৌশলগত পরিকল্পনা।", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2070&auto=format&fit=crop" }
             ].map((program, i) => (
               <div key={i} className="bg-white rounded-[3rem] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-2xl transition-all group">
                 <div className="h-64 overflow-hidden relative">
@@ -122,10 +125,10 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="p-10">
-                  <h3 className="text-2xl font-bold text-neutral-900 mb-4">{program.title}</h3>
+                  <h3 className="text-2xl font-bold text-neutral-900 mb-4 tracking-tight">{program.title}</h3>
                   <p className="text-neutral-500 text-sm leading-relaxed mb-8">{program.desc}</p>
                   <Link to="/register" className="flex items-center space-x-2 text-brand-primary font-bold hover:space-x-4 transition-all">
-                    <span>Enroll Now</span>
+                    <span>ভর্তি হোন</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -139,13 +142,13 @@ export default function LandingPage() {
       <section className="pb-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-brand-primary rounded-[4rem] p-16 md:p-24 text-center text-white relative overflow-hidden">
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">Ready to start?</h2>
-            <p className="text-brand-surface/80 text-lg mb-12 max-w-lg mx-auto">Join the most advanced academic network and authorize your future success today.</p>
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-8 uppercase tracking-tighter">আপনি কি তৈরি?</h2>
+            <p className="text-brand-surface/80 text-lg mb-12 max-w-lg mx-auto">দেশের প্রথিতযশা একাডেমিক নেটওয়ার্কে যোগ দিন এবং আজই আপনার সফল ভবিষ্যৎ নিশ্চিত করুন।</p>
             <Link
               to="/register"
               className="inline-flex items-center px-10 py-4 bg-white text-brand-primary rounded-2xl font-bold hover:scale-105 transition-all shadow-xl"
             >
-              Get Operative Access
+              যাত্রা শুরু করুন
             </Link>
           </div>
         </div>

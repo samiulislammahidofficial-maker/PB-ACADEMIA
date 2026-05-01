@@ -31,9 +31,9 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-10">
-            <Link to="/" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">Home</Link>
-            <Link to="/courses" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">Programs</Link>
-            <Link to="/about" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">About</Link>
+            <Link to="/" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">হোম</Link>
+            <Link to="/courses" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">প্রোগ্রামসমূহ</Link>
+            <Link to="/about" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">আমাদের সম্পর্কে</Link>
             
             {user ? (
               <div className="flex items-center space-x-6">
@@ -41,7 +41,7 @@ export default function Navbar() {
                   to="/dashboard" 
                   className="px-6 py-2.5 bg-brand-primary text-white rounded-xl font-bold text-sm hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center space-x-2"
                 >
-                  <span>Dashboard</span>
+                  <span>ড্যাশবোর্ড</span>
                   <ChevronRight className="h-4 w-4" />
                 </Link>
                 <div className="flex items-center space-x-3 pl-6 border-l border-neutral-100">
@@ -59,12 +59,12 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center space-x-6">
-                <Link to="/login" className="text-sm font-bold text-neutral-600 hover:text-brand-primary transition-colors">Sign In</Link>
+                <Link to="/login" className="text-sm font-bold text-neutral-600 hover:text-brand-primary transition-colors">লগইন</Link>
                 <Link 
                   to="/register" 
                   className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold text-sm hover:shadow-xl hover:shadow-brand-primary/30 transition-all"
                 >
-                  Get Started
+                  শুরু করুন
                 </Link>
               </div>
             )}
@@ -88,22 +88,22 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden bg-white border-b border-neutral-100 px-4 pt-2 pb-8 space-y-2"
           >
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Home</Link>
-            <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Programs</Link>
+            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">হোম</Link>
+            <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">প্রোগ্রামসমূহ</Link>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-brand-primary font-bold">Dashboard</Link>
+                <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-brand-primary font-bold">ড্যাশবোর্ড</Link>
                 <button
                   onClick={() => { handleLogout(); setIsOpen(false); }}
                   className="w-full text-left px-3 py-4 text-sm font-semibold text-brand-secondary"
                 >
-                  Logout
+                  লগ আউট
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">Login</Link>
-                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-brand-primary">Sign Up</Link>
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">লগইন</Link>
+                <Link to="/register" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-brand-primary">শুরু করুন</Link>
               </>
             )}
           </motion.div>
