@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { db, collection, getDocs, addDoc, setDoc, doc } from '../../lib/firebase';
 import { UserProfile } from '../../types';
-import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical, Key } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical, Key, Trash2, BarChart2, FileText, Trophy } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { deleteDoc, query, orderBy } from 'firebase/firestore';
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'users' | 'teachers' | 'courses' | 'settings'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'teachers' | 'analytics' | 'settings'>('users');
   const [newTeacherId, setNewTeacherId] = useState('');
   const [newTeacherPass, setNewTeacherPass] = useState('');
   const [creatingTeacher, setCreatingTeacher] = useState(false);
@@ -15,6 +16,19 @@ export default function AdminDashboard() {
   const [teachers, setTeachers] = useState<{id: string, password: string, createdAt: string}[]>([]);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
   const [showPass, setShowPass] = useState<{[key: string]: boolean}>({});
+
+  const [analytics, setAnalytics] = useState<{
+    totalSubmissions: number,
+    totalExams: number,
+    averageScore: number,
+    recentResults: any[]
+  }>({
+    totalSubmissions: 0,
+    totalExams: 0,
+    averageScore: 0,
+    recentResults: []
+  });
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
 
   const togglePass = (id: string) => {
     setShowPass(prev => ({ ...prev, [id]: !prev[id] }));
@@ -37,6 +51,38 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    setLoadingAnalytics(true);
+    try {
+      const examsSnap = await getDocs(collection(db, 'exams'));
+      const subSnap = await getDocs(query(collection(db, 'examSubmissions'), orderBy('submittedAt', 'desc')));
+      
+      const subList: any[] = [];
+      let totalMarks = 0;
+      let gradedCount = 0;
+
+      subSnap.forEach(doc => {
+        const data = doc.data();
+        subList.push({ id: doc.id, ...data });
+        if (data.graded) {
+          totalMarks += data.marks || 0;
+          gradedCount++;
+        }
+      });
+
+      setAnalytics({
+        totalExams: examsSnap.size,
+        totalSubmissions: subSnap.size,
+        averageScore: gradedCount > 0 ? totalMarks / gradedCount : 0,
+        recentResults: subList
+      });
+    } catch (err) {
+      console.error("Analytics Fetch Error:", err);
+    } finally {
+      setLoadingAnalytics(false);
+    }
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -55,7 +101,19 @@ export default function AdminDashboard() {
     };
     fetchUsers();
     fetchTeachers();
+    fetchAnalytics();
   }, []);
+
+  const handleDeleteTeacher = async (id: string) => {
+    if (!confirm(`Are you sure you want to terminate Teacher Unit ${id}?`)) return;
+    try {
+      await deleteDoc(doc(db, 'teacher_credentials', id));
+      setTeachers(prev => prev.filter(t => t.id !== id));
+      alert(`Teacher Unit ${id} has been decommissioned.`);
+    } catch (err) {
+      alert("Error terminating unit.");
+    }
+  };
 
   const handleCreateTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +166,7 @@ export default function AdminDashboard() {
           <button onClick={initializeData} className="mt-8 text-[8px] font-black text-blue-500 bg-white/5 border border-white/5 px-6 py-2 rounded-full uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-2xl">Init Neural Samples</button>
         </div>
         <div className="flex bg-black p-1.5 rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-2xl">
-          {(['users', 'teachers', 'courses', 'settings'] as const).map(tab => (
+          {(['users', 'teachers', 'analytics', 'settings'] as const).map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -228,10 +286,16 @@ export default function AdminDashboard() {
                         <td className="px-10 py-8 text-[9px] text-neutral-500 font-black uppercase tracking-widest">
                           {new Date(teacher.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="px-10 py-8 text-right">
+                        <td className="px-10 py-8 text-right flex items-center justify-end space-x-4">
                           <span className="px-5 py-2 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-[8px] font-black uppercase tracking-[0.2em]">
                             Active
                           </span>
+                          <button 
+                            onClick={() => handleDeleteTeacher(teacher.id)}
+                            className="p-3 bg-red-500/5 text-red-500/50 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-2xl"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -343,7 +407,105 @@ export default function AdminDashboard() {
         </motion.div>
       )}
 
-      {(activeTab === 'courses' || activeTab === 'settings') && (
+      {activeTab === 'analytics' && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="space-y-12"
+        >
+          {/* Analytics Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500"><BarChart2 className="h-6 w-6" /></div>
+                <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest">Total Ops</p>
+              </div>
+              <p className="text-4xl font-black text-white">{analytics.totalExams}</p>
+              <p className="text-[8px] text-neutral-600 font-black uppercase mt-2">Active Assessments</p>
+            </div>
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="p-3 bg-purple-500/10 rounded-xl text-purple-500"><FileText className="h-6 w-6" /></div>
+                <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest">Submissions</p>
+              </div>
+              <p className="text-4xl font-black text-white">{analytics.totalSubmissions}</p>
+              <p className="text-[8px] text-neutral-600 font-black uppercase mt-2">Data Points Captured</p>
+            </div>
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="p-3 bg-green-500/10 rounded-xl text-green-500"><Trophy className="h-6 w-6" /></div>
+                <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest">Avg Efficiency</p>
+              </div>
+              <p className="text-4xl font-black text-white">{analytics.averageScore.toFixed(1)}%</p>
+              <p className="text-[8px] text-neutral-600 font-black uppercase mt-2">Squad Mean Score</p>
+            </div>
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Shield className="h-6 w-6" /></div>
+                <p className="text-[8px] font-black text-neutral-500 uppercase tracking-widest">Integrity</p>
+              </div>
+              <p className="text-4xl font-black text-white">99.9</p>
+              <p className="text-[8px] text-neutral-600 font-black uppercase mt-2">Security Hash Verification</p>
+            </div>
+          </div>
+
+          {/* Student Results Table */}
+          <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden">
+            <div className="p-10 border-b border-white/5 bg-black/20 flex justify-between items-center">
+              <h3 className="text-sm font-black text-white uppercase tracking-widest">Tactical Results Stream</h3>
+              <button 
+                onClick={fetchAnalytics}
+                className="text-[8px] font-black text-blue-500 bg-white/5 px-6 py-2 rounded-full uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all"
+              >
+                Refresh Stream
+              </button>
+            </div>
+            {loadingAnalytics ? (
+              <div className="p-20 text-center text-neutral-600 text-[10px] font-black uppercase animate-pulse">Syncing data from central server...</div>
+            ) : analytics.recentResults.length === 0 ? (
+              <div className="p-20 text-center text-neutral-600 text-[10px] font-black uppercase">No submission data available in this sector.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-[#050505] border-b border-white/5">
+                    <tr>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Candidate</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Outcome Status</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Submission Hash</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em] text-right">Points</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {analytics.recentResults.map((res, i) => (
+                      <tr key={res.id} className="hover:bg-white/[0.01] transition-colors">
+                        <td className="px-10 py-8">
+                          <span className="font-black text-white text-sm uppercase tracking-tight">{res.studentName}</span>
+                          <p className="text-[8px] text-neutral-600 font-black mt-1">ID: {res.studentId.slice(0, 8)}...</p>
+                        </td>
+                        <td className="px-10 py-8">
+                          <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                            res.graded ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'
+                          }`}>
+                            {res.graded ? 'DECRYPTED' : 'PENDING'}
+                          </span>
+                        </td>
+                        <td className="px-10 py-8 text-[9px] text-neutral-500 font-mono italic">
+                          {new Date(res.submittedAt).toLocaleString()}
+                        </td>
+                        <td className="px-10 py-8 text-right font-black text-white text-xl tabular-nums">
+                          {res.graded ? res.marks : '---'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+
+      {activeTab === 'settings' && (
         <div className="py-40 text-center flex flex-col items-center">
           <div className="p-10 bg-white/5 rounded-full mb-8 animate-pulse">
             <Settings className="h-16 w-16 text-neutral-800" />
