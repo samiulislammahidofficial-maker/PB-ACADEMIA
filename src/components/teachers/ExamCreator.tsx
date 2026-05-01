@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { db, collection, addDoc, serverTimestamp, storage, ref, uploadBytes, getDownloadURL } from '../../lib/firebase';
+import { db, collection, addDoc, serverTimestamp, storage, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
 import { useAuth } from '../../lib/AuthContext';
-import { X, Save, Upload, Link as LinkIcon, Clock, Calendar, FileText, CheckCircle2 } from 'lucide-react';
+import { X, Save, Upload, Link as LinkIcon, Clock, Calendar, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface ExamCreatorProps {
@@ -11,7 +11,7 @@ interface ExamCreatorProps {
 }
 
 export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: ExamCreatorProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [title, setTitle] = useState('');
   const [examType, setExamType] = useState<'CQ' | 'MCQ' | null>(null);
   const [startTime, setStartTime] = useState('');
@@ -19,6 +19,7 @@ export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: 
   const [googleFormLink, setGoogleFormLink] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleSave = async () => {
     if (!title || !examType || !startTime || !duration) {
@@ -36,13 +37,39 @@ export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: 
       return;
     }
 
+    if (profile?.role !== 'teacher' && profile?.role !== 'admin') {
+      alert('আপনার এই কাজ করার অনুমতি নেই (Unauthorized: Teacher access only)');
+      return;
+    }
+
     setLoading(true);
+    setUploadProgress(0);
+
     try {
       let questionUrl = '';
       if (examType === 'CQ' && file) {
-        const fileRef = ref(storage, `exams/${Date.now()}_${file.name}`);
-        const uploadResult = await uploadBytes(fileRef, file);
-        questionUrl = await getDownloadURL(uploadResult.ref);
+        const fileExtension = file.name.split('.').pop();
+        const fileName = `${Date.now()}_exam_${title.replace(/\s+/g, '_')}.${fileExtension}`;
+        const fileRef = ref(storage, `exams/${fileName}`);
+        
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        questionUrl = await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed', 
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(Math.round(progress));
+            }, 
+            (error) => {
+              console.error("Upload error:", error);
+              reject(error);
+            }, 
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(downloadURL);
+            }
+          );
+        });
       }
 
       await addDoc(collection(db, 'exams'), {
@@ -62,11 +89,12 @@ export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: 
 
       alert('পরীক্ষা সফলভাবে শিডিউল করা হয়েছে (Exam scheduled!)');
       onClose();
-    } catch (e) {
-      console.error(e);
-      alert('ত্রুটি হয়েছে (Error saving exam)');
+    } catch (e: any) {
+      console.error("Exam Creation Error:", e);
+      alert(`ত্রুটি হয়েছে (Error): ${e.message || 'Unknown error occurred'}`);
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -184,10 +212,18 @@ export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: 
           <button 
             onClick={handleSave}
             disabled={loading}
-            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center space-x-3"
+            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 flex flex-col items-center justify-center space-y-1"
           >
-            {loading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="h-4 w-4" />}
-            <span>{loading ? 'Processing...' : 'Deploy Exam (পরীক্ষা তৈরি করুন)'}</span>
+            <div className="flex items-center space-x-3">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              <span>{loading ? 'Processing...' : 'Deploy Exam (পরীক্ষা তৈরি করুন)'}</span>
+            </div>
+            {loading && uploadProgress > 0 && uploadProgress < 100 && (
+              <span className="text-[10px] opacity-70">UPLOADING: {uploadProgress}%</span>
+            )}
+            {loading && uploadProgress === 100 && (
+              <span className="text-[10px] opacity-70">FINALIZING...</span>
+            )}
           </button>
         </div>
       </motion.div>

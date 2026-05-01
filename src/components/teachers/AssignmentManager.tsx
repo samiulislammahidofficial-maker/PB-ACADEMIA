@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { db, storage, collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL } from '../../lib/firebase';
+import { db, storage, collection, addDoc, serverTimestamp, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
 import { useAuth } from '../../lib/AuthContext';
-import { Upload, X, FileText, CheckCircle, Calendar } from 'lucide-react';
+import { Upload, X, FileText, CheckCircle, Calendar, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface AssignmentManagerProps {
@@ -10,24 +10,51 @@ interface AssignmentManagerProps {
 }
 
 export default function AssignmentManager({ courseId, onClose }: AssignmentManagerProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !dueDate) return alert('Fill required fields');
 
+    if (profile?.role !== 'teacher' && profile?.role !== 'admin') {
+      alert('Unauthorized access');
+      return;
+    }
+
     setUploading(true);
+    setUploadProgress(0);
+
     try {
       let fileUrl = '';
       if (file) {
-        const storageRef = ref(storage, `assignments/${Date.now()}_${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        fileUrl = await getDownloadURL(snapshot.ref);
+        const fileExtension = file.name.split('.').pop();
+        const fileName = `${Date.now()}_assignment_${title.replace(/\s+/g, '_')}.${fileExtension}`;
+        const storageRef = ref(storage, `assignments/${fileName}`);
+        
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        fileUrl = await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed', 
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(Math.round(progress));
+            }, 
+            (error) => {
+              console.error("Upload error:", error);
+              reject(error);
+            }, 
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(downloadURL);
+            }
+          );
+        });
       }
 
       await addDoc(collection(db, 'assignments'), {
@@ -42,11 +69,12 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
       });
 
       onClose();
-    } catch (e) {
-      console.error(e);
-      alert('Upload failed');
+    } catch (e: any) {
+      console.error("Assignment Upload Error:", e);
+      alert(`Upload failed: ${e.message || 'Unknown error'}`);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -67,7 +95,7 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
           </button>
         </div>
 
-        <form onSubmit={handleUpload} className="p-10 space-y-8">
+        <form onSubmit={handleUpload} className="p-10 space-y-8 max-h-[70vh] overflow-y-auto">
           <div className="space-y-3">
             <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.3em]">Operational Designation</label>
             <input 
@@ -134,18 +162,20 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
           <button
             type="submit"
             disabled={uploading}
-            className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] active:scale-95 flex items-center justify-center space-x-3"
+            className="w-full py-5 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] active:scale-95 flex flex-col items-center justify-center space-y-1"
           >
-            {uploading ? (
-              <>
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                  className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
-                />
-                <span>Streaming Data...</span>
-              </>
-            ) : 'Broadcast Directive'}
+            <div className="flex items-center space-x-3">
+              {uploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
+              <span>{uploading ? 'Streaming Data...' : 'Broadcast Directive'}</span>
+            </div>
+            {uploading && uploadProgress > 0 && uploadProgress < 100 && (
+              <span className="text-[8px] opacity-70">UPLOADING: {uploadProgress}%</span>
+            )}
+            {uploading && uploadProgress === 100 && (
+              <span className="text-[8px] opacity-70">FINALIZING...</span>
+            )}
           </button>
         </form>
       </motion.div>

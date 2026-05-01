@@ -1,8 +1,8 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { db, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp, storage, ref, uploadBytes, getDownloadURL } from '../lib/firebase';
+import { db, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp, storage, ref, uploadBytesResumable, getDownloadURL } from '../lib/firebase';
 import { Course, Exam, Assignment } from '../types';
-import { BookOpen, FileText, User, Calendar, Play, ClipboardList, Upload, CheckCircle, X, Download } from 'lucide-react';
+import { BookOpen, FileText, User, Calendar, Play, ClipboardList, Upload, CheckCircle, X, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../lib/AuthContext';
 
@@ -16,6 +16,7 @@ export default function CourseView() {
   const [loading, setLoading] = useState(true);
   const [submittingAssignment, setSubmittingAssignment] = useState<Assignment | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -47,10 +48,31 @@ export default function CourseView() {
   const handleAssignmentSubmit = async () => {
     if (!file || !submittingAssignment || !user) return;
     setUploading(true);
+    setUploadProgress(0);
+
     try {
-      const storageRef = ref(storage, `submissions/${user.uid}_${Date.now()}_${file.name}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const fileUrl = await getDownloadURL(snapshot.ref);
+      const fileExtension = file.name.split('.').pop();
+      const fileName = `${user.uid}_${Date.now()}.${fileExtension}`;
+      const storageRef = ref(storage, `submissions/${fileName}`);
+      
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      const fileUrl = await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(Math.round(progress));
+          }, 
+          (error) => {
+            console.error("Upload error:", error);
+            reject(error);
+          }, 
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(downloadURL);
+          }
+        );
+      });
 
       await addDoc(collection(db, 'assignmentSubmissions'), {
         assignmentId: submittingAssignment.id,
@@ -65,11 +87,12 @@ export default function CourseView() {
       alert('Assignment submitted successfully!');
       setSubmittingAssignment(null);
       setFile(null);
-    } catch (e) {
-      console.error(e);
-      alert('Submission failed');
+    } catch (e: any) {
+      console.error("Assignment Submission Error:", e);
+      alert(`Submission failed: ${e.message || 'Unknown error'}`);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -233,9 +256,18 @@ export default function CourseView() {
               <button
                 disabled={!file || uploading}
                 onClick={handleAssignmentSubmit}
-                className="w-full py-6 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.3em] text-xs"
+                className="w-full py-6 bg-blue-600 text-white font-black rounded-3xl hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 uppercase tracking-[0.3em] text-[10px] flex flex-col items-center justify-center space-y-1"
               >
-                {uploading ? 'Processing Signal...' : 'Confirm Submission'}
+                <div className="flex items-center space-x-3">
+                  {uploading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  <span>{uploading ? 'Processing Signal...' : 'Confirm Submission'}</span>
+                </div>
+                {uploading && uploadProgress > 0 && uploadProgress < 100 && (
+                  <span className="text-[8px] opacity-70 tracking-widest">UPLOADING: {uploadProgress}%</span>
+                )}
+                {uploading && uploadProgress === 100 && (
+                  <span className="text-[8px] opacity-70 tracking-widest">FINALIZING...</span>
+                )}
               </button>
             </motion.div>
           </div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, storage, ref, uploadBytes, getDownloadURL } from '../../lib/firebase';
+import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, storage, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
-import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight } from 'lucide-react';
+import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight, Loader2 } from 'lucide-react';
 import ExamCreator from '../teachers/ExamCreator';
 import CountdownClock from '../common/CountdownClock';
 import SubmissionGrader from '../teachers/SubmissionGrader';
@@ -16,6 +16,7 @@ export default function QuizBlustDashboard() {
   const [activeExam, setActiveExam] = useState<any>(null);
   const [submissionFile, setSubmissionFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [registering, setRegistering] = useState(false);
   const [gradingExam, setGradingExam] = useState<any>(null);
   const [results, setResults] = useState<any[]>([]);
@@ -88,11 +89,38 @@ export default function QuizBlustDashboard() {
 
   const handleSubmitCQ = async (examId: string) => {
     if (!submissionFile || !user) return;
+    
+    if (profile?.role !== 'student') {
+      alert('Only students can submit answers.');
+      return;
+    }
+
     setSubmitting(true);
+    setUploadProgress(0);
+
     try {
-      const fileRef = ref(storage, `submissions/${examId}_${user.uid}_${Date.now()}_${submissionFile.name}`);
-      const uploadResult = await uploadBytes(fileRef, submissionFile);
-      const downloadUrl = await getDownloadURL(uploadResult.ref);
+      const fileExtension = submissionFile.name.split('.').pop();
+      const fileName = `${examId}_${user.uid}_${Date.now()}.${fileExtension}`;
+      const fileRef = ref(storage, `submissions/${fileName}`);
+      
+      const uploadTask = uploadBytesResumable(fileRef, submissionFile);
+
+      const downloadUrl = await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(Math.round(progress));
+          }, 
+          (error) => {
+            console.error("Upload error:", error);
+            reject(error);
+          }, 
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(url);
+          }
+        );
+      });
 
       await addDoc(collection(db, 'examSubmissions'), {
         examId,
@@ -102,14 +130,16 @@ export default function QuizBlustDashboard() {
         submittedAt: new Date().toISOString(),
         graded: false
       });
+
       alert('আপনার উত্তরপত্র সফলভাবে জমা দেওয়া হয়েছে!');
       setActiveExam(null);
       setSubmissionFile(null);
-    } catch (e) {
-      console.error(e);
-      alert('জমা দিতে ব্যর্থ হয়েছে।');
+    } catch (e: any) {
+      console.error("Submission Error:", e);
+      alert(`জমা দিতে ব্যর্থ হয়েছে: ${e.message || 'Unknown error'}`);
     } finally {
       setSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -466,9 +496,18 @@ export default function QuizBlustDashboard() {
                         <button 
                           onClick={() => handleSubmitCQ(activeExam.id)}
                           disabled={!submissionFile || submitting}
-                          className="w-full py-6 bg-green-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-green-700 transition-all shadow-2xl shadow-green-600/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="w-full py-6 bg-green-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-green-700 transition-all shadow-2xl shadow-green-600/20 disabled:opacity-30 disabled:cursor-not-allowed flex flex-col items-center justify-center space-y-1"
                         >
-                          {submitting ? 'উপলোড হচ্ছে...' : 'উত্তরপত্র জমা দিন'}
+                          <div className="flex items-center space-x-3">
+                            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                            <span>{submitting ? 'উপলোড হচ্ছে...' : 'উত্তরপত্র জমা দিন'}</span>
+                          </div>
+                          {submitting && uploadProgress > 0 && uploadProgress < 100 && (
+                            <span className="text-[8px] opacity-70">PROGRESS: {uploadProgress}%</span>
+                          )}
+                          {submitting && uploadProgress === 100 && (
+                            <span className="text-[8px] opacity-70">FINALIZING...</span>
+                          )}
                         </button>
                         
                         <button 
