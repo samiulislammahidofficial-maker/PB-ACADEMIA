@@ -43,11 +43,19 @@ service cloud.firestore {
       allow write: if isRole('teacher') || isRole('admin');
     }
 
-    // Results
-    match /results/{resultId} {
+    // Exam Submissions
+    match /examSubmissions/{submissionId} {
       allow read: if isSignedIn() && (isOwner(resource.data.studentId) || isRole('teacher') || isRole('admin'));
       allow create: if isSignedIn() && isRole('student') && request.resource.data.studentId == request.auth.uid;
-      allow update, delete: if isRole('admin') || isRole('teacher');
+      allow update: if isRole('admin') || isRole('teacher');
+      allow delete: if isRole('admin');
+    }
+
+    // QuizBlust Registrations
+    match /quizblust_registrations/{regId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isRole('student') && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isRole('admin');
     }
 
     // Attendance
@@ -77,7 +85,8 @@ service cloud.firestore {
 
     // Teacher Credentials
     match /teacher_credentials/{teacherId} {
-      allow read: if isRole('admin') || isRole('teacher');
+      allow get: if true;
+      allow list: if isRole('admin');
       allow write: if isRole('admin');
     }
   }

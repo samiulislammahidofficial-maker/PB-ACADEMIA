@@ -33,6 +33,13 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-10">
             <Link to="/" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">হোম</Link>
             <Link to="/courses" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">প্রোগ্রামসমূহ</Link>
+            <Link to="/quizblust" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center space-x-1">
+              <span className="relative">
+                QUIZBLUST
+                <span className="absolute -top-1 -right-4 h-2 w-2 bg-red-500 rounded-full animate-ping"></span>
+                <span className="absolute -top-1 -right-4 h-2 w-2 bg-red-500 rounded-full"></span>
+              </span>
+            </Link>
             <Link to="/about" className="text-sm font-semibold text-neutral-600 hover:text-brand-primary transition-colors">আমাদের সম্পর্কে</Link>
             
             {user ? (
@@ -90,6 +97,7 @@ export default function Navbar() {
           >
             <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">হোম</Link>
             <Link to="/courses" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-neutral-600">প্রোগ্রামসমূহ</Link>
+            <Link to="/quizblust" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-bold text-blue-600">QUIZBLUST</Link>
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-4 text-sm font-semibold text-brand-primary font-bold">ড্যাশবোর্ড</Link>

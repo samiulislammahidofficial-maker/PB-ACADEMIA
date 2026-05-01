@@ -6,7 +6,7 @@ import {
   BookOpen, Award, Clock, ChevronRight, Video, ClipboardList, 
   MessageSquare, BookCheck, Info, Users, LayoutDashboard, 
   PlusCircle, FileText, Monitor, GraduationCap, BarChart2, 
-  Wallet, Headphones, ArrowRight
+  Wallet, Headphones, ArrowRight, Rocket
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -28,14 +28,14 @@ const sidebarItems = [
 ];
 
 const features = [
+  { icon: <Rocket className="h-6 w-6" />, title: "QuizBlust", color: "bg-blue-600 text-white", link: "/quizblust" },
   { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600" },
   { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600" },
   { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600" },
   { icon: <BookCheck className="h-6 w-6" />, title: "Solve Sheets", color: "bg-purple-50 text-purple-600" },
   { icon: <MessageSquare className="h-6 w-6" />, title: "Q&A Service", color: "bg-pink-50 text-pink-600" },
   { icon: <Info className="h-6 w-6" />, title: "Course Content", color: "bg-indigo-50 text-indigo-600" },
-  { icon: <Users className="h-6 w-6" />, title: "Discussion", color: "bg-teal-50 text-teal-600" },
-  { icon: <Award className="h-6 w-6" />, title: "Certificates", color: "bg-yellow-50 text-yellow-600" }
+  { icon: <Users className="h-6 w-6" />, title: "Discussion", color: "bg-teal-50 text-teal-600" }
 ];
 
 export default function StudentDashboard() {
@@ -136,16 +136,17 @@ export default function StudentDashboard() {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {features.map((feature, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ y: -5 }}
-                  className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col items-center group transition-all hover:shadow-lg"
-                >
-                  <div className={`h-14 w-14 ${feature.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    {feature.icon}
-                  </div>
-                  <span className="text-xs font-bold text-neutral-800 tracking-tight text-center">{feature.title}</span>
-                </motion.div>
+                <Link to={feature.link || '#'} key={i}>
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col items-center group transition-all hover:shadow-lg h-full"
+                  >
+                    <div className={`h-14 w-14 ${feature.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-xl shadow-current/10`}>
+                      {feature.icon}
+                    </div>
+                    <span className="text-xs font-bold text-neutral-800 tracking-tight text-center">{feature.title}</span>
+                  </motion.div>
+                </Link>
               ))}
             </div>
           </div>

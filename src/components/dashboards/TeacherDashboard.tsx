@@ -1,7 +1,7 @@
 import { useAuth } from '../../lib/AuthContext';
 import { db, collection, getDocs, query, where } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
-import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen } from 'lucide-react';
+import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import ExamCreator from '../teachers/ExamCreator';
@@ -53,6 +53,13 @@ export default function TeacherDashboard() {
               {courses.map(c => <option key={c.id} value={c.id} className="bg-[#0a0a0a]">{c.title}</option>)}
             </select>
           )}
+          <Link 
+            to="/quizblust"
+            className="flex items-center space-x-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-500/20 active:scale-95 uppercase tracking-widest text-[10px]"
+          >
+            <Rocket className="h-4 w-4" />
+            <span>QuizBlust Control</span>
+          </Link>
           <button 
             onClick={() => setShowExamCreator(true)}
             className="flex items-center space-x-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 active:scale-95 uppercase tracking-widest text-[10px]"

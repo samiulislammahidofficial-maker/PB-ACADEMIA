@@ -16,6 +16,7 @@ import CourseView from './components/CourseView';
 import ExamView from './components/ExamView';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import QuizBlustDashboard from './components/dashboards/QuizBlustDashboard';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
   const { user, profile, loading } = useAuth();
@@ -45,6 +46,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/quizblust" 
+                element={
+                  <ProtectedRoute>
+                    <QuizBlustDashboard />
                   </ProtectedRoute>
                 } 
               />

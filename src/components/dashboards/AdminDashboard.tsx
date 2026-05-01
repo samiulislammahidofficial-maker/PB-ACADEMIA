@@ -12,18 +12,49 @@ export default function AdminDashboard() {
   const [newTeacherPass, setNewTeacherPass] = useState('');
   const [creatingTeacher, setCreatingTeacher] = useState(false);
 
+  const [teachers, setTeachers] = useState<{id: string, password: string, createdAt: string}[]>([]);
+  const [loadingTeachers, setLoadingTeachers] = useState(false);
+  const [showPass, setShowPass] = useState<{[key: string]: boolean}>({});
+
+  const togglePass = (id: string) => {
+    setShowPass(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const fetchTeachers = async () => {
+    setLoadingTeachers(true);
+    try {
+      const q = collection(db, 'teacher_credentials');
+      const snap = await getDocs(q);
+      const list: {id: string, password: string, createdAt: string}[] = [];
+      snap.forEach(doc => {
+        list.push({ id: doc.id, ...doc.data() } as any);
+      });
+      setTeachers(list);
+    } catch (err) {
+      console.error("Error fetching teachers:", err);
+    } finally {
+      setLoadingTeachers(false);
+    }
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
-      const q = collection(db, 'users');
-      const snap = await getDocs(q);
-      const userList: UserProfile[] = [];
-      snap.forEach(doc => {
-        userList.push(doc.data() as UserProfile);
-      });
-      setUsers(userList);
-      setLoading(false);
+      try {
+        const q = collection(db, 'users');
+        const snap = await getDocs(q);
+        const userList: UserProfile[] = [];
+        snap.forEach(doc => {
+          userList.push(doc.data() as UserProfile);
+        });
+        setUsers(userList);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUsers();
+    fetchTeachers();
   }, []);
 
   const handleCreateTeacher = async (e: React.FormEvent) => {
@@ -31,13 +62,14 @@ export default function AdminDashboard() {
     if (!newTeacherId || !newTeacherPass) return;
     setCreatingTeacher(true);
     try {
-      await setDoc(doc(db, 'teacher_credentials', newTeacherId), {
-        password: newTeacherPass,
+      await setDoc(doc(db, 'teacher_credentials', newTeacherId.trim()), {
+        password: newTeacherPass.trim(),
         createdAt: new Date().toISOString()
       });
       alert(`Teacher account protocol activated for ID: ${newTeacherId}`);
       setNewTeacherId('');
       setNewTeacherPass('');
+      fetchTeachers(); // Refresh list
     } catch (err: any) {
       console.error("Detailed Teacher Unit Initialization Error:", err);
       if (err.code === 'permission-denied') {
@@ -150,9 +182,63 @@ export default function AdminDashboard() {
             <div className="p-10 border-b border-white/5 bg-black/20">
               <h3 className="text-sm font-black text-white uppercase tracking-widest">Active Teacher Units</h3>
             </div>
-            <div className="p-10 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest">
-              Teacher records are strictly indexed for security. Use the commission form above to add staff.
-            </div>
+            {loadingTeachers ? (
+              <div className="p-10 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                Scanning secure database...
+              </div>
+            ) : teachers.length === 0 ? (
+              <div className="p-10 text-center text-neutral-600 text-[10px] font-black uppercase tracking-widest">
+                No teacher records found. Use the commission form above to add staff.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-[#050505] border-b border-white/5">
+                    <tr>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Teacher ID</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Security Key</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em]">Activation Date</th>
+                      <th className="px-10 py-6 text-[8px] font-black text-neutral-600 uppercase tracking-[0.4em] text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {teachers.map((teacher) => (
+                      <tr key={teacher.id} className="hover:bg-white/[0.01] transition-colors group">
+                        <td className="px-10 py-8">
+                          <div className="flex items-center space-x-6">
+                            <div className="h-10 w-10 rounded-xl bg-brand-primary/10 border border-white/5 flex items-center justify-center text-brand-primary font-black text-xs uppercase tracking-tighter">
+                              {teacher.id.charAt(0)}
+                            </div>
+                            <span className="font-black text-white text-sm uppercase tracking-widest">{teacher.id}</span>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8">
+                          <div className="flex items-center space-x-4">
+                            <span className="font-mono text-[10px] text-neutral-400 tracking-widest">
+                              {showPass[teacher.id] ? teacher.password : '••••••••'}
+                            </span>
+                            <button 
+                              onClick={() => togglePass(teacher.id)}
+                              className="text-[9px] font-black text-blue-500 uppercase tracking-widest hover:text-blue-400 transition-colors"
+                            >
+                              {showPass[teacher.id] ? 'Hide' : 'Reveal'}
+                            </button>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8 text-[9px] text-neutral-500 font-black uppercase tracking-widest">
+                          {new Date(teacher.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-10 py-8 text-right">
+                          <span className="px-5 py-2 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-[8px] font-black uppercase tracking-[0.2em]">
+                            Active
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </motion.div>
       )}

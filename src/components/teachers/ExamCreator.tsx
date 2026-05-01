@@ -1,242 +1,213 @@
 import React, { useState } from 'react';
-import { db, collection, addDoc, serverTimestamp } from '../../lib/firebase';
+import { db, collection, addDoc, serverTimestamp, storage, ref, uploadBytes, getDownloadURL } from '../../lib/firebase';
 import { useAuth } from '../../lib/AuthContext';
-import { Question, QuestionType } from '../../types';
-import { Plus, Trash2, Save, X, HelpCircle, FileText, Type } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { X, Save, Upload, Link as LinkIcon, Clock, Calendar, FileText, CheckCircle2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface ExamCreatorProps {
   courseId: string;
   onClose: () => void;
+  isQuizBlust?: boolean;
 }
 
-export default function ExamCreator({ courseId, onClose }: ExamCreatorProps) {
+export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: ExamCreatorProps) {
   const { user } = useAuth();
   const [title, setTitle] = useState('');
-  const [duration, setDuration] = useState(30);
-  const [questions, setQuestions] = useState<Partial<Question>[]>([]);
+  const [examType, setExamType] = useState<'CQ' | 'MCQ' | null>(null);
+  const [startTime, setStartTime] = useState('');
+  const [duration, setDuration] = useState(60);
+  const [googleFormLink, setGoogleFormLink] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const addQuestion = (type: QuestionType) => {
-    const newQuestion: Partial<Question> = {
-      id: Math.random().toString(36).substr(2, 9),
-      type,
-      text: '',
-      points: 5,
-    };
-
-    if (type === 'mcq') {
-      newQuestion.options = ['', '', '', ''];
-      newQuestion.correctOption = 0;
-    } else if (type === 'short_answer') {
-      newQuestion.correctAnswer = '';
+  const handleSave = async () => {
+    if (!title || !examType || !startTime || !duration) {
+      alert('Please fill all required fields');
+      return;
     }
 
-    setQuestions([...questions, newQuestion]);
-  };
+    if (examType === 'MCQ' && !googleFormLink) {
+      alert('Please provide a Google Form link for MCQ exam');
+      return;
+    }
 
-  const removeQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q.id !== id));
-  };
-
-  const updateQuestion = (id: string, updates: Partial<Question>) => {
-    setQuestions(questions.map(q => q.id === id ? { ...q, ...updates } : q));
-  };
-
-  const saveExam = async () => {
-    if (!title || questions.length === 0) {
-      alert('Please provide a title and at least one question');
+    if (examType === 'CQ' && !file) {
+      alert('Please upload an exam question file (PDF or Image) for CQ');
       return;
     }
 
     setLoading(true);
     try {
+      let questionUrl = '';
+      if (examType === 'CQ' && file) {
+        const fileRef = ref(storage, `exams/${Date.now()}_${file.name}`);
+        const uploadResult = await uploadBytes(fileRef, file);
+        questionUrl = await getDownloadURL(uploadResult.ref);
+      }
+
       await addDoc(collection(db, 'exams'), {
         title,
-        courseId,
+        courseId: isQuizBlust ? 'quizblust' : courseId,
         teacherId: user?.uid,
+        examType,
+        questionUrl: examType === 'CQ' ? questionUrl : null,
+        googleFormLink: examType === 'MCQ' ? googleFormLink : null,
+        startTime: new Date(startTime).toISOString(),
         durationMinutes: duration,
-        questions,
-        createdAt: serverTimestamp()
+        status: 'scheduled',
+        resultsReleased: false,
+        createdAt: serverTimestamp(),
+        isQuizBlust
       });
+
+      alert('Exam scheduled successfully');
       onClose();
     } catch (e) {
       console.error(e);
-      alert('Failed to save exam');
+      alert('Failed to schedule exam');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-2xl z-50 flex items-center justify-center p-4">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-[#0a0a0a] w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-2xl border border-white/5 flex flex-col overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-[#0a0a0a] w-full max-w-2xl rounded-[3rem] shadow-2xl border border-white/5 flex flex-col overflow-hidden max-h-[90vh]"
       >
-        <div className="p-10 border-b border-white/5 flex justify-between items-center bg-[#0a0a0a]/50 backdrop-blur-md sticky top-0 z-10">
+        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/40">
           <div>
-            <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Tactical <span className="text-blue-500">Assessment</span> Designer</h2>
-            <p className="text-[10px] text-neutral-500 font-black uppercase tracking-[0.3em] mt-2 italic">Operation: Evaluation Core // CourseID-{courseId.slice(0,6)}</p>
+            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
+              {isQuizBlust ? 'QuizBlust' : 'Course'} <span className="text-blue-500">Exam Deployment</span>
+            </h2>
+            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mt-1">Configure Assessment Protocol</p>
           </div>
-          <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl transition-all group">
-            <X className="h-6 w-6 text-neutral-500 group-hover:text-white transition-colors" />
+          <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all">
+            <X className="h-5 w-5 text-neutral-500" />
           </button>
         </div>
 
-        <div className="flex-grow overflow-y-auto p-10 space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex-grow overflow-y-auto p-8 space-y-8">
+          {/* Step 1: Exam Title */}
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Exam Title</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Physics Midterm Assessment" 
+              className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-bold uppercase tracking-widest text-xs"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+
+          {/* Step 2: Exam Type Selection */}
+          <div className="space-y-4">
+            <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Assessment Architecture</label>
+            <div className="grid grid-cols-2 gap-4">
+              <button 
+                onClick={() => setExamType('CQ')}
+                className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-3 ${
+                  examType === 'CQ' ? 'border-blue-500 bg-blue-500/10' : 'border-white/5 bg-black hover:border-white/10'
+                }`}
+              >
+                <div className={`p-4 rounded-2xl ${examType === 'CQ' ? 'bg-blue-500 text-white' : 'bg-white/5 text-neutral-500'}`}>
+                  <FileText className="h-6 w-6" />
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${examType === 'CQ' ? 'text-white' : 'text-neutral-500'}`}>CQ (Written)</span>
+              </button>
+              <button 
+                onClick={() => setExamType('MCQ')}
+                className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-3 ${
+                  examType === 'MCQ' ? 'border-purple-500 bg-purple-500/10' : 'border-white/5 bg-black hover:border-white/10'
+                }`}
+              >
+                <div className={`p-4 rounded-2xl ${examType === 'MCQ' ? 'bg-purple-500 text-white' : 'bg-white/5 text-neutral-500'}`}>
+                  <LinkIcon className="h-6 w-6" />
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${examType === 'MCQ' ? 'text-white' : 'text-neutral-500'}`}>MCQ (External Unit)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Step 3: Specific Content */}
+          {examType === 'CQ' && (
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Operational Title</label>
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Upload Question Paper (PDF/Image)</label>
+              <label className="flex flex-col items-center justify-center w-full p-8 border-2 border-dashed border-white/5 rounded-3xl bg-black hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer group">
+                <div className="flex flex-col items-center justify-center space-y-3">
+                  <Upload className="h-10 w-10 text-neutral-700 group-hover:text-blue-500 transition-colors" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
+                    {file ? file.name : 'Select or drop asset file'}
+                  </p>
+                </div>
+                <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+              </label>
+            </div>
+          )}
+
+          {examType === 'MCQ' && (
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1">Google Form Integration Link</label>
+              <div className="relative">
+                <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+                <input 
+                  type="url" 
+                  placeholder="https://docs.google.com/forms/..." 
+                  className="w-full pl-14 pr-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-purple-500 outline-none transition-all text-white font-bold text-xs"
+                  value={googleFormLink}
+                  onChange={(e) => setGoogleFormLink(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Schedule */}
+          <div className="grid grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <Calendar className="h-3 w-3" /> Start Chronology
+              </label>
               <input 
-                type="text" 
-                placeholder="e.g. ALPHA_SYNC_01" 
-                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] placeholder:text-neutral-800 shadow-inner"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                type="datetime-local" 
+                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-bold text-xs [color-scheme:dark]"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
               />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-[0.3em]">Window Duration (Units)</label>
+              <label className="text-[10px] font-black text-neutral-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                <Clock className="h-3 w-3" /> Runtime Duration (Mins)
+              </label>
               <input 
                 type="number" 
-                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner"
+                placeholder="60"
+                className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-bold text-xs"
                 value={duration}
                 onChange={(e) => setDuration(parseInt(e.target.value))}
               />
             </div>
           </div>
-
-          <div className="space-y-8">
-            <div className="flex items-center justify-between pb-4 border-b border-white/5">
-              <h3 className="font-black text-white uppercase tracking-widest text-sm flex items-center">
-                <div className="h-2 w-2 bg-blue-500 rounded-full mr-3 animate-pulse"></div>
-                Question Array ({questions.length})
-              </h3>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => addQuestion('mcq')}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all"
-                >
-                  <HelpCircle className="h-4 w-4" />
-                  <span>+ MCQ</span>
-                </button>
-                <button 
-                  onClick={() => addQuestion('short_answer')}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-500/10 text-purple-500 border border-purple-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all"
-                >
-                  <Type className="h-4 w-4" />
-                  <span>+ ANALYTIC</span>
-                </button>
-                <button 
-                  onClick={() => addQuestion('creative')}
-                  className="flex items-center space-x-2 px-4 py-2 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-white transition-all"
-                >
-                  <FileText className="h-4 w-4" />
-                  <span>+ CREATIVE</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <AnimatePresence>
-                {questions.map((q, idx) => (
-                  <motion.div 
-                    key={q.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative group hover:border-white/10 transition-all shadow-2xl"
-                  >
-                    <button 
-                      onClick={() => removeQuestion(q.id!)}
-                      className="absolute top-6 right-6 p-3 bg-red-500/5 text-red-500/50 hover:bg-red-500 hover:text-white rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-2xl"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-
-                    <div className="space-y-6">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-[10px] font-black text-neutral-800 uppercase tabular-nums">DATA_POINT_{idx + 1}</span>
-                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] ${
-                          q.type === 'mcq' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 
-                          q.type === 'short_answer' ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20' : 
-                          'bg-orange-500/10 text-orange-500 border border-orange-500/20'
-                        }`}>
-                          {q.type?.replace('_', ' ')}
-                        </span>
-                      </div>
-
-                      <div className="space-y-3">
-                        <label className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Intelligence Parameter</label>
-                        <textarea 
-                          rows={3}
-                          className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] placeholder:text-neutral-800 shadow-inner"
-                          value={q.text}
-                          placeholder="Input Directive Content..."
-                          onChange={(e) => updateQuestion(q.id!, { text: e.target.value })}
-                        />
-                      </div>
-
-                      {q.type === 'mcq' && q.options && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                          {q.options.map((opt, oIdx) => (
-                            <div key={oIdx} className="flex items-center space-x-4 bg-black/50 p-4 rounded-xl border border-white/5 group/opt hover:border-white/20 transition-all shadow-inner">
-                              <input 
-                                type="radio" 
-                                name={`correct-${q.id}`}
-                                className="accent-blue-500 w-4 h-4"
-                                checked={q.correctOption === oIdx}
-                                onChange={() => updateQuestion(q.id!, { correctOption: oIdx })}
-                              />
-                              <input 
-                                type="text"
-                                placeholder={`Neural Path ${oIdx + 1}`}
-                                className="flex-grow bg-transparent outline-none text-white font-black uppercase tracking-widest text-[9px] placeholder:text-neutral-800"
-                                value={opt}
-                                onChange={(e) => {
-                                  const newOpts = [...q.options!];
-                                  newOpts[oIdx] = e.target.value;
-                                  updateQuestion(q.id!, { options: newOpts });
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {q.type === 'short_answer' && (
-                        <div className="space-y-3">
-                          <label className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em]">Validation Encryption (Optional)</label>
-                          <input 
-                            type="text"
-                            className="w-full px-6 py-4 bg-black border border-white/5 rounded-2xl focus:border-blue-500 outline-none transition-all text-white font-black uppercase tracking-widest text-[10px] shadow-inner"
-                            value={q.correctAnswer}
-                            placeholder="Static Result Hash..."
-                            onChange={(e) => updateQuestion(q.id!, { correctAnswer: e.target.value })}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
         </div>
 
-        <div className="p-10 border-t border-white/5 flex justify-end bg-black/40 backdrop-blur-md">
+        <div className="p-8 border-t border-white/5 bg-black/40">
           <button 
-            onClick={saveExam}
+            onClick={handleSave}
             disabled={loading}
-            className="flex items-center space-x-4 px-12 py-5 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/30 disabled:opacity-50 group active:scale-95"
+            className="w-full py-5 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-500/20 disabled:opacity-50 flex items-center justify-center space-x-3"
           >
-            <Save className="h-5 w-5 group-hover:scale-110 transition-transform" />
-            <span>{loading ? 'Encrypting Array...' : 'Commit to Database'}</span>
+            {loading ? (
+              <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            <span>{loading ? 'Initializing Protocol...' : 'Finalize Exam Deployment'}</span>
           </button>
         </div>
       </motion.div>
     </div>
   );
 }
+

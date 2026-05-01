@@ -31,30 +31,47 @@
     },
     "Exam": {
       "title": "Exam",
-      "description": "An exam created by a teacher",
+      "description": "An exam created by a teacher for QuizBlust or other courses",
       "type": "object",
       "properties": {
         "title": { "type": "string" },
         "courseId": { "type": "string" },
         "teacherId": { "type": "string" },
-        "questions": { "type": "array" },
+        "examType": { "type": "string", "enum": ["CQ", "MCQ"] },
+        "questionUrl": { "type": "string", "description": "URL to PDF/Image for CQ" },
+        "googleFormLink": { "type": "string", "description": "Link for MCQ" },
         "startTime": { "type": "string", "format": "date-time" },
-        "durationMinutes": { "type": "number" }
+        "durationMinutes": { "type": "number" },
+        "status": { "type": "string", "enum": ["scheduled", "live", "completed"] },
+        "resultsReleased": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["title", "courseId", "teacherId", "questions"]
+      "required": ["title", "courseId", "teacherId", "examType", "startTime", "durationMinutes"]
     },
-    "Result": {
-      "title": "Result",
-      "description": "Student result for an exam",
+    "ExamSubmission": {
+      "title": "ExamSubmission",
+      "description": "A student's submission for an exam",
       "type": "object",
       "properties": {
         "examId": { "type": "string" },
         "studentId": { "type": "string" },
-        "score": { "type": "number" },
-        "answers": { "type": "object" },
-        "submittedAt": { "type": "string", "format": "date-time" }
+        "ansUrl": { "type": "string", "description": "PDF URL for CQ submission" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "marks": { "type": "number" },
+        "feedback": { "type": "string" },
+        "graded": { "type": "boolean" }
       },
-      "required": ["examId", "studentId", "score"]
+      "required": ["examId", "studentId", "submittedAt"]
+    },
+    "QuizBlustRegistration": {
+      "title": "QuizBlustRegistration",
+      "description": "Registration for the free QuizBlust course",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "registeredAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId"]
     },
     "Attendance": {
       "title": "Attendance",
@@ -139,11 +156,15 @@
     },
     "/exams/{examId}": {
       "schema": "Exam",
-      "description": "Exams for courses"
+      "description": "Exams for courses/QuizBlust"
     },
-    "/results/{resultId}": {
-      "schema": "Result",
-      "description": "Student exam results"
+    "/examSubmissions/{submissionId}": {
+      "schema": "ExamSubmission",
+      "description": "Student exam submissions"
+    },
+    "/quizblust_registrations/{regId}": {
+      "schema": "QuizBlustRegistration",
+      "description": "QuizBlust course registrations"
     },
     "/attendance/{attendanceId}": {
       "schema": "Attendance",
