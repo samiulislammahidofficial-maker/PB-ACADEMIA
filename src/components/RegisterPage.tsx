@@ -117,7 +117,7 @@ export default function RegisterPage() {
               whileHover={{ scale: 1.1 }}
               className="h-20 w-20 bg-brand-surface rounded-full overflow-hidden border-4 border-white shadow-xl flex items-center justify-center p-1"
             >
-              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover rounded-full" />
+              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover rounded-full scale-125" />
             </motion.div>
           </Link>
           <h2 className="text-3xl font-display font-bold text-neutral-900">Create Account</h2>
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                   onClick={handleGoogleSignIn}
                   className="w-full py-4 border border-neutral-200 text-neutral-700 font-bold rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center space-x-3"
                 >
-                  <img src="https://www.google.com/favicon.ico" className="h-5 w-5" alt="Google" />
+                  <img src="https://www.google.com/favicon.ico" className="h-5 w-5 rounded-full scale-125" alt="Google" />
                   <span>Google Account</span>
                 </button>
               </div>

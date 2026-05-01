@@ -24,7 +24,7 @@ export default function Navbar() {
               whileHover={{ rotate: 5, scale: 1.05 }}
               className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-brand-primary/10 shadow-sm"
             >
-              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="PB Academia Logo" className="w-full h-full object-cover" />
+              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="PB Academia Logo" className="w-full h-full object-cover rounded-full scale-125" />
             </motion.div>
             <span className="font-display font-bold text-xl sm:text-2xl md:text-3xl tracking-tight text-neutral-900 group-hover:text-brand-primary transition-colors">PB ACADEMIA</span>
           </Link>
