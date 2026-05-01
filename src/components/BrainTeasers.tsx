@@ -81,7 +81,7 @@ export default function BrainTeasers() {
             <Trophy className="h-12 w-12 text-white" />
           </div>
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">অভিনন্দন!</h2>
-          <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px] mb-10">আপনার ব্রেইন পাওয়ার টেস্ট শেষ হয়েছে</p>
+          <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px] mb-10">তোমার ব্রেইন পাওয়ার টেস্ট শেষ হয়েছে</p>
           
           <div className="p-10 bg-white/5 rounded-[3rem] border border-white/5 mb-10">
             <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest mb-2">Final Score</p>
@@ -92,7 +92,7 @@ export default function BrainTeasers() {
             onClick={() => window.location.reload()}
             className="w-full py-6 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-all shadow-xl shadow-blue-600/20"
           >
-            আবার পরীক্ষা দিন
+            আবার চেষ্টা করো
           </button>
         </motion.div>
       </div>

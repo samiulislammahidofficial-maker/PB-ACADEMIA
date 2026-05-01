@@ -17,22 +17,32 @@ export default function Footer() {
             <p className="mt-8 text-neutral-500 max-w-sm text-sm font-medium leading-relaxed">
               Empowering the next generation of leaders through cutting-edge education and mentorship. Dhaka's premier destination for academic excellence.
             </p>
-            <div className="mt-10 flex items-center space-x-5">
-              {[
-                { icon: <Facebook className="h-5 w-5" />, href: "https://facebook.com/pbacademia" },
-                { icon: <Instagram className="h-5 w-5" />, href: "#" },
-                { icon: <Twitter className="h-5 w-5" />, href: "#" },
-                { icon: <Youtube className="h-5 w-5" />, href: "#" },
-              ].map((social, i) => (
-                <motion.a 
-                  key={i}
-                  whileHover={{ y: -4, color: '#5d3fd3' }}
-                  href={social.href}
-                  className="h-10 w-10 bg-neutral-50 border border-neutral-100 rounded-xl flex items-center justify-center text-neutral-400 transition-all hover:border-brand-primary/20 hover:bg-white"
-                >
-                  {social.icon}
-                </motion.a>
-              ))}
+            <div className="mt-10 flex flex-col space-y-6">
+              <div className="flex items-center space-x-5">
+                {[
+                  { icon: <Facebook className="h-5 w-5" />, href: "https://www.facebook.com/profile.php?id=61584555539761" },
+                  { icon: <Youtube className="h-5 w-5" />, href: "https://www.youtube.com/@PBAcademia" },
+                ].map((social, i) => (
+                  <motion.a 
+                    key={i}
+                    whileHover={{ y: -4, color: '#2563eb' }}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="h-10 w-10 bg-neutral-50 border border-neutral-100 rounded-xl flex items-center justify-center text-neutral-400 transition-all hover:border-blue-500/20 hover:bg-white"
+                  >
+                    {social.icon}
+                  </motion.a>
+                ))}
+              </div>
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Contact Us</p>
+                <p className="text-sm font-bold text-neutral-900 group">01784-323041</p>
+                <div className="flex flex-col space-y-1">
+                  <a href="mailto:pbacademia25@gmail.com" className="text-xs font-medium text-neutral-500 hover:text-blue-600 transition-colors">pbacademia25@gmail.com</a>
+                  <a href="mailto:admin@pbacademia.top" className="text-xs font-medium text-neutral-500 hover:text-blue-600 transition-colors">admin@pbacademia.top</a>
+                </div>
+              </div>
             </div>
           </div>
           <div>

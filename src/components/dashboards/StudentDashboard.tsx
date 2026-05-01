@@ -49,32 +49,32 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FDFCFE] flex">
+    <div className="min-h-screen bg-[#050505] flex">
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-neutral-100 flex flex-col hidden lg:flex sticky top-20 h-[calc(100vh-80px)]">
-        <div className="p-6 border-b border-neutral-50 mb-4">
-          <div className="flex items-center space-x-3">
-             <div className="h-10 w-10 bg-brand-surface rounded-full overflow-hidden border border-neutral-100 shadow-sm">
+      <aside className="w-72 bg-[#0a0a0a] border-r border-white/5 flex flex-col hidden lg:flex sticky top-20 h-[calc(100vh-80px)]">
+        <div className="p-8 border-b border-white/5 mb-6">
+          <div className="flex items-center space-x-4">
+             <div className="h-10 w-10 bg-white/5 rounded-[1rem] overflow-hidden border border-white/10 shadow-2xl">
                 <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
-              <span className="font-display font-bold text-lg text-neutral-900 tracking-tight">PB Academia</span>
+              <span className="font-black uppercase tracking-tighter text-white text-lg">PB Academia</span>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto py-2 px-4">
+        <div className="flex-1 overflow-y-auto py-2 px-6">
           <div className="space-y-1">
             {sidebarItems.map((item, i) => (
               <button
                 key={i}
-                className={`w-full flex items-center space-x-4 px-4 py-3 rounded-xl transition-all ${
+                className={`w-full flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all group ${
                   item.active 
-                    ? 'bg-brand-primary/10 text-brand-primary' 
-                    : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+                    ? 'bg-blue-600 font-black text-white shadow-xl shadow-blue-600/20' 
+                    : 'text-neutral-500 hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <span className={item.active ? 'text-brand-primary' : 'text-neutral-400'}>
+                <span className={item.active ? 'text-white' : 'text-neutral-600 group-hover:text-blue-500'}>
                   {item.icon}
                 </span>
-                <span className="text-sm font-bold tracking-tight">{item.label}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
               </button>
             ))}
           </div>
@@ -82,57 +82,79 @@ export default function StudentDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
-        <div className="max-w-5xl">
-          <div className="mb-12 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-display font-bold text-neutral-900">Welcome Back, {profile?.name}!</h1>
-              <p className="text-neutral-500 mt-2 font-medium">Ready to continue your learning journey today?</p>
-            </div>
-            <div className="h-12 w-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400 hover:bg-neutral-200 transition-colors cursor-pointer">
-              <Users className="h-6 w-6" />
-            </div>
-          </div>
-
-          {/* Quick Actions / Featured */}
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            <div className="bg-brand-primary p-8 rounded-[2.5rem] text-white shadow-xl shadow-brand-primary/20 relative overflow-hidden group cursor-pointer">
-              <div className="relative z-10">
-                <Video className="h-8 w-8 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Live Class</h3>
-                <p className="text-brand-surface/70 text-sm font-medium">Physics: Quantum Mechanics 101 starts in 15 mins</p>
-                <div className="mt-8 flex items-center text-sm font-bold underline decoration-brand-surface/30 group-hover:decoration-white transition-all">
-                  Join Now <ArrowRight className="ml-2 h-4 w-4" />
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-            </div>
-
-            <div className="bg-emerald-500 p-8 rounded-[2.5rem] text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden group cursor-pointer">
-              <div className="relative z-10">
-                <ClipboardList className="h-8 w-8 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Live Exam</h3>
-                <p className="text-emerald-50/70 text-sm font-medium">Weekly Assessment #14 is now active</p>
-                <div className="mt-8 flex items-center text-sm font-bold underline decoration-emerald-50/30 group-hover:decoration-white transition-all">
-                  Start Test <ArrowRight className="ml-2 h-4 w-4" />
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-            </div>
-
-            <div className="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
-              <BarChart2 className="h-8 w-8 text-brand-primary mb-4" />
-              <h3 className="text-xl font-bold text-neutral-900 mb-2">Performance</h3>
-              <p className="text-neutral-500 text-sm font-medium">You are in the top 5% of your class this week.</p>
-              <div className="mt-8 text-brand-primary text-sm font-bold">View detailed analytics</div>
+      <main className="flex-1 p-8 lg:p-16 overflow-y-auto">
+        <div className="max-w-6xl mx-auto">
+          {/* Immersive Welcome Banner */}
+          <div className="relative rounded-[3.5rem] overflow-hidden mb-16 border border-white/5 shadow-2xl h-[400px] flex items-center group">
+            <img 
+              src="https://i.ibb.co.com/BHxqgXTv/fbfe08da-0769-41af-bb5e-3ab953c6b34f.jpg" 
+              className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
+              alt="Class moments" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+            <div className="relative z-10 p-12 md:p-20">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <span className="px-5 py-2 bg-blue-600/10 text-blue-500 border border-blue-600/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block">
+                  Student Operations Centre
+                </span>
+                <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-none mb-6 uppercase">
+                  তোমাকে <br />
+                  <span className="text-blue-500">স্বাগতম!</span>
+                </h1>
+                <p className="text-neutral-500 font-bold uppercase tracking-[0.4em] text-[10px]">
+                  {profile?.name} • তোমার পারফরম্যান্স এবং কোর্স এখানে ট্র্যাক করো
+                </p>
+              </motion.div>
             </div>
           </div>
 
-          {/* Explore Services Section */}
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-display font-bold text-neutral-900 tracking-tight">Explore Services</h2>
-              <span className="text-sm font-bold text-brand-primary cursor-pointer hover:underline">View All Protocols</span>
+          {/* Quick Actions */}
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all cursor-pointer">
+              <div className="relative z-10">
+                <div className="h-14 w-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-blue-600/30">
+                  <Video className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">লাইভ ক্লাস</h3>
+                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">আগামী সেশন ১ ঘণ্টা পরে শুরু হবে</p>
+                <div className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:translate-x-2 transition-transform">
+                  জয়েন করো <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-600/5 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
+            </div>
+
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer">
+              <div className="relative z-10">
+                <div className="h-14 w-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-emerald-500/30">
+                  <ClipboardList className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">লাইভ পরীক্ষা</h3>
+                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">অ্যাসেসমেন্ট #১৪ বর্তমানে সক্রিয়</p>
+                <div className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform">
+                  অংশ নাও <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl group hover:border-orange-500/50 transition-all cursor-pointer">
+              <div className="h-14 w-14 bg-orange-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-orange-500/30">
+                <BarChart2 className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">অ্যানালিটিক্স</h3>
+              <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">তুমি গত সপ্তাহে শীর্ষ ৫% এ আছো</p>
+              <div className="mt-10 text-orange-500 text-[9px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-transform">বিস্তারিত দেখো</div>
+            </div>
+          </div>
+
+          {/* Explore Sections */}
+          <div className="mb-24">
+            <div className="flex items-center justify-between mb-12">
+              <h2 className="text-2xl font-black text-white uppercase tracking-tighter">এক্সপ্লোর করো</h2>
+              <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest cursor-pointer hover:underline">সব দেখাও</span>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -140,12 +162,12 @@ export default function StudentDashboard() {
                 <Link to={feature.link || '#'} key={i}>
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col items-center group transition-all hover:shadow-lg h-full"
+                    className="bg-black/40 p-10 rounded-[2.5rem] border border-white/5 flex flex-col items-center group transition-all hover:bg-white/[0.02] hover:border-white/10"
                   >
-                    <div className={`h-14 w-14 ${feature.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-xl shadow-current/10`}>
+                    <div className={`h-16 w-16 ${feature.color} rounded-[1.5rem] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-2xl`}>
                       {feature.icon}
                     </div>
-                    <span className="text-xs font-bold text-neutral-800 tracking-tight text-center">{feature.title}</span>
+                    <span className="text-[10px] font-black text-neutral-400 group-hover:text-white uppercase tracking-widest text-center">{feature.title}</span>
                   </motion.div>
                 </Link>
               ))}

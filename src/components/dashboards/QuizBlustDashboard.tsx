@@ -16,6 +16,7 @@ export default function QuizBlustDashboard() {
   const [activeExam, setActiveExam] = useState<any>(null);
   const [submissionFile, setSubmissionFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [registering, setRegistering] = useState(false);
   const [gradingExam, setGradingExam] = useState<any>(null);
   const [results, setResults] = useState<any[]>([]);
 
@@ -70,6 +71,7 @@ export default function QuizBlustDashboard() {
 
   const handleRegister = async () => {
     if (!user) return;
+    setRegistering(true);
     try {
       await addDoc(collection(db, 'quizblust_registrations'), {
         studentId: user.uid,
@@ -79,6 +81,8 @@ export default function QuizBlustDashboard() {
       alert('সফলভাবে রেজিস্ট্রেশন সম্পন্ন হয়েছে!');
     } catch (e) {
       alert('রেজিস্ট্রেশনে ত্রুটি হয়েছে। আবার চেষ্টা করুন।');
+    } finally {
+      setRegistering(false);
     }
   };
 
@@ -204,6 +208,41 @@ export default function QuizBlustDashboard() {
           })()}
         </div>
       )}
+
+      {/* Intro Header */}
+      <div className="relative rounded-[3.5rem] overflow-hidden mb-16 border border-white/5 shadow-2xl h-[400px] flex items-center group">
+        <img src="https://i.ibb.co.com/ZpTkHT4q/Untitled-design-8.png" className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 transition-all duration-1000" alt="QuizBlust Header" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+        <div className="relative z-10 p-12 md:p-20">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter">
+              QUIZ<span className="text-blue-500">BLUST</span>
+            </h1>
+            <p className="mt-4 text-neutral-400 font-bold uppercase tracking-[0.4em] text-[10px]">
+              এক্সাম সলভ ব্যাচ • তোমার জন্য সম্পূর্ণ ফ্রি কোর্স
+            </p>
+            <div className="mt-12 flex items-center space-x-6">
+              {!isRegistered && (
+                <button 
+                  onClick={handleRegister}
+                  disabled={registering}
+                  className="px-12 py-6 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-all shadow-2xl shadow-blue-600/30"
+                >
+                  {registering ? 'প্রসেসিং...' : 'ফ্রি এনরোল করো (এখনই!)'}
+                </button>
+              )}
+              {isRegistered && (
+                <span className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-green-500 uppercase tracking-widest">
+                  তুমি এনরোলড আছো! 
+                </span>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-10">
