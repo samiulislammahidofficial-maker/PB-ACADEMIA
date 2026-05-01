@@ -43,11 +43,11 @@ export default function LoginPage() {
       }
 
       if (role === 'teacher') {
-        const teacherRef = doc(db, 'teacher_credentials', trimmedEmail);
+        const teacherRef = doc(db, 'teacher_credentials', trimmedEmail.toUpperCase());
         const teacherSnap = await getDoc(teacherRef);
         
         if (teacherSnap.exists() && teacherSnap.data().password === trimmedPassword) {
-          await loginCustom('teacher', trimmedEmail);
+          await loginCustom('teacher', trimmedEmail.toUpperCase());
           navigate('/dashboard');
         } else {
           setError('Invalid Teacher ID or Security Key.');

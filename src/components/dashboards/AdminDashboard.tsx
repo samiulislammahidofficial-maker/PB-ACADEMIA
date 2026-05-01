@@ -62,11 +62,11 @@ export default function AdminDashboard() {
     if (!newTeacherId || !newTeacherPass) return;
     setCreatingTeacher(true);
     try {
-      await setDoc(doc(db, 'teacher_credentials', newTeacherId.trim()), {
+      await setDoc(doc(db, 'teacher_credentials', newTeacherId.trim().toUpperCase()), {
         password: newTeacherPass.trim(),
         createdAt: new Date().toISOString()
       });
-      alert(`Teacher account protocol activated for ID: ${newTeacherId}`);
+      alert(`Teacher account protocol activated for ID: ${newTeacherId.toUpperCase()}`);
       setNewTeacherId('');
       setNewTeacherPass('');
       fetchTeachers(); // Refresh list

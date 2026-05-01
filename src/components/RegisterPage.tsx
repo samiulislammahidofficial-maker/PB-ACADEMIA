@@ -46,7 +46,11 @@ export default function RegisterPage() {
       await createProfile(user.uid, formData.email, formData.name);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/operation-not-allowed') {
+        setError('Email/Password registration is disabled in Firebase. Please enable it in the Firebase Console (Authentication > Sign-in method).');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }

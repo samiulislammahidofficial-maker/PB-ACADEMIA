@@ -167,6 +167,42 @@ export default function QuizBlustDashboard() {
         </motion.div>
       )}
 
+      {/* Upcoming Exam Alert */}
+      {profile?.role === 'student' && isRegistered && (
+        <div className="mb-12">
+          {(() => {
+            const nextExam = exams
+              .filter(e => new Date(e.startTime) > new Date())
+              .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())[0];
+            
+            if (!nextExam) return null;
+
+            return (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-8 bg-amber-500/10 border border-amber-500/20 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-amber-500/5"
+              >
+                <div className="flex items-center space-x-6">
+                  <div className="h-16 w-16 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-amber-500/30">
+                    <AlertTriangle className="h-8 w-8 animate-pulse" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">আগামী পরীক্ষার নোটিশ!</h3>
+                    <p className="text-amber-500 font-bold text-[10px] uppercase tracking-widest mt-1">
+                      {nextExam.title} শুরু হবে {new Date(nextExam.startTime).toLocaleString()} এ
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-black/40 px-10 py-6 rounded-2xl border border-white/5">
+                  <CountdownClock targetDate={nextExam.startTime} prefix="EXAM STARTS IN" />
+                </div>
+              </motion.div>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-10">
         
