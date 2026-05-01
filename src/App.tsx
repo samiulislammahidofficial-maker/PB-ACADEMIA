@@ -7,6 +7,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
@@ -33,6 +34,7 @@ export default function App() {
         <div className="min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
           <Navbar />
           <SpeedInsights />
+          <Analytics />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<LandingPage />} />
