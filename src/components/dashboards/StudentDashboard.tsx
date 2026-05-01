@@ -160,7 +160,10 @@ export default function StudentDashboard() {
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-600/5 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
             </div>
 
-            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer">
+            <Link 
+              to={activeExam ? (activeExam.isQuizBlust ? "/quizblust" : `/exams/${activeExam.id}`) : "/quizblust"}
+              className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer"
+            >
               <div className="relative z-10">
                 <div className="h-14 w-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-emerald-500/30">
                   <ClipboardList className="h-7 w-7" />
@@ -169,14 +172,13 @@ export default function StudentDashboard() {
                 <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">
                   {activeExam ? `${activeExam.title} বর্তমানে সক্রিয়` : liveExams.length > 0 ? `${liveExams.length}টি আসন্ন পরীক্ষা শিডিউল করা আছে` : 'বর্তমানে কোনো সক্রিয় পরীক্ষা নেই'}
                 </p>
-                <Link 
-                  to={activeExam ? (activeExam.isQuizBlust ? "/quizblust" : `/courses/${activeExam.courseId}`) : "/quizblust"}
+                <div 
                   className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform"
                 >
                   {activeExam ? 'অংশ নাও' : 'শিডিউল দেখো'} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                </div>
               </div>
-            </div>
+            </Link>
 
             <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl group hover:border-orange-500/50 transition-all cursor-pointer">
               <div className="h-14 w-14 bg-orange-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-orange-500/30">

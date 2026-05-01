@@ -12,6 +12,18 @@ const moments = [
   "https://i.ibb.co.com/bnjWcbX/Untitled-design-6.png"
 ];
 
+const mentors = [
+  { name: "Shahriar Sajir", uni: "Dhaka University (DU)", dept: "Dept: Nuclear Engineering", role: "Mentor at PB: Math", exp: "Experience: 3y+", img: "https://i.ibb.co/0wdj6Sj/18c049fd-815a-470b-a187-3922244f0093.jpg" },
+  { name: "Farzaad Bin Sarwar", uni: "Islamic University of Technology (IUT)", dept: "Dept: Civil & Environmental Engineering", role: "Mentor at PB: Chemistry", exp: "Experience: 4y+", img: "https://i.ibb.co/MkbHL5dm/6291856579174796136.png" },
+  { name: "Samiul Islam Mahid", uni: "Bangladesh University of Engineering and Technology (BUET)", dept: "Dept: Industrial & Production Engineering", role: "Mentor at PB: Physics", exp: "Experience: 4y+", img: "https://i.ibb.co/zH47xXCN/IMG-1755-Samiul-islam-Mahid.jpg" },
+  { name: "Md Sayem Billah", uni: "Bangladesh University of Engineering and Technology (BUET)", dept: "Dept: Industrial & Production Engineering", role: "Mentor at PB: Math", exp: "Experience: 4y+", img: "https://i.ibb.co/4nW8k27V/IMG-20251111-WA0619-Seam-Billah.jpg" },
+  { name: "Atuloan Audrie", uni: "Bangladesh University of Engineering and Technology (BUET)", dept: "Dept: Mechanical Engineering", role: "Mentor at PB: Physics", exp: "Experience: 2y+", img: "https://i.ibb.co/s9GBQVvx/IMG-20251219-WA0000-Atuloan-Audrie.jpg" },
+  { name: "Ahnaf Ahsan", uni: "Dhaka Medical College (DMC)", dept: "Medical Operations", role: "Mentor at PB: Biology", exp: "Experience: 2y+", img: "https://i.ibb.co/chssGk33/IMG20221220122126-Ahnaf-Sayem.jpg" },
+  { name: "Shafayei Tashin", uni: "Dhaka Medical College (DMC)", dept: "Medical Operations", role: "Mentor at PB: Biology", exp: "Experience: 2y+", img: "https://i.ibb.co/84fJmw4r/inbound1880949799825595534-Shafayei-Khan-Tashin.jpg" },
+  { name: "Selmoon Habib", uni: "Popular Medical College (PMC)", dept: "Medical Operations", role: "Mentor at PB: Biology", exp: "Experience: 2y+", img: "https://i.ibb.co/m5r39j6N/inbound6074873297210308592-Selmoon-Habib.jpg" },
+  { name: "Aindrela Rani Kar", uni: "Jahangirnagar University (JU)", dept: "Dept: Computer Science Engineering (CSE)", role: "Mentor at PB: ICT", exp: "Experience: 2y+", img: "https://i.ibb.co/S7DttQqz/inbound5164628309827598750-Aindrela-Kar.jpg" },
+];
+
 export default function LandingPage() {
   const [currentMoment, setCurrentMoment] = useState(0);
 
@@ -196,6 +208,79 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mentors Section - High End Design */}
+      <section className="py-32 bg-brand-dark overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+            <div className="max-w-2xl">
+              <span className="text-brand-primary font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Executive Faculty</span>
+              <h2 className="text-5xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-[0.9]">
+                ELITE <br />
+                <span className="text-brand-primary">MENTORS</span>
+              </h2>
+            </div>
+            <p className="text-neutral-500 font-bold uppercase tracking-widest text-[11px] max-w-sm mb-2">
+              দেশের প্রথিতযশা প্রতিষ্ঠানের (BUET, DU, DMC, IUT) সেরা মেধাবীদের তত্ত্বাবধানে তোমার একাডেমিক ক্যারিয়ার শুরু করো।
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {mentors.map((mentor, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative"
+              >
+                <div className="relative h-[450px] w-full rounded-[3.5rem] overflow-hidden border border-white/5 bg-brand-surface shadow-2xl transition-all duration-500 group-hover:border-brand-primary/50 group-hover:shadow-brand-primary/10">
+                  {/* Background Accents */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full blur-3xl group-hover:bg-brand-primary/10 transition-colors"></div>
+                  
+                  {/* Photo Container */}
+                  <div className="absolute inset-0 grayscale group-hover:grayscale-0 transition-all duration-700">
+                    <img 
+                      src={mentor.img} 
+                      alt={mentor.name} 
+                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" 
+                    />
+                    {/* Immersive Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/20 to-transparent opacity-90 group-hover:opacity-70 transition-opacity"></div>
+                  </div>
+
+                  {/* Info Overlay */}
+                  <div className="absolute bottom-0 left-0 w-full p-10 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <span className="px-3 py-1 bg-brand-primary/20 text-brand-primary text-[9px] font-black uppercase tracking-widest rounded-full border border-brand-primary/30">
+                        {mentor.role.split(': ')[1]}
+                      </span>
+                      <span className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">
+                        {mentor.exp}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-2 leading-none">
+                      {mentor.name}
+                    </h3>
+                    
+                    <div className="space-y-1">
+                      <p className="text-brand-primary text-[11px] font-black uppercase tracking-widest flex items-center">
+                        <Award className="h-3 w-3 mr-2" />
+                        {mentor.uni}
+                      </p>
+                      <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-tight">
+                        {mentor.dept}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
