@@ -36,18 +36,18 @@ export default function Footer() {
                 ))}
               </div>
               <div className="space-y-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-brand-primary">Direct Contact</p>
+                <p className="text-xs font-black uppercase tracking-widest text-brand-primary">Direct Contact</p>
                 <p className="text-xl font-black text-white group">01784-323041</p>
                 <div className="flex flex-col space-y-2">
-                  <a href="mailto:pbacademia25@gmail.com" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">pbacademia25@gmail.com</a>
-                  <a href="mailto:admin@pbacademia.top" className="text-sm font-medium text-neutral-400 hover:text-white transition-colors">admin@pbacademia.top</a>
+                  <a href="mailto:pbacademia25@gmail.com" className="text-base font-medium text-neutral-400 hover:text-white transition-colors">pbacademia25@gmail.com</a>
+                  <a href="mailto:admin@pbacademia.top" className="text-base font-medium text-neutral-400 hover:text-white transition-colors">admin@pbacademia.top</a>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            <h4 className="font-black text-white mb-8 text-[10px] uppercase tracking-widest text-brand-primary">Programs</h4>
-            <ul className="space-y-5 text-neutral-400 text-sm font-bold uppercase tracking-tight">
+            <h4 className="font-black text-white mb-8 text-xs uppercase tracking-widest text-brand-primary">Programs</h4>
+            <ul className="space-y-5 text-neutral-400 text-base font-bold uppercase tracking-tight">
               <li><Link to="/courses" className="hover:text-white transition-colors">Class 8-10</Link></li>
               <li><Link to="/courses" className="hover:text-white transition-colors">HSC Foundation</Link></li>
               <li><Link to="/courses" className="hover:text-white transition-colors">Skill Development</Link></li>
@@ -55,8 +55,8 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-black text-white mb-8 text-[10px] uppercase tracking-widest text-brand-primary">Support</h4>
-            <ul className="space-y-5 text-neutral-400 text-sm font-bold uppercase tracking-tight">
+            <h4 className="font-black text-white mb-8 text-xs uppercase tracking-widest text-brand-primary">Support</h4>
+            <ul className="space-y-5 text-neutral-400 text-base font-bold uppercase tracking-tight">
               <li><Link to="/help" className="hover:text-white transition-colors">Help Center</Link></li>
               <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
@@ -64,7 +64,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-black text-neutral-500 uppercase tracking-widest gap-6 text-center md:text-left">
+        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs font-black text-neutral-500 uppercase tracking-widest gap-6 text-center md:text-left">
           <p>© {new Date().getFullYear()} PB ACADEMIA. ALL RIGHTS RESERVED.</p>
           <div className="flex items-center space-x-8">
             <span className="hover:text-neutral-300 transition-colors cursor-default tracking-[0.2em]">Designed in Dhaka</span>

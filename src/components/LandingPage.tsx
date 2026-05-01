@@ -49,8 +49,8 @@ export default function LandingPage() {
                 <div className="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center space-x-4">
                   <QrCode className="h-12 w-12 text-white" />
                   <div>
-                    <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">স্ক্যান করুন</p>
-                    <p className="text-sm text-white font-bold">ঢাকা নোড</p>
+                    <p className="text-xs text-neutral-400 font-bold uppercase tracking-widest">স্ক্যান করুন</p>
+                    <p className="text-base text-white font-bold">ঢাকা নোড</p>
                   </div>
                 </div>
                 <Link
@@ -88,24 +88,24 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 mb-24">
             <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-[4rem] p-12 relative overflow-hidden group border border-white/10 shadow-2xl">
               <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-xs font-black uppercase tracking-[0.3em] mb-6">
                   <span>নতুন ফিচার</span>
                 </div>
                 <h3 className="text-4xl font-display font-bold text-white uppercase tracking-tighter">QUIZ<span className="text-blue-500">BLUST</span></h3>
-                <p className="mt-4 text-blue-100/70 font-medium text-sm">তোমাদের জন্য সম্পূর্ণ ফ্রি এক্সাম সলভ ব্যাচ। এখনই জয়েন করো!</p>
-                <Link to="/quizblust" className="inline-block mt-8 px-8 py-4 bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">ফ্রি জয়েন করো</Link>
+                <p className="mt-4 text-blue-100/70 font-medium text-lg">তোমাদের জন্য সম্পূর্ণ ফ্রি এক্সাম সলভ ব্যাচ। এখনই জয়েন করো!</p>
+                <Link to="/quizblust" className="inline-block mt-8 px-8 py-4 bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs">ফ্রি জয়েন করো</Link>
               </div>
               <Rocket className="h-40 w-40 text-white/5 absolute -bottom-10 -right-10 rotate-12" />
             </div>
 
             <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-[4rem] p-12 relative overflow-hidden group border border-white/10 shadow-2xl">
               <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/30 text-purple-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/30 text-purple-300 text-xs font-black uppercase tracking-[0.3em] mb-6">
                   <span>ফ্রি অ্যাক্সেস</span>
                 </div>
                 <h3 className="text-4xl font-display font-bold text-white uppercase tracking-tighter">BRAIN <span className="text-purple-500">TEASERS</span></h3>
-                <p className="mt-4 text-purple-100/70 font-medium text-sm">মজাদার আইকিউ প্রশ্ন ও ধাঁধার মাধ্যমে নিজেকে ঝালিয়ে নাও।</p>
-                <Link to="/brain-teasers" className="inline-block mt-8 px-8 py-4 bg-purple-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">সমাধান শুরু করো</Link>
+                <p className="mt-4 text-purple-100/70 font-medium text-lg">মজাদার আইকিউ প্রশ্ন ও ধাঁধার মাধ্যমে নিজেকে ঝালিয়ে নাও।</p>
+                <Link to="/brain-teasers" className="inline-block mt-8 px-8 py-4 bg-purple-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs">সমাধান শুরু করো</Link>
               </div>
               <Brain className="h-40 w-40 text-white/5 absolute -bottom-10 -right-10 -rotate-12" />
             </div>
@@ -115,7 +115,7 @@ export default function LandingPage() {
           <div className="mb-32">
             <div className="flex items-center justify-between mb-12 px-4 md:px-0">
               <div>
-                <span className="text-brand-primary font-black uppercase tracking-[0.3em] text-[10px]">Our Journey</span>
+                <span className="text-brand-primary font-black uppercase tracking-[0.3em] text-xs">Our Journey</span>
                 <h2 className="text-3xl md:text-5xl font-display font-bold text-white uppercase tracking-tighter mt-2">CLASS <span className="text-brand-primary">MOMENTS</span></h2>
               </div>
               <div className="flex space-x-2">
@@ -187,7 +187,7 @@ export default function LandingPage() {
                   'সরাসরি ডাউট-ক্লিয়ারিং সেশন', 
                   'পারফরম্যান্স অ্যানালাইসিস রিপোর্ট'
                 ].map((item) => (
-                  <li key={item} className="flex items-center space-x-3 text-neutral-300 font-bold uppercase tracking-tight text-sm">
+                  <li key={item} className="flex items-center space-x-3 text-neutral-300 font-bold uppercase tracking-tight text-base">
                     <div className="h-6 w-6 bg-brand-primary/10 text-brand-primary rounded-xl flex items-center justify-center">
                       <ArrowRight className="h-3 w-3" />
                     </div>
@@ -205,7 +205,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tighter">প্রোগ্রামসমূহ</h2>
-            <p className="mt-6 text-neutral-500 font-medium max-w-lg mx-auto uppercase tracking-widest text-[10px]">তোমার একাডেমিক লক্ষ্যের প্রোগ্রামটি নির্বাচন করো এবং সফলতার যাত্রা শুরু করো।</p>
+            <p className="mt-6 text-neutral-500 font-black max-w-lg mx-auto uppercase tracking-widest text-xs">তোমার একাডেমিক লক্ষ্যের প্রোগ্রামটি নির্বাচন করো এবং সফলতার যাত্রা শুরু করো।</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-10">
@@ -217,14 +217,14 @@ export default function LandingPage() {
               <div key={i} className="bg-neutral-900 rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl group">
                 <div className="h-64 overflow-hidden relative">
                   <img src={program.img} alt={program.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-40" />
-                  <div className="absolute top-6 left-6 bg-brand-primary px-4 py-2 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-lg">
+                  <div className="absolute top-6 left-6 bg-brand-primary px-4 py-2 rounded-xl text-xs font-black text-white uppercase tracking-widest shadow-lg">
                     {program.classes}
                   </div>
                 </div>
                 <div className="p-10">
                   <h3 className="text-2xl font-black text-white mb-4 tracking-tighter uppercase">{program.title}</h3>
                   <p className="text-neutral-500 text-sm leading-relaxed mb-8">{program.desc}</p>
-                  <Link to="/register" className="flex items-center space-x-2 text-brand-primary font-black uppercase tracking-widest text-[10px] hover:space-x-4 transition-all">
+                  <Link to="/register" className="flex items-center space-x-2 text-brand-primary font-black uppercase tracking-widest text-xs hover:space-x-4 transition-all">
                     <span>ভর্তি হও</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -260,7 +260,7 @@ export default function LandingPage() {
                       href="https://maps.app.goo.gl/qYaJDS3mqNz67L979" 
                       target="_blank" 
                       rel="noreferrer"
-                      className="inline-flex items-center mt-4 text-blue-500 text-[10px] font-black uppercase tracking-widest hover:underline"
+                      className="inline-flex items-center mt-4 text-blue-500 text-xs font-black uppercase tracking-widest hover:underline"
                     >
                       Google Maps-এ দেখুন <ArrowRight className="ml-2 h-3 w-3" />
                     </a>
@@ -290,17 +290,31 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="relative mt-16 lg:mt-0">
-              <div className="relative z-10 bg-white/5 p-6 rounded-[3.5rem] border border-white/10 backdrop-blur-md shadow-2xl overflow-hidden aspect-video">
+            <div className="relative mt-16 lg:mt-0 grid gap-8">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="relative z-10 p-2 bg-white/5 border border-white/10 rounded-[3rem] backdrop-blur-sm shadow-2xl overflow-hidden"
+              >
+                <img 
+                  src="https://i.ibb.co.com/prWFBywQ/Gemini-Generated-Image-3drk3j3drk3j3drk.png" 
+                  alt="PB Academia Campus" 
+                  className="rounded-[2.5rem] w-full h-[300px] object-cover"
+                />
+              </motion.div>
+
+              <div className="relative z-10 bg-white/5 p-2 rounded-[3.5rem] border border-white/10 backdrop-blur-md shadow-2xl overflow-hidden aspect-video">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14608.272186834165!2d90.37039014605929!3d23.744956667950293!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b93d7907f1f3%3A0xe5f8664156d1c49!2sPB%20Academia!5e0!3m2!1sen!2sbd!4v1714584200000!5m2!1sen!2sbd" 
-                  className="w-full h-full grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+                  className="w-full h-full grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700 rounded-[3rem]"
                   style={{ border: 0 }} 
                   allowFullScreen={true}
                   loading="lazy" 
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
+              
               <div className="absolute -top-10 -right-10 w-64 h-64 bg-blue-600/10 rounded-full blur-[120px]"></div>
               <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-brand-primary/10 rounded-full blur-[120px]"></div>
             </div>
@@ -316,7 +330,7 @@ export default function LandingPage() {
             <p className="text-white/70 text-lg mb-12 max-w-lg mx-auto font-medium leading-relaxed">দেশের প্রথিতযশা একাডেমিক নেটওয়ার্কে যোগ দাও এবং আজই তোমার সফল ভবিষ্যৎ নিশ্চিত করো।</p>
             <Link
               to="/register"
-              className="inline-flex items-center px-12 py-5 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:scale-105 transition-all shadow-2xl"
+              className="inline-flex items-center px-12 py-5 bg-black text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all shadow-2xl"
             >
               যাত্রা শুরু করো
             </Link>
