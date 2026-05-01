@@ -181,21 +181,23 @@ export default function QuizBlustDashboard() {
               <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-8 bg-amber-500/10 border border-amber-500/20 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-amber-500/5"
+                className="p-1 w-full bg-gradient-to-r from-amber-500/50 via-yellow-500/50 to-amber-500/50 rounded-[2.6rem] shadow-2xl shadow-amber-500/10 mb-12"
               >
-                <div className="flex items-center space-x-6">
-                  <div className="h-16 w-16 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-amber-500/30">
-                    <AlertTriangle className="h-8 w-8 animate-pulse" />
+                <div className="p-8 bg-[#0a0a0a] rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8">
+                  <div className="flex items-center space-x-6">
+                    <div className="h-16 w-16 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-amber-500/30">
+                      <AlertTriangle className="h-8 w-8 animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-white uppercase tracking-tight">আসন্ন পরীক্ষার সতর্কতা!</h3>
+                      <p className="text-amber-500 font-bold text-[10px] uppercase tracking-widest mt-1">
+                        {nextExam.title} শুরু হবে {new Date(nextExam.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} মিনিটে
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight">আগামী পরীক্ষার নোটিশ!</h3>
-                    <p className="text-amber-500 font-bold text-[10px] uppercase tracking-widest mt-1">
-                      {nextExam.title} শুরু হবে {new Date(nextExam.startTime).toLocaleString()} এ
-                    </p>
+                  <div className="bg-black/60 px-10 py-6 rounded-2xl border border-white/5 shadow-inner">
+                    <CountdownClock targetDate={nextExam.startTime} prefix="পরীক্ষা শুরু হতে বাকি" />
                   </div>
-                </div>
-                <div className="bg-black/40 px-10 py-6 rounded-2xl border border-white/5">
-                  <CountdownClock targetDate={nextExam.startTime} prefix="EXAM STARTS IN" />
                 </div>
               </motion.div>
             );

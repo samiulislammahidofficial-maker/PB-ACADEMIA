@@ -140,30 +140,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const initializeData = async () => {
-    const courses = [
-      { title: 'Mathematics for Class 10', description: 'Complete trigonometry, algebra, and geometry coverage.', price: 500, teacherId: 'demo-teacher', teacherName: 'Mr. Sharma' },
-      { title: 'Physics Foundation', description: 'Mechanics and Electromagnetism for Class 11.', price: 600, teacherId: 'demo-teacher', teacherName: 'Dr. Bose' },
-      { title: 'Biology Deep Dive', description: 'Genetics and Human Anatomy for Class 12.', price: 450, teacherId: 'demo-teacher', teacherName: 'Ms. Iyer' }
-    ];
-
-    for (const course of courses) {
-      await addDoc(collection(db, 'courses'), {
-        ...course,
-        createdAt: new Date().toISOString()
-      });
-    }
-    alert('Sample courses added!');
-    window.location.reload();
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
         <div>
-          <h1 className="text-5xl font-black text-white tracking-tighter leading-none uppercase">PB ACADEMIA <br/><span className="text-blue-500">ROOT CONTROL</span></h1>
-          <p className="text-neutral-500 mt-4 uppercase tracking-[0.4em] text-[8px] font-black italic">Advanced Governance Terminal // Protocol 7.4.x</p>
-          <button onClick={initializeData} className="mt-8 text-[8px] font-black text-blue-500 bg-white/5 border border-white/5 px-6 py-2 rounded-full uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-2xl">Init Neural Samples</button>
+          <h1 className="text-5xl font-black text-white tracking-tighter leading-none uppercase">PB ACADEMIA <br/><span className="text-blue-500">ADMIN PANEL</span></h1>
+          <p className="text-neutral-500 mt-4 uppercase tracking-[0.4em] text-[8px] font-black italic">System Oversight & Governance Center</p>
         </div>
         <div className="flex bg-black p-1.5 rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-2xl">
           {(['users', 'teachers', 'analytics', 'settings'] as const).map(tab => (

@@ -6,7 +6,7 @@ import {
   BookOpen, Award, Clock, ChevronRight, Video, ClipboardList, 
   MessageSquare, BookCheck, Info, Users, LayoutDashboard, 
   PlusCircle, FileText, Monitor, GraduationCap, BarChart2, 
-  Wallet, Headphones, ArrowRight, Rocket
+  Wallet, Headphones, ArrowRight, Rocket, Brain
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -29,6 +29,7 @@ const sidebarItems = [
 
 const features = [
   { icon: <Rocket className="h-6 w-6" />, title: "QuizBlust", color: "bg-blue-600 text-white", link: "/quizblust" },
+  { icon: <Brain className="h-6 w-6" />, title: "Brain Teasers", color: "bg-indigo-600 text-white", link: "/brain-teasers" },
   { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600" },
   { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600" },
   { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600" },

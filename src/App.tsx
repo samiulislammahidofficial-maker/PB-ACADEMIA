@@ -17,6 +17,7 @@ import ExamView from './components/ExamView';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizBlustDashboard from './components/dashboards/QuizBlustDashboard';
+import BrainTeasers from './components/BrainTeasers';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
   const { user, profile, loading } = useAuth();
@@ -54,6 +55,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <QuizBlustDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/brain-teasers" 
+                element={
+                  <ProtectedRoute>
+                    <BrainTeasers />
                   </ProtectedRoute>
                 } 
               />

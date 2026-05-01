@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { BookOpen, Award, Users, ArrowRight, Video, QrCode, ClipboardList, Info, BookCheck, MessageSquare, Rocket } from 'lucide-react';
+import { BookOpen, Award, Users, ArrowRight, Video, QrCode, ClipboardList, Info, BookCheck, MessageSquare, Rocket, Brain } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function LandingPage() {
@@ -67,49 +67,29 @@ export default function LandingPage() {
       {/* Philosophy Section - Inspired by the student illustration screenshot */}
       <section className="py-24 bg-brand-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-[4rem] p-12 mb-24 relative overflow-hidden group border border-white/10 shadow-2xl">
-            <div className="relative z-10 lg:grid lg:grid-cols-2 items-center gap-16">
-              <div className="text-left">
-                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6 animate-pulse">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                  <span>নতুন ফিচার লঞ্চ</span>
+          <div className="grid md:grid-cols-2 gap-12 mb-24">
+            <div className="bg-gradient-to-br from-indigo-900 to-blue-900 rounded-[4rem] p-12 relative overflow-hidden group border border-white/10 shadow-2xl">
+              <div className="relative z-10">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                  <span>নতুন ফিচার</span>
                 </div>
-                <h3 className="text-4xl md:text-6xl font-display font-bold text-white leading-tight uppercase tracking-tighter">
-                  QUIZ<span className="text-blue-500">BLUST</span>
-                </h3>
-                <p className="mt-6 text-xl text-blue-100/70 font-medium">অষ্টম শ্রেণীর শিক্ষার্থীদের জন্য সম্পূর্ণ ফ্রি এক্সাম সলভ ব্যাচ।</p>
-                <div className="mt-10 flex flex-wrap gap-6">
-                  <Link to="/quizblust" className="px-10 py-5 bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-all shadow-xl shadow-blue-500/20">
-                    ফ্রি জয়েন করুন
-                  </Link>
-                  <div className="flex -space-x-4">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="h-12 w-12 rounded-full border-4 border-indigo-900 bg-neutral-800 flex items-center justify-center overflow-hidden">
-                        <img src={`https://i.pravatar.cc/150?u=${i+10}`} alt="user" className="h-full w-full object-cover" />
-                      </div>
-                    ))}
-                    <div className="h-12 w-12 rounded-full border-4 border-indigo-900 bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
-                      +1k
-                    </div>
-                  </div>
-                </div>
+                <h3 className="text-4xl font-display font-bold text-white uppercase tracking-tighter">QUIZ<span className="text-blue-500">BLUST</span></h3>
+                <p className="mt-4 text-blue-100/70 font-medium text-sm">অষ্টম শ্রেণীর শিক্ষার্থীদের জন্য সম্পূর্ণ ফ্রি এক্সাম সলভ ব্যাচ।</p>
+                <Link to="/quizblust" className="inline-block mt-8 px-8 py-4 bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">ফ্রি জয়েন করুন</Link>
               </div>
-              <div className="hidden lg:block relative">
-                <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full"></div>
-                <Rocket className="h-64 w-64 text-white/10 absolute -top-10 -right-10 rotate-12" />
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[3rem] shadow-2xl relative">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
-                    <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-4 w-3/4 bg-white/10 rounded-full"></div>
-                    <div className="h-4 w-1/2 bg-white/10 rounded-full"></div>
-                    <div className="h-24 w-full bg-white/5 rounded-3xl mt-8"></div>
-                  </div>
+              <Rocket className="h-40 w-40 text-white/5 absolute -bottom-10 -right-10 rotate-12" />
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-[4rem] p-12 relative overflow-hidden group border border-white/10 shadow-2xl">
+              <div className="relative z-10">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/30 text-purple-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                  <span>ফ্রি অ্যাক্সেস</span>
                 </div>
+                <h3 className="text-4xl font-display font-bold text-white uppercase tracking-tighter">BRAIN <span className="text-purple-500">TEASERS</span></h3>
+                <p className="mt-4 text-purple-100/70 font-medium text-sm">মজাদার আইকিউ প্রশ্ন ও ধাঁধার মাধ্যমে নিজেকে ঝালিয়ে নিন।</p>
+                <Link to="/brain-teasers" className="inline-block mt-8 px-8 py-4 bg-purple-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px]">ধাঁধা সমাধান শুরু করুন</Link>
               </div>
+              <Brain className="h-40 w-40 text-white/5 absolute -bottom-10 -right-10 -rotate-12" />
             </div>
           </div>
 
