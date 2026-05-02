@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="h-10 w-10 bg-white/5 rounded-full overflow-hidden transition-all group-hover:scale-105 border border-white/10 shadow-sm">
-                <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="PB Academia Logo" className="w-full h-full object-cover" />
+                <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="PB Academia Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-display font-black text-2xl tracking-tighter text-white">PB ACADEMIA</span>
             </Link>

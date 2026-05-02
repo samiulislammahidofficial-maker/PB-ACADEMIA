@@ -100,7 +100,7 @@ export default function LoginPage() {
               whileHover={{ scale: 1.1 }}
               className="h-20 w-20 bg-brand-surface rounded-full overflow-hidden border-4 border-white shadow-xl flex items-center justify-center p-1"
             >
-              <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover rounded-full scale-125" />
+              <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover rounded-full" />
             </motion.div>
           </Link>
           <h2 className="text-3xl font-display font-bold text-neutral-900">Welcome Back</h2>
