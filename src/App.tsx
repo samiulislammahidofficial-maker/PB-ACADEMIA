@@ -33,11 +33,11 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
+        <div className="relative min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
           <Navbar />
           <SpeedInsights />
           <Analytics />
-          <main className="flex-grow">
+          <main className="flex-1 w-full relative z-10">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />

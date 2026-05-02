@@ -109,11 +109,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCFE] flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-5rem)] bg-[#FDFCFE] flex items-center justify-center p-4">
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-white rounded-[3rem] shadow-2xl shadow-brand-primary/10 border border-neutral-100 p-10 md:p-14"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="max-w-md w-full bg-white rounded-[3rem] shadow-2xl shadow-brand-primary/10 border border-neutral-100 p-10 md:p-14 relative z-20"
       >
         <div className="text-center mb-10">
           <Link to="/" className="inline-block mb-6">

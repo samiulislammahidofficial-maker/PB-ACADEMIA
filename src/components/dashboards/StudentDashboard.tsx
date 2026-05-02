@@ -88,7 +88,7 @@ export default function StudentDashboard() {
         <div className="p-8 border-b border-white/5 mb-6">
           <div className="flex items-center space-x-4">
              <div className="h-10 w-10 bg-white/5 rounded-[1rem] overflow-hidden border border-white/10 shadow-2xl">
-                <img src="https://i.ibb.co.com/9394X1bB/fb-profile-pic-1.png" alt="Logo" className="w-full h-full object-cover" />
+                <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-black uppercase tracking-tighter text-white text-lg">PB Academia</span>
           </div>
