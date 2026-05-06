@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { auth, googleProvider, signInWithPopup, db, getDoc, doc } from '../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Mail, Lock, AlertCircle, ChevronRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../lib/AuthContext';
 
 export default function LoginPage() {
@@ -12,10 +12,12 @@ export default function LoginPage() {
   const [role, setRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
   const { user, loading: authLoading, loginCustom } = useAuth();
 
   useEffect(() => {
+    setIsMounted(true);
     if (!authLoading && user) {
       navigate('/dashboard');
     }
@@ -88,25 +90,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-[#FDFCFE] flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="max-w-md w-full bg-white rounded-[3rem] shadow-2xl shadow-brand-primary/10 border border-neutral-100 p-10 md:p-14 relative z-20"
-      >
-        <div className="text-center mb-10">
-          <Link to="/" className="inline-block mb-6">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              className="h-20 w-20 bg-brand-surface rounded-full overflow-hidden border-4 border-white shadow-xl flex items-center justify-center p-1"
-            >
-              <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover rounded-full" />
-            </motion.div>
-          </Link>
-          <h2 className="text-3xl font-display font-bold text-neutral-900">Welcome Back</h2>
-          <p className="text-neutral-500 mt-2 font-medium">Select your department to enter</p>
-        </div>
+    <div className="min-h-[calc(100vh-5rem)] bg-white relative overflow-hidden flex items-center justify-center p-4">
+      {/* Background Decor */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 -left-20 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+        <div className="absolute bottom-0 -right-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      <AnimatePresence>
+        {isMounted && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="max-w-md w-full bg-white rounded-[3rem] shadow-[0_32px_120px_rgba(31,38,135,0.15)] border border-neutral-100 p-10 md:p-14 relative z-20"
+          >
+            <div className="text-center mb-10">
+              <Link to="/" className="inline-block mb-6">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="h-20 w-20 bg-brand-surface rounded-full overflow-hidden border-4 border-white shadow-xl flex items-center justify-center p-1"
+                >
+                  <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover rounded-full" />
+                </motion.div>
+              </Link>
+              <h2 className="text-3xl font-display font-black text-[#1e1b4b] uppercase tracking-tighter">লগইন করুন</h2>
+              <p className="text-neutral-400 mt-3 font-bold uppercase tracking-widest text-[10px]">পিবি অ্যাকাডেমি ড্যাশবোর্ড</p>
+            </div>
 
         {/* Role Selector */}
         <div className="flex bg-neutral-50 p-1.5 rounded-2xl mb-10 border border-neutral-100">
@@ -202,12 +212,14 @@ export default function LoginPage() {
           </>
         )}
 
-        {role !== 'student' && (
-          <p className="mt-10 text-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
-            Identity verification required. Access restricted to authorized personnel.
-          </p>
+            {role !== 'student' && (
+              <p className="mt-10 text-center text-[10px] text-neutral-400 font-bold uppercase tracking-widest leading-relaxed">
+                Identity verification required. <br />Access restricted to authorized personnel.
+              </p>
+            )}
+          </motion.div>
         )}
-      </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
