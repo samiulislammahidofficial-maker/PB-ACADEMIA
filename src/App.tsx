@@ -26,7 +26,11 @@ import { useLocation } from 'react-router-dom';
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
   const { user, profile, loading } = useAuth();
   
-  if (loading) return <div className="flex items-center justify-center h-screen bg-[#050505]">Loading...</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen bg-white">
+      <div className="h-8 w-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" />;
   if (role && profile?.role !== role) return <Navigate to="/dashboard" />;
   

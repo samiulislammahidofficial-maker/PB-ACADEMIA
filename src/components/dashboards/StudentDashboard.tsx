@@ -51,14 +51,11 @@ export default function StudentDashboard() {
       return;
     }
 
-    // Initialize with empty array but don't set loading to true unless we really have no data
-    // setLiveExams([]); // Optional: keep previous data until new snapshot
-    
-    // Fetch live/upcoming exams
+    // Attempt to load exams but don't block the UI
     const q = query(
       collection(db, 'exams'),
       orderBy('startTime', 'desc'),
-      limit(50)
+      limit(20)
     );
 
     const unsubscribe = onSnapshot(q, (snap) => {
@@ -70,179 +67,130 @@ export default function StudentDashboard() {
         
         try {
           const startTime = data.startTime?.toDate ? data.startTime.toDate() : new Date(data.startTime);
-          if (isNaN(startTime.getTime())) return;
-          
           const duration = data.durationMinutes || 60;
           const endTime = new Date(startTime.getTime() + duration * 60000);
           
-          const sevenDaysFromNow = new Date();
-          sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-
-          if (now <= endTime && startTime <= sevenDaysFromNow) {
+          if (now <= endTime) {
             list.push({ id: doc.id, ...data, startTime: startTime.toISOString() });
           }
         } catch (e) {
-          console.error("Error processing exam date:", e);
+          console.error("Date processing error:", e);
         }
       });
       
-      list.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
       setLiveExams(list);
       setLoading(false);
     }, (error) => {
-      console.error("Dashboard sub error:", error);
+      console.error("Sync error:", error);
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  const activeExam = liveExams.find(e => {
-    const start = new Date(e.startTime);
-    const end = new Date(start.getTime() + (e.durationMinutes || 60) * 60000);
+  const activeExam = liveExams.find(exam => {
+    const start = new Date(exam.startTime);
+    const end = new Date(start.getTime() + (exam.durationMinutes || 60) * 60000);
     const now = new Date();
     return now >= start && now <= end;
   });
 
-  if (loading && liveExams.length === 0) {
+  if (loading && !profile) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#050505] min-h-[400px]">
+      <div className="flex-1 flex items-center justify-center bg-gray-50 min-h-screen">
         <div className="flex flex-col items-center">
-          <div className="h-10 w-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-white/20 font-black uppercase tracking-widest text-[9px]">লোড হচ্ছে...</p>
+          <div className="h-10 w-10 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-neutral-400 font-bold uppercase tracking-widest text-[10px]">Loading Dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col lg:flex-row">
-      {/* Sidebar - Fixed Height within Viewport */}
-      <aside className="w-full lg:w-72 bg-[#0a0a0a] border-b lg:border-b-0 lg:border-r border-white/5 flex flex-col lg:sticky lg:top-20 lg:h-[calc(100vh-80px)] overflow-y-auto">
-        <div className="p-8 border-b border-white/5 hidden lg:block">
-          <div className="flex items-center space-x-4">
-             <div className="h-10 w-10 bg-white/5 rounded-[1rem] overflow-hidden border border-white/10 shadow-2xl">
+    <div className="min-h-screen bg-neutral-100 flex flex-col lg:flex-row">
+      {/* Sidebar - Light Version as requested */}
+      <aside className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-neutral-200 flex flex-col lg:sticky lg:top-0 lg:h-screen overflow-y-auto z-30">
+        <div className="p-6 border-b border-neutral-100 hidden lg:block">
+          <div className="flex items-center space-x-3">
+             <div className="h-8 w-8 bg-brand-surface rounded-lg overflow-hidden border border-neutral-200 shadow-sm">
                 <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover" />
-              </div>
-              <span className="font-black uppercase tracking-tighter text-white text-lg">PB Academia</span>
+             </div>
+             <span className="font-extrabold tracking-tighter text-neutral-900 uppercase">PB Academia</span>
           </div>
         </div>
-        <div className="py-6 px-4 lg:px-6">
-          <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-2 lg:space-x-0 lg:space-y-1 pb-4 lg:pb-0 scrollbar-hide">
+        <div className="py-4 px-3">
+          <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-1 lg:space-x-0 lg:space-y-0.5 pb-2 lg:pb-0 scrollbar-hide">
             {sidebarItems.map((item, i) => (
               <button
                 key={i}
                 onClick={() => item.link && navigate(item.link)}
-                className={`flex-shrink-0 flex items-center space-x-4 px-6 lg:px-4 py-3 rounded-2xl transition-all group ${
+                className={`flex-shrink-0 flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${
                   item.active 
-                    ? 'bg-blue-600 font-black text-white shadow-xl shadow-blue-600/20' 
-                    : 'text-neutral-500 hover:bg-white/5 hover:text-white'
+                    ? 'bg-neutral-100 font-bold text-brand-primary' 
+                    : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
                 }`}
               >
-                <span className={item.active ? 'text-white' : 'text-neutral-600 group-hover:text-blue-500'}>
-                  {item.icon}
+                <span className={item.active ? 'text-brand-primary' : 'text-neutral-400 group-hover:text-brand-primary'}>
+                  {React.cloneElement(item.icon as React.ReactElement, { size: 18 })}
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{item.label}</span>
+                <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">{item.label}</span>
               </button>
             ))}
           </div>
         </div>
       </aside>
 
-      {/* Main Content - Scrolls with window */}
-      <main className="flex-1 p-6 md:p-10 lg:p-16 relative">
-        <div className="max-w-6xl mx-auto">
-          <div>
-            {/* Immersive Welcome Banner */}
-            <div className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden mb-12 border border-white/5 shadow-2xl h-[300px] md:h-[400px] flex items-center group">
-              <img 
-                src="https://i.ibb.co.com/BHxqgXTv/fbfe08da-0769-41af-bb5e-3ab953c6b34f.jpg" 
-                className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
-                alt="Class moments" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
-              <div className="relative z-10 p-8 md:p-20">
-                <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-blue-600/20 text-blue-500 border border-blue-600/30 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">
-                  <div className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span>Academic Operations Centre</span>
-                </div>
-                <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none mb-6 uppercase">
-                  তোমাকে <br />
-                  <span className="text-blue-500">স্বাগতম!</span>
-                </h1>
-                <p className="text-neutral-400 font-bold uppercase tracking-[0.3em] text-[9px] md:text-[10px]">
-                  {profile?.name} • তোমার পারফরম্যান্স এখানে দেখুন
-                </p>
-              </div>
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-8 lg:p-10 bg-neutral-100">
+        <div className="max-w-4xl mx-auto space-y-4">
+          
+          {/* Welcome Header */}
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Welcome, {profile?.name || 'Student'}!</h1>
+              <p className="text-neutral-500 text-xs font-bold uppercase tracking-widest mt-1">Class {profile?.className || profile?.class || '8'}</p>
             </div>
-
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-3 gap-6 mb-16">
-              <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all cursor-pointer">
-                <div className="relative z-10">
-                  <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-blue-600/30">
-                    <Video className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">লাইভ ক্লাস</h3>
-                  <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">আগামী সেশন ১ ঘণ্টা পরে</p>
-                  <div className="mt-8 flex items-center text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:translate-x-2 transition-transform">
-                    জয়েন করো <ArrowRight className="ml-2 h-4 w-4" />
-                  </div>
-                </div>
-                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
-              </div>
-
-              <Link 
-                to={activeExam ? `/exams/${activeExam.id}` : "/quizblust"}
-                className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer"
-              >
-                <div className="relative z-10">
-                  <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-emerald-500/30">
-                    <ClipboardList className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">লাইভ পরীক্ষা</h3>
-                  <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest leading-relaxed">
-                    {activeExam ? `${activeExam.title} চলছে` : liveExams.length > 0 ? `${liveExams.length}টি আসন্ন পরীক্ষা` : 'কোনো পরীক্ষা নেই'}
-                  </p>
-                  <div className="mt-8 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform">
-                    {activeExam ? 'অংশ নাও' : 'শিডিউল দেখো'} <ArrowRight className="ml-2 h-4 w-4" />
-                  </div>
-                </div>
-              </Link>
-
-              <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl group hover:border-orange-500/50 transition-all cursor-pointer">
-                <div className="h-12 w-12 bg-orange-500 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-orange-500/30">
-                  <BarChart2 className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">অ্যানালিটিক্স</h3>
-                <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">সপ্তাহের শীর্ষ ৫% পজিশন</p>
-                <div className="mt-8 text-orange-500 text-[9px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-transform">বিস্তারিত দেখো</div>
-              </div>
-            </div>
-
-            {/* Explore Sections */}
-            <div className="mb-20">
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-xl font-black text-white uppercase tracking-tighter">এক্সপ্লোর করো</h2>
-                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest cursor-pointer hover:underline">সব দেখাও</span>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                {features.map((feature, i) => (
-                  <Link to={feature.link || '#'} key={i}>
-                    <div
-                      className="bg-[#0a0a0a] p-8 rounded-[2rem] border border-white/5 flex flex-col items-center group transition-all hover:bg-white/[0.02] hover:border-white/10 cursor-pointer"
-                    >
-                      <div className={`h-12 w-12 ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-2xl`}>
-                        {feature.icon}
-                      </div>
-                      <span className="text-[9px] font-black text-neutral-400 group-hover:text-white uppercase tracking-widest text-center">{feature.title}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            {/* Quick Profile Info if needed */}
           </div>
+
+          {/* Action Cards List - Directly matching reference style */}
+          <div className="space-y-3">
+            {[
+              { icon: <Video className="text-green-500" />, title: "Live Class", link: "/dashboard", color: "bg-green-50" },
+              { icon: <ClipboardList className="text-yellow-500" />, title: "Live Exam", link: "/quizblust", color: "bg-yellow-50", badge: activeExam ? "Live Now" : null },
+              { icon: <BookOpen className="text-orange-500" />, title: "Practice Exam", link: "/practice-exams", color: "bg-orange-50" },
+              { icon: <BookCheck className="text-indigo-500" />, title: "Solve Sheet", link: "/dashboard", color: "bg-indigo-50" },
+              { icon: <MessageSquare className="text-cyan-500" />, title: "Q&A Service", link: "/dashboard", color: "bg-cyan-50" },
+              { icon: <FileText className="text-red-500" />, title: "Course & Content", link: "/dashboard", color: "bg-red-50" },
+              { icon: <Users className="text-emerald-500" />, title: "Discussion Group", link: "/dashboard", color: "bg-emerald-50" },
+            ].map((feature, i) => (
+              <button
+                key={i}
+                onClick={() => navigate(feature.link)}
+                className="w-full bg-white border border-neutral-200 rounded-3xl p-5 md:p-6 flex items-center justify-between group hover:shadow-xl hover:shadow-neutral-200 hover:border-brand-primary/30 transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center space-x-6">
+                  <div className={`h-12 w-12 md:h-14 md:w-14 ${feature.color} rounded-2xl flex items-center justify-center shadow-sm`}>
+                    {feature.icon}
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg md:text-xl font-black text-neutral-800 tracking-tight group-hover:text-brand-primary transition-colors">
+                      {feature.title}
+                    </h3>
+                    {feature.badge && (
+                      <span className="inline-block px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-[8px] font-black uppercase tracking-widest mt-1">
+                        {feature.badge}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-brand-primary group-hover:text-white transition-all">
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+            ))}
+          </div>
+
         </div>
       </main>
     </div>

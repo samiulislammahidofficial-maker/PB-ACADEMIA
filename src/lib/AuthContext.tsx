@@ -61,7 +61,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const handleInactivity = () => {
-      const last = parseInt(localStorage.getItem('pb_last_activity') || Date.now().toString());
+      const storedLast = localStorage.getItem('pb_last_activity');
+      if (!storedLast) {
+        localStorage.setItem('pb_last_activity', Date.now().toString());
+        return;
+      }
+      
+      const last = parseInt(storedLast);
+      if (isNaN(last)) {
+        localStorage.setItem('pb_last_activity', Date.now().toString());
+        return;
+      }
+
       if (Date.now() - last > timeout) {
         console.log("Session expired due to inactivity");
         logout();
