@@ -43,6 +43,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Inactivity timeout: 1 hour
+  useEffect(() => {
+    if (!user) return;
+
+    const timeout = 3600000; // 1 hour in ms
+    const checkInterval = 60000; // Check every minute
+    let lastUpdate = Date.now();
+
+    const updateActivity = () => {
+      const now = Date.now();
+      // Throttle updates to local storage to every 10 seconds
+      if (now - lastUpdate > 10000) {
+        lastUpdate = now;
+        localStorage.setItem('pb_last_activity', now.toString());
+      }
+    };
+
+    const handleInactivity = () => {
+      const last = parseInt(localStorage.getItem('pb_last_activity') || Date.now().toString());
+      if (Date.now() - last > timeout) {
+        console.log("Session expired due to inactivity");
+        logout();
+      }
+    };
+
+    // Events to track activity
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    events.forEach(event => window.addEventListener(event, updateActivity, { passive: true }));
+
+    localStorage.setItem('pb_last_activity', Date.now().toString());
+    const interval = setInterval(handleInactivity, checkInterval);
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, updateActivity));
+      clearInterval(interval);
+    };
+  }, [user]);
+
   // Persistence check for custom login - deprecated in favor of Firebase persistence
   useEffect(() => {
     const savedCustom = localStorage.getItem('pb_custom_auth');
@@ -97,6 +135,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let unsubscribeProfile: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+      // Only trigger loading if the user has actually changed and we need to fetch a new profile
+      const userChanged = !user || !firebaseUser || user.uid !== firebaseUser.uid;
+      
       setUser(firebaseUser);
       
       if (unsubscribeProfile) {
@@ -105,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (firebaseUser) {
-        setLoading(true);
+        if (userChanged) setLoading(true);
         unsubscribeProfile = onSnapshot(doc(db, 'users', firebaseUser.uid), 
           (docSnap) => {
             if (docSnap.exists()) {

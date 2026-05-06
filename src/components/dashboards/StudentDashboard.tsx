@@ -46,9 +46,14 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
-    setLoading(true);
+    // Initialize with empty array but don't set loading to true unless we really have no data
+    // setLiveExams([]); // Optional: keep previous data until new snapshot
+    
     // Fetch live/upcoming exams
     const q = query(
       collection(db, 'exams'),
@@ -61,15 +66,23 @@ export default function StudentDashboard() {
       const now = new Date();
       snap.forEach(doc => {
         const data = doc.data();
-        const startTime = data.startTime?.toDate ? data.startTime.toDate() : new Date(data.startTime);
-        const duration = data.durationMinutes || 60;
-        const endTime = new Date(startTime.getTime() + duration * 60000);
+        if (!data || !data.startTime) return;
         
-        const sevenDaysFromNow = new Date();
-        sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+        try {
+          const startTime = data.startTime?.toDate ? data.startTime.toDate() : new Date(data.startTime);
+          if (isNaN(startTime.getTime())) return;
+          
+          const duration = data.durationMinutes || 60;
+          const endTime = new Date(startTime.getTime() + duration * 60000);
+          
+          const sevenDaysFromNow = new Date();
+          sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
-        if (now <= endTime && startTime <= sevenDaysFromNow) {
-          list.push({ id: doc.id, ...data, startTime: startTime.toISOString() });
+          if (now <= endTime && startTime <= sevenDaysFromNow) {
+            list.push({ id: doc.id, ...data, startTime: startTime.toISOString() });
+          }
+        } catch (e) {
+          console.error("Error processing exam date:", e);
         }
       });
       
@@ -91,12 +104,12 @@ export default function StudentDashboard() {
     return now >= start && now <= end;
   });
 
-  if (loading) {
+  if (loading && liveExams.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#050505] p-20">
+      <div className="flex-1 flex items-center justify-center bg-[#050505] min-h-[400px]">
         <div className="flex flex-col items-center">
-          <div className="h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-          <p className="text-white/40 font-black uppercase tracking-widest text-xs">অ্যাকাডেমিক ডেটা লোড হচ্ছে...</p>
+          <div className="h-10 w-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-white/20 font-black uppercase tracking-widest text-[9px]">লোড হচ্ছে...</p>
         </div>
       </div>
     );
@@ -139,11 +152,7 @@ export default function StudentDashboard() {
       {/* Main Content - Scrolls with window */}
       <main className="flex-1 p-6 md:p-10 lg:p-16 relative">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
+          <div>
             {/* Immersive Welcome Banner */}
             <div className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden mb-12 border border-white/5 shadow-2xl h-[300px] md:h-[400px] flex items-center group">
               <img 
@@ -221,20 +230,19 @@ export default function StudentDashboard() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {features.map((feature, i) => (
                   <Link to={feature.link || '#'} key={i}>
-                    <motion.div
-                      whileHover={{ y: -5 }}
+                    <div
                       className="bg-[#0a0a0a] p-8 rounded-[2rem] border border-white/5 flex flex-col items-center group transition-all hover:bg-white/[0.02] hover:border-white/10 cursor-pointer"
                     >
                       <div className={`h-12 w-12 ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-2xl`}>
                         {feature.icon}
                       </div>
                       <span className="text-[9px] font-black text-neutral-400 group-hover:text-white uppercase tracking-widest text-center">{feature.title}</span>
-                    </motion.div>
+                    </div>
                   </Link>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </main>
     </div>

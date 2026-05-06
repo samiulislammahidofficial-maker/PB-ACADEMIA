@@ -143,5 +143,60 @@ export const practiceSets: PracticeSet[] = [
       { id: 'r1', text: 'আকাইদ শব্দের অর্থ কী?', options: ['বিশ্বাস', 'ইবাদত', 'আমল', 'তাকওয়া'], correctAnswer: 0 },
       { id: 'r2', text: 'কালেমা তাইয়্যেবা অর্থ কী?', options: ['পবিত্র বাক্য', 'সফল বাক্য', 'মহান বাক্য', 'সুন্দর বাক্য'], correctAnswer: 0 }
     ]
+  },
+  {
+    id: 'class10-biology-2',
+    title: 'Biology Chapter 4: Bioenergetics (SSC)',
+    class: 10,
+    subject: 'Biology',
+    durationMinutes: 15,
+    questions: [
+      { id: 'b41', text: 'ATP এর পূর্ণরূপ কী?', options: ['Adenosine Triphosphate', 'Adenosine Diphosphate', 'Adenosine Monophosphate', 'Alanine Triphosphate'], correctAnswer: 0 },
+      { id: 'b42', text: 'সালোকসংশ্লেষণ প্রক্রিয়ায় উপজাত হিসেবে কী নির্গত হয়?', options: ['CO2', 'O2', 'H2', 'N2'], correctAnswer: 1 }
+    ]
+  },
+  {
+    id: 'class9-gs-1',
+    title: 'সাধারণ বিজ্ঞান মডেল টেস্ট ২ (Class 9)',
+    class: 9,
+    subject: 'General Science',
+    durationMinutes: 12,
+    questions: [
+      { id: 'gs1', text: 'পানিতে দ্রবণীয় ভিটামিন কোনটি?', options: ['ভিটামিন A', 'ভিটামিন D', 'ভিটামিন C', 'ভিটামিন E'], correctAnswer: 2 },
+      { id: 'gs2', text: 'বায়ুমণ্ডলে অক্সিজেনের পরিমাণ কত?', options: ['২১%', '৭৮%', '০.০৩%', '০.৯%'], correctAnswer: 0 }
+    ]
+  },
+  {
+    id: 'class10-ict-2',
+    title: 'ICT Chapter 1-3 (SSC)',
+    class: 10,
+    subject: 'ICT',
+    durationMinutes: 10,
+    questions: [
+      { id: 'i101', text: 'ই-লার্নিং এর পূর্ণরূপ কী?', options: ['Easy Learning', 'Electronic Learning', 'Effective Learning', 'Extra Learning'], correctAnswer: 1 },
+      { id: 'i102', text: 'নিচের কোনটি সামাজিক যোগাযোগ মাধ্যম?', options: ['Google', 'Facebook', 'Yahoo', 'Bing'], correctAnswer: 1 }
+    ]
+  },
+  {
+    id: 'class8-bgs-1',
+    title: 'বাংলাদেশ ও বিশ্বপরিচয় (Class 8)',
+    class: 8,
+    subject: 'BGS',
+    durationMinutes: 10,
+    questions: [
+      { id: 'bgs1', text: 'মুক্তিযুদ্ধের সময় বাংলাদেশকে কয়টি সেক্টরে ভাগ করা হয়?', options: ['৯টি', '১০টি', '১১টি', '১২টি'], correctAnswer: 2 },
+      { id: 'bgs2', text: 'মুজিবনগর সরকার কবে গঠিত হয়?', options: ['১০ এপ্রিল ১৯৭১', '১৭ এপ্রিল ১৯৭১', '২৫ মার্চ ১৯৭১', '১৬ ডিসেম্বর ১৯৭১'], correctAnswer: 0 }
+    ]
+  },
+  {
+    id: 'ssc-genmath-2',
+    title: 'গণিত মডেল টেস্ট ২ (SSC)',
+    class: 10,
+    subject: 'Mathematics',
+    durationMinutes: 20,
+    questions: [
+      { id: 'gm21', text: 'বর্গের চার কোণের সমষ্টি কত ডিগ্রী?', options: ['৯০', '১৮০', '২৭০', '৩৬০'], correctAnswer: 3 },
+      { id: 'gm22', text: 'সমান্তর ধারার n-তম পদের সূত্র কী?', options: ['a+(n-1)d', 'a+nd', 'ar^(n-1)', 'n/2(2a+(n-1)d)'], correctAnswer: 0 }
+    ]
   }
 ];
