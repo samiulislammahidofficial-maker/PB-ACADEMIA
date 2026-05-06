@@ -111,26 +111,24 @@ export default function LandingPage() {
             <div className="mt-20 lg:mt-0 relative group">
               <div className="bg-[#1e1b4b] rounded-[4rem] border border-white/10 p-4 shadow-[0_32px_80px_rgba(30,27,75,0.4)] relative overflow-hidden aspect-[4/3] group-hover:scale-[1.01] transition-transform duration-700">
                 <AnimatePresence mode="wait">
-                  {isLoaded && (
-                    <motion.div
-                      key={curSlide}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.8, ease: "easeInOut" }}
-                      className="absolute inset-0"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1e1b4b] via-transparent to-transparent opacity-80 z-10"></div>
-                      <img 
-                        src={curSlide === 0 
-                          ? "https://i.ibb.co.com/HTFftBh2/IMG-1378-JPG.jpg" 
-                          : `https://images.unsplash.com/photo-${curSlide === 1 ? '1571260899304-425eee4c7efc' : curSlide === 2 ? '1580582932707-520aed937b7b' : '1434030216411-0b793f4b4173'}?w=1000&auto=format&fit=crop`} 
-                        className="w-full h-full object-cover grayscale opacity-90"
-                        alt="Slide"
-                        loading="eager"
-                      />
-                    </motion.div>
-                  )}
+                  <motion.div
+                    key={curSlide}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="absolute inset-0"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1e1b4b] via-transparent to-transparent opacity-80 z-10"></div>
+                    <img 
+                      src={curSlide === 0 
+                        ? "https://i.ibb.co.com/xK0kjbwG/Gemini-Generated-Image-3drk3j3drk3j3drk-1.png" 
+                        : `https://images.unsplash.com/photo-${curSlide === 1 ? '1571260899304-425eee4c7efc' : curSlide === 2 ? '1580582932707-520aed937b7b' : '1434030216411-0b793f4b4173'}?w=1000&auto=format&fit=crop`} 
+                      className="w-full h-full object-cover grayscale opacity-90"
+                      alt="Slide"
+                      loading="eager"
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
                 <div className="absolute top-10 left-10 flex items-center space-x-3 z-20">
