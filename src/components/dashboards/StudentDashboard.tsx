@@ -47,7 +47,7 @@ export default function StudentDashboard() {
   useEffect(() => {
     if (!user) return;
 
-    // Fetch live/upcoming exams from all sources
+    // Fetch live/upcoming exams
     const q = query(
       collection(db, 'exams'),
       orderBy('startTime', 'desc'),
@@ -59,25 +59,23 @@ export default function StudentDashboard() {
       const now = new Date();
       snap.forEach(doc => {
         const data = doc.data();
-        const startTime = new Date(data.startTime);
+        const startTime = data.startTime?.toDate ? data.startTime.toDate() : new Date(data.startTime);
         const duration = data.durationMinutes || 60;
         const endTime = new Date(startTime.getTime() + duration * 60000);
         
-        // Include if live or upcoming (within next 7 days for visibility)
         const sevenDaysFromNow = new Date();
         sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
         if (now <= endTime && startTime <= sevenDaysFromNow) {
-          list.push({ id: doc.id, ...data });
+          list.push({ id: doc.id, ...data, startTime: startTime.toISOString() });
         }
       });
-      // Sort: Live first, then by start time soonest
-      list.sort((a, b) => {
-        const aStart = new Date(a.startTime).getTime();
-        const bStart = new Date(b.startTime).getTime();
-        return aStart - bStart;
-      });
+      
+      list.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
       setLiveExams(list);
+      setLoading(false);
+    }, (error) => {
+      console.error("Dashboard sub error:", error);
       setLoading(false);
     });
 
@@ -91,11 +89,22 @@ export default function StudentDashboard() {
     return now >= start && now <= end;
   });
 
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-[#050505] p-20">
+        <div className="flex flex-col items-center">
+          <div className="h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+          <p className="text-white/40 font-black uppercase tracking-widest text-xs">অ্যাকাডেমিক ডেটা লোড হচ্ছে...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#050505] flex">
-      {/* Sidebar */}
-      <aside className="w-72 bg-[#0a0a0a] border-r border-white/5 flex flex-col hidden lg:flex sticky top-20 h-[calc(100vh-80px)]">
-        <div className="p-8 border-b border-white/5 mb-6">
+    <div className="min-h-screen bg-[#050505] flex flex-col lg:flex-row">
+      {/* Sidebar - Fixed Height within Viewport */}
+      <aside className="w-full lg:w-72 bg-[#0a0a0a] border-b lg:border-b-0 lg:border-r border-white/5 flex flex-col lg:sticky lg:top-20 lg:h-[calc(100vh-80px)] overflow-y-auto">
+        <div className="p-8 border-b border-white/5 hidden lg:block">
           <div className="flex items-center space-x-4">
              <div className="h-10 w-10 bg-white/5 rounded-[1rem] overflow-hidden border border-white/10 shadow-2xl">
                 <img src="https://i.ibb.co/C5RL3w7r/PB-Academia-logo-bg-chara.png" alt="Logo" className="w-full h-full object-cover" />
@@ -103,12 +112,12 @@ export default function StudentDashboard() {
               <span className="font-black uppercase tracking-tighter text-white text-lg">PB Academia</span>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto py-2 px-6">
-          <div className="space-y-1">
+        <div className="py-6 px-4 lg:px-6">
+          <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-2 lg:space-x-0 lg:space-y-1 pb-4 lg:pb-0 scrollbar-hide">
             {sidebarItems.map((item, i) => (
               <button
                 key={i}
-                className={`w-full flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all group ${
+                className={`flex-shrink-0 flex items-center space-x-4 px-6 lg:px-4 py-3 rounded-2xl transition-all group ${
                   item.active 
                     ? 'bg-blue-600 font-black text-white shadow-xl shadow-blue-600/20' 
                     : 'text-neutral-500 hover:bg-white/5 hover:text-white'
@@ -117,112 +126,112 @@ export default function StudentDashboard() {
                 <span className={item.active ? 'text-white' : 'text-neutral-600 group-hover:text-blue-500'}>
                   {item.icon}
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{item.label}</span>
               </button>
             ))}
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8 lg:p-16 overflow-y-auto">
+      {/* Main Content - Scrolls with window */}
+      <main className="flex-1 p-6 md:p-10 lg:p-16">
         <div className="max-w-6xl mx-auto">
-          {/* Immersive Welcome Banner */}
-          <div className="relative rounded-[3.5rem] overflow-hidden mb-16 border border-white/5 shadow-2xl h-[400px] flex items-center group">
-            <img 
-              src="https://i.ibb.co.com/BHxqgXTv/fbfe08da-0769-41af-bb5e-3ab953c6b34f.jpg" 
-              className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
-              alt="Class moments" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
-            <div className="relative z-10 p-12 md:p-20">
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-              >
-                <span className="px-5 py-2 bg-blue-600/10 text-blue-500 border border-blue-600/20 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 inline-block">
-                  Student Operations Centre
-                </span>
-                <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-none mb-6 uppercase">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Immersive Welcome Banner */}
+            <div className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden mb-12 border border-white/5 shadow-2xl h-[300px] md:h-[400px] flex items-center group">
+              <img 
+                src="https://i.ibb.co.com/BHxqgXTv/fbfe08da-0769-41af-bb5e-3ab953c6b34f.jpg" 
+                className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
+                alt="Class moments" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+              <div className="relative z-10 p-8 md:p-20">
+                <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-blue-600/20 text-blue-500 border border-blue-600/30 rounded-full text-[9px] font-black uppercase tracking-widest mb-6">
+                  <div className="h-1.5 w-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span>Academic Operations Centre</span>
+                </div>
+                <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none mb-6 uppercase">
                   তোমাকে <br />
                   <span className="text-blue-500">স্বাগতম!</span>
                 </h1>
-                <p className="text-neutral-500 font-bold uppercase tracking-[0.4em] text-[10px]">
-                  {profile?.name} • তোমার পারফরম্যান্স এবং কোর্স এখানে ট্র্যাক করো
+                <p className="text-neutral-400 font-bold uppercase tracking-[0.3em] text-[9px] md:text-[10px]">
+                  {profile?.name} • তোমার পারফরম্যান্স এখানে দেখুন
                 </p>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
-            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all cursor-pointer">
-              <div className="relative z-10">
-                <div className="h-14 w-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-blue-600/30">
-                  <Video className="h-7 w-7" />
-                </div>
-                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">লাইভ ক্লাস</h3>
-                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">আগামী সেশন ১ ঘণ্টা পরে শুরু হবে</p>
-                <div className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:translate-x-2 transition-transform">
-                  জয়েন করো <ArrowRight className="ml-2 h-4 w-4" />
-                </div>
               </div>
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-600/5 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
             </div>
 
-            <Link 
-              to={activeExam ? `/exams/${activeExam.id}` : "/quizblust"}
-              className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer"
-            >
-              <div className="relative z-10">
-                <div className="h-14 w-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-emerald-500/30">
-                  <ClipboardList className="h-7 w-7" />
+            {/* Quick Actions */}
+            <div className="grid md:grid-cols-3 gap-6 mb-16">
+              <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-blue-500/50 transition-all cursor-pointer">
+                <div className="relative z-10">
+                  <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-blue-600/30">
+                    <Video className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">লাইভ ক্লাস</h3>
+                  <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">আগামী সেশন ১ ঘণ্টা পরে</p>
+                  <div className="mt-8 flex items-center text-[9px] font-black uppercase tracking-widest text-blue-500 group-hover:translate-x-2 transition-transform">
+                    জয়েন করো <ArrowRight className="ml-2 h-4 w-4" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">লাইভ পরীক্ষা</h3>
-                <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">
-                  {activeExam ? `${activeExam.title} বর্তমানে সক্রিয়` : liveExams.length > 0 ? `${liveExams.length}টি আসন্ন পরীক্ষা শিডিউল করা আছে` : 'বর্তমানে কোনো সক্রিয় পরীক্ষা নেই'}
-                </p>
-                <div 
-                  className="mt-10 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform"
-                >
-                  {activeExam ? 'অংশ নাও' : 'শিডিউল দেখো'} <ArrowRight className="ml-2 h-4 w-4" />
+                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
+              </div>
+
+              <Link 
+                to={activeExam ? `/exams/${activeExam.id}` : "/quizblust"}
+                className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer"
+              >
+                <div className="relative z-10">
+                  <div className="h-12 w-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-emerald-500/30">
+                    <ClipboardList className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">লাইভ পরীক্ষা</h3>
+                  <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest leading-relaxed">
+                    {activeExam ? `${activeExam.title} চলছে` : liveExams.length > 0 ? `${liveExams.length}টি আসন্ন পরীক্ষা` : 'কোনো পরীক্ষা নেই'}
+                  </p>
+                  <div className="mt-8 flex items-center text-[9px] font-black uppercase tracking-widest text-emerald-500 group-hover:translate-x-2 transition-transform">
+                    {activeExam ? 'অংশ নাও' : 'শিডিউল দেখো'} <ArrowRight className="ml-2 h-4 w-4" />
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
 
-            <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl group hover:border-orange-500/50 transition-all cursor-pointer">
-              <div className="h-14 w-14 bg-orange-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-2xl shadow-orange-500/30">
-                <BarChart2 className="h-7 w-7" />
+              <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl group hover:border-orange-500/50 transition-all cursor-pointer">
+                <div className="h-12 w-12 bg-orange-500 rounded-xl flex items-center justify-center text-white mb-6 shadow-2xl shadow-orange-500/30">
+                  <BarChart2 className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-black text-white uppercase tracking-tight mb-2">অ্যানালিটিক্স</h3>
+                <p className="text-neutral-500 text-[9px] font-black uppercase tracking-widest">সপ্তাহের শীর্ষ ৫% পজিশন</p>
+                <div className="mt-8 text-orange-500 text-[9px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-transform">বিস্তারিত দেখো</div>
               </div>
-              <h3 className="text-xl font-black text-white uppercase tracking-tight mb-3">অ্যানালিটিক্স</h3>
-              <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest">তুমি গত সপ্তাহে শীর্ষ ৫% এ আছো</p>
-              <div className="mt-10 text-orange-500 text-[9px] font-black uppercase tracking-widest group-hover:translate-x-2 transition-transform">বিস্তারিত দেখো</div>
             </div>
-          </div>
 
-          {/* Explore Sections */}
-          <div className="mb-24">
-            <div className="flex items-center justify-between mb-12">
-              <h2 className="text-2xl font-black text-white uppercase tracking-tighter">এক্সপ্লোর করো</h2>
-              <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest cursor-pointer hover:underline">সব দেখাও</span>
+            {/* Explore Sections */}
+            <div className="mb-20">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-xl font-black text-white uppercase tracking-tighter">এক্সপ্লোর করো</h2>
+                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest cursor-pointer hover:underline">সব দেখাও</span>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                {features.map((feature, i) => (
+                  <Link to={feature.link || '#'} key={i}>
+                    <motion.div
+                      whileHover={{ y: -5 }}
+                      className="bg-[#0a0a0a] p-8 rounded-[2rem] border border-white/5 flex flex-col items-center group transition-all hover:bg-white/[0.02] hover:border-white/10 cursor-pointer"
+                    >
+                      <div className={`h-12 w-12 ${feature.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-2xl`}>
+                        {feature.icon}
+                      </div>
+                      <span className="text-[9px] font-black text-neutral-400 group-hover:text-white uppercase tracking-widest text-center">{feature.title}</span>
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
             </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {features.map((feature, i) => (
-                <Link to={feature.link || '#'} key={i}>
-                  <motion.div
-                    whileHover={{ y: -5 }}
-                    className="bg-black/40 p-10 rounded-[2.5rem] border border-white/5 flex flex-col items-center group transition-all hover:bg-white/[0.02] hover:border-white/10"
-                  >
-                    <div className={`h-16 w-16 ${feature.color} rounded-[1.5rem] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-2xl`}>
-                      {feature.icon}
-                    </div>
-                    <span className="text-[10px] font-black text-neutral-400 group-hover:text-white uppercase tracking-widest text-center">{feature.title}</span>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>
