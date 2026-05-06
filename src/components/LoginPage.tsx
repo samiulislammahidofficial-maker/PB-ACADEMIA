@@ -16,9 +16,14 @@ export default function LoginPage() {
   const { user, profile, loading: authLoading, loginCustom } = useAuth();
 
   useEffect(() => {
-    // Only redirect if we have both user AND profile (or we're sure no profile exists)
+    // If logged in and has profile, go to dashboard
     if (!authLoading && user && profile) {
       navigate('/dashboard');
+    }
+    // If logged in but NO profile, we might be in middle of registration
+    // Let Dashboard handle the decision to show 'Complete Setup'
+    if (!authLoading && user && !profile) {
+       navigate('/dashboard');
     }
   }, [user, profile, authLoading, navigate]);
 

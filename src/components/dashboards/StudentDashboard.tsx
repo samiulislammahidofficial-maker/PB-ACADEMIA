@@ -21,7 +21,8 @@ import {
   ClipboardList,
   MessageSquare,
   FileText,
-  Users
+  Users,
+  ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
