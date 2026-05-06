@@ -27,9 +27,13 @@ export interface Exam {
   title: string;
   courseId: string;
   teacherId: string;
-  questions: Question[];
+  questions?: Question[];
   durationMinutes: number;
   startTime?: any;
+  examType?: 'CQ' | 'MCQ';
+  questionUrl?: string;
+  googleFormLink?: string;
+  isQuizBlust?: boolean;
 }
 
 export type QuestionType = 'mcq' | 'short_answer' | 'creative';

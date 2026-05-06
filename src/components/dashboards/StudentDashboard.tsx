@@ -51,7 +51,7 @@ export default function StudentDashboard() {
     const q = query(
       collection(db, 'exams'),
       orderBy('startTime', 'desc'),
-      limit(10)
+      limit(50)
     );
 
     const unsubscribe = onSnapshot(q, (snap) => {
@@ -60,12 +60,22 @@ export default function StudentDashboard() {
       snap.forEach(doc => {
         const data = doc.data();
         const startTime = new Date(data.startTime);
-        const endTime = new Date(startTime.getTime() + (data.durationMinutes || 60) * 60000);
+        const duration = data.durationMinutes || 60;
+        const endTime = new Date(startTime.getTime() + duration * 60000);
         
-        // Include if live or upcoming
-        if (now <= endTime) {
+        // Include if live or upcoming (within next 7 days for visibility)
+        const sevenDaysFromNow = new Date();
+        sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+        if (now <= endTime && startTime <= sevenDaysFromNow) {
           list.push({ id: doc.id, ...data });
         }
+      });
+      // Sort: Live first, then by start time soonest
+      list.sort((a, b) => {
+        const aStart = new Date(a.startTime).getTime();
+        const bStart = new Date(b.startTime).getTime();
+        return aStart - bStart;
       });
       setLiveExams(list);
       setLoading(false);
@@ -161,7 +171,7 @@ export default function StudentDashboard() {
             </div>
 
             <Link 
-              to={activeExam ? (activeExam.isQuizBlust ? "/quizblust" : `/exams/${activeExam.id}`) : "/quizblust"}
+              to={activeExam ? `/exams/${activeExam.id}` : "/quizblust"}
               className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl relative overflow-hidden group hover:border-emerald-500/50 transition-all cursor-pointer"
             >
               <div className="relative z-10">

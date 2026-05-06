@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, storage, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
+import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, storage, ref, uploadBytesResumable, getDownloadURL, limit } from '../../lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight, Loader2 } from 'lucide-react';
 import ExamCreator from '../teachers/ExamCreator';
@@ -36,13 +36,18 @@ export default function QuizBlustDashboard() {
     // Listen to exams
     const q = query(
       collection(db, 'exams'), 
-      where('isQuizBlust', '==', true),
-      orderBy('startTime', 'desc')
+      orderBy('startTime', 'desc'),
+      limit(50)
     );
     
     const unsubscribe = onSnapshot(q, (snap) => {
       const list: any[] = [];
-      snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.isQuizBlust || data.courseId === 'quizblust') {
+          list.push({ id: doc.id, ...data });
+        }
+      });
       setExams(list);
       setLoading(false);
     });

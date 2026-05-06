@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db, addDoc, collection, serverTimestamp, doc, getDoc } from '../lib/firebase';
+import { db, addDoc, collection, serverTimestamp, doc, getDoc, storage, ref, uploadBytesResumable, getDownloadURL } from '../lib/firebase';
 import { useAuth } from '../lib/AuthContext';
 import { Exam, Question } from '../types';
-import { Clock, CheckCircle, ChevronRight, ChevronLeft, Flag, Info } from 'lucide-react';
+import { Clock, CheckCircle, ChevronRight, ChevronLeft, Flag, Info, FileText, Send, Loader2, Link as LinkIcon, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function ExamView() {
@@ -17,6 +17,9 @@ export default function ExamView() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submissionFile, setSubmissionFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -26,7 +29,16 @@ export default function ExamView() {
       if (snap.exists()) {
         const data = snap.data() as Exam;
         setExam({ id: snap.id, ...data });
-        setTimeLeft(data.durationMinutes * 60);
+        
+        // Calculate remaining time
+        const startTime = new Date(data.startTime);
+        const duration = data.durationMinutes || 60;
+        const endTime = new Date(startTime.getTime() + duration * 60000);
+        const now = new Date();
+        const diffSeconds = Math.max(0, Math.floor((endTime.getTime() - now.getTime()) / 1000));
+        
+        setTimeLeft(diffSeconds);
+
         if (data.questions) {
           setAnswers(new Array(data.questions.length).fill(-1));
         }
@@ -41,18 +53,22 @@ export default function ExamView() {
       const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && !submitted && exam) {
-      handleSubmit();
+      if (exam.examType === 'CQ') {
+        // Just stop the timer, student might need to upload
+      } else {
+        handleSubmit();
+      }
     }
   }, [timeLeft, submitted, exam]);
 
   const handleSubmit = async () => {
     if (!exam || !user) return;
+    if (!exam.questions) return;
 
     let finalScore = 0;
     exam.questions.forEach((q, idx) => {
       const ans = answers[idx];
       if (q.type === 'mcq' && ans === q.correctOption) finalScore += q.points;
-      // Short answer and creative need teacher manual grading, or exact match for short answer
       if (q.type === 'short_answer' && q.correctAnswer && ans?.toString().toLowerCase() === q.correctAnswer.toLowerCase()) {
         finalScore += q.points;
       }
@@ -67,12 +83,61 @@ export default function ExamView() {
         studentName: profile?.name,
         answers,
         score: finalScore,
-        totalPoints: exam.questions.reduce((acc, current) => acc + (current.points || 0), 0),
+        totalPoints: exam.questions?.reduce((acc, current) => acc + (current.points || 0), 0) || 0,
         submittedAt: serverTimestamp(),
-        status: exam.questions.some(q => q.type === 'creative') ? 'pending' : 'graded'
+        status: exam.questions?.some(q => q.type === 'creative') ? 'pending' : 'graded'
       });
     } catch (e) {
       console.error("Error saving result:", e);
+    }
+  };
+
+  const handleSubmitCQ = async () => {
+    if (!submissionFile || !user || !exam) return;
+    
+    setSubmitting(true);
+    setUploadProgress(0);
+
+    try {
+      const fileExtension = submissionFile.name.split('.').pop();
+      const fileName = `${exam.id}_${user.uid}_${Date.now()}.${fileExtension}`;
+      const fileRef = ref(storage, `submissions/${fileName}`);
+      
+      const uploadTask = uploadBytesResumable(fileRef, submissionFile);
+
+      const downloadUrl = await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(Math.round(progress));
+          }, 
+          (error) => {
+            console.error("Upload error:", error);
+            reject(error);
+          }, 
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(url);
+          }
+        );
+      });
+
+      await addDoc(collection(db, 'examSubmissions'), {
+        examId: exam.id,
+        studentId: user.uid,
+        studentName: profile?.name || 'Anonymous Student',
+        ansUrl: downloadUrl,
+        submittedAt: new Date().toISOString(),
+        graded: false
+      });
+
+      setSubmitted(true);
+    } catch (e: any) {
+      console.error("Submission Error:", e);
+      alert(`জমা দিতে ব্যর্থ হয়েছে: ${e.message || 'Unknown error'}`);
+    } finally {
+      setSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -82,71 +147,182 @@ export default function ExamView() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (loading) return <div className="p-20 text-center font-bold text-neutral-400 animate-pulse">Loading Examination...</div>;
-  if (!exam) return <div className="p-20 text-center">Exam not found or unavailable.</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-20">
+      <div className="h-10 w-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+  );
+  
+  if (!exam) return (
+    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-20 text-center">
+       <div className="h-24 w-24 bg-red-600/10 text-red-500 rounded-[2rem] flex items-center justify-center mb-10">
+          <Info className="h-10 w-10" />
+       </div>
+       <h1 className="text-3xl font-black text-white uppercase tracking-tighter mb-4">Exam Unavailable</h1>
+       <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px] mb-12">The assessment link you followed is invalid or has expired.</p>
+       <button onClick={() => navigate('/dashboard')} className="px-10 py-4 bg-white/5 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] border border-white/10">Return to HQ</button>
+    </div>
+  );
 
   // Handle tactical exam types (CQ / MCQ via link)
   if (exam.examType === 'CQ' || exam.examType === 'MCQ') {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-20">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
           <div>
-            <h1 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">{exam.title}</h1>
-            <div className="flex items-center space-x-4 mt-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-3 bg-blue-600 rounded-2xl">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-4xl font-black text-white uppercase tracking-tighter leading-none">{exam.title}</h1>
+            </div>
+            <div className="flex items-center space-x-4">
               <span className="px-4 py-1.5 bg-white/5 text-[9px] font-black text-blue-500 border border-white/10 rounded-full uppercase tracking-[0.2em]">Operational Module: {exam.examType}</span>
+              {timeLeft > 0 && (
+                <div className="flex items-center space-x-3 text-red-500 font-mono font-black text-xl bg-red-500/10 px-6 py-2 rounded-xl border border-red-500/20 shadow-lg">
+                  <Clock className="h-5 w-5" />
+                  <span>{formatTime(timeLeft)}</span>
+                </div>
+              )}
             </div>
           </div>
           <button 
             onClick={() => navigate('/dashboard')}
-            className="px-8 py-3 bg-white/5 text-neutral-500 rounded-xl font-black uppercase tracking-widest text-[9px] hover:text-white transition-all"
+            className="px-8 py-3 bg-white/5 text-neutral-500 rounded-xl font-black uppercase tracking-widest text-[9px] hover:text-white transition-all border border-white/10"
           >
             Exit Terminal
           </button>
         </div>
 
-        <div className="bg-[#0a0a0a] rounded-[4rem] border border-white/5 p-16 shadow-2xl">
-          {exam.examType === 'CQ' ? (
-            <div className="space-y-12">
-              <div className="aspect-[3/4] w-full max-w-4xl mx-auto bg-black rounded-[3rem] border border-white/5 overflow-hidden">
-                {exam.questionUrl ? (
-                  <iframe src={exam.questionUrl} className="w-full h-full" title="Question Paper" />
-                ) : (
-                  <div className="h-full flex items-center justify-center text-neutral-700 font-black uppercase tracking-widest text-xs">
-                    Synchronizing Question Data...
+        <div className="grid lg:grid-cols-2 gap-10">
+          {/* Question Viewport */}
+          <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-8 border-b border-white/5 bg-black/40 flex items-center justify-between">
+              <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center">
+                <FileText className="h-4 w-4 mr-3 text-blue-500" />
+                Question Paper / প্রশ্নপত্র
+              </h3>
+            </div>
+            <div className="flex-grow p-1 overflow-hidden">
+               {exam.examType === 'CQ' ? (
+                  <div className="h-[600px] bg-black rounded-[2.5rem] overflow-hidden">
+                    {exam.questionUrl ? (
+                      <iframe src={exam.questionUrl} className="w-full h-full" title="Question Paper" />
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-neutral-800 font-black uppercase tracking-widest text-[10px] italic">
+                        Synchronizing Tactical Question Data...
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="text-center">
-                <p className="text-neutral-500 font-bold uppercase tracking-widest text-xs mb-8">
-                  সৃজনশীল পরীক্ষার সমাধান জমা দিতে আপনার ড্যাশবোর্ড থেকে সংশ্লিষ্ট কোর্সে যান।
-                </p>
-                <button 
-                  onClick={() => navigate(`/courses/${exam.courseId}`)}
-                  className="px-12 py-5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-blue-500/30"
-                >
-                  কোর্স ড্যাশবোর্ডে ফিরে যান (জমা দিতে)
-                </button>
+               ) : (
+                  <div className="h-[600px] flex flex-col items-center justify-center text-center p-12">
+                      <LinkIcon className="h-16 w-16 text-purple-600 mb-8 animate-pulse" />
+                      <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-6">MCQ Integration Detected</h2>
+                      <p className="text-neutral-500 font-bold text-[10px] uppercase tracking-[0.3em] leading-relaxed mb-12 max-w-sm">
+                        This is an external assessment. Please click the button below to join the strategic combat mission on Google Forms.
+                      </p>
+                      <a 
+                        href={exam.googleFormLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-16 py-6 bg-purple-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] inline-block shadow-[0_0_50px_rgba(147,51,234,0.3)] hover:scale-105 transition-all"
+                      >
+                        Launch Google Form Link
+                      </a>
+                  </div>
+               )}
+            </div>
+          </div>
+
+          {/* Submission / Status Panel */}
+          <div className="space-y-10">
+            <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/10 p-12 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] rounded-full"></div>
+              
+              {submitted ? (
+                 <div className="text-center py-10">
+                    <div className="h-24 w-24 bg-emerald-500/10 text-emerald-500 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                      <CheckCircle className="h-12 w-12" />
+                    </div>
+                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-4">Submission Captured!</h2>
+                    <p className="text-neutral-500 font-bold uppercase tracking-widest text-[9px] mb-12">Your tactical response has been securely archived. Our instructors will evaluate your mission soon.</p>
+                    <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-emerald-600/30">Back to Dashboard</button>
+                 </div>
+              ) : (
+                <div className="relative z-10">
+                  <h3 className="text-xl font-black text-white uppercase tracking-tight mb-8">Submission Portal</h3>
+                  
+                  {exam.examType === 'CQ' ? (
+                    <div className="space-y-8">
+                       <p className="text-neutral-500 font-bold uppercase tracking-widest text-[9px] leading-relaxed italic">
+                         Download the question, solve it on your paper, scan it (PDF/Image) and upload it here before the timer expires.
+                       </p>
+                       
+                       <label className="flex flex-col items-center justify-center w-full p-12 border-2 border-dashed border-white/10 rounded-[2.5rem] bg-black/40 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer group">
+                          <Send className="h-10 w-10 text-neutral-700 group-hover:text-blue-500 mb-4 transition-colors" />
+                          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 text-center">
+                            {submissionFile ? submissionFile.name : 'Select Answer Script (PDF/Image)'}
+                          </p>
+                          <input type="file" className="hidden" accept="image/*,application/pdf" onChange={(e) => setSubmissionFile(e.target.files?.[0] || null)} />
+                       </label>
+
+                       <button 
+                          onClick={handleSubmitCQ}
+                          disabled={!submissionFile || submitting || timeLeft === 0}
+                          className="w-full py-6 bg-blue-600 text-white rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/30 disabled:opacity-30 flex flex-col items-center justify-center gap-1"
+                       >
+                         <div className="flex items-center space-x-3">
+                           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                           <span>{submitting ? 'Transmitting Data...' : 'Submit Answer Paper'}</span>
+                         </div>
+                         {submitting && uploadProgress > 0 && (
+                            <span className="text-[8px] opacity-70">Progress: {uploadProgress}%</span>
+                         )}
+                       </button>
+
+                       {timeLeft === 0 && (
+                         <div className="flex items-center space-x-3 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-[9px] font-black uppercase tracking-widest">
+                           <Info className="h-4 w-4" />
+                           <span>Tactical window closed. Late submissions restricted.</span>
+                         </div>
+                       )}
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                       <p className="text-neutral-500 font-bold uppercase tracking-widest text-[9px] leading-relaxed italic">
+                         For MCQ assessments, please follow the Google Form link on the left. Your score will be imported automatically.
+                       </p>
+                       <div className="p-8 bg-purple-500/10 border border-purple-500/20 rounded-[2rem] flex flex-col items-center text-center">
+                          <CheckCircle className="h-8 w-8 text-purple-500 mb-4" />
+                          <p className="text-[10px] font-black text-white uppercase tracking-widest">Auto-Sync Enabled</p>
+                       </div>
+                       <button onClick={() => navigate('/dashboard')} className="w-full py-5 bg-white/5 border border-white/10 text-neutral-500 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:text-white transition-all">Done - Return to Dashboard</button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Tactical Briefing */}
+            <div className="bg-gradient-to-br from-indigo-900/40 to-blue-900/40 p-10 rounded-[3rem] border border-white/10 shadow-2xl">
+              <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">Mission Status</h4>
+              <div className="space-y-4">
+                 <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                    <span>Signal Strength</span>
+                    <span className="text-emerald-500">EXCELLENT</span>
+                 </div>
+                 <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                    <span>Authentication</span>
+                    <span className="text-emerald-500">VERIFIED</span>
+                 </div>
+                 <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                    <span>Latency</span>
+                    <span className="text-neutral-500">12ms Dhaka Node</span>
+                 </div>
               </div>
             </div>
-          ) : (
-            <div className="py-20 text-center">
-              <div className="h-24 w-24 bg-purple-600/10 text-purple-500 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-2xl">
-                <Info className="h-10 w-10 text-purple-600" />
-              </div>
-              <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-6">MCQ লিঙ্ক ডিটেক্ট করা হয়েছে</h2>
-              <p className="text-neutral-500 font-bold text-xs uppercase tracking-widest leading-relaxed mb-12 max-w-md mx-auto">
-                এটি একটি অনলাইন MCQ পরীক্ষা। নিচের বাটনে ক্লিক করে গুগোল ফর্মটি পূরণ করুন।
-              </p>
-              <a 
-                href={exam.googleFormLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="px-16 py-6 bg-purple-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] inline-block shadow-2xl shadow-purple-600/30 hover:scale-105 transition-all"
-              >
-                গুগল ফর্ম ওপেন করুন
-              </a>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     );
