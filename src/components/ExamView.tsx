@@ -164,6 +164,9 @@ export default function ExamView() {
     </div>
   );
 
+  const answeredCount = answers.filter(a => a !== -1 && a !== '').length;
+  const progressPercent = exam.questions ? (answeredCount / exam.questions.length) * 100 : 0;
+
   // Handle tactical exam types (CQ / MCQ via link)
   if (exam.examType === 'CQ' || exam.examType === 'MCQ') {
     return (
@@ -377,6 +380,15 @@ export default function ExamView() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         <div className="lg:col-span-3">
+          {/* Visual Progress Bar */}
+          <div className="mb-8 px-4 h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 relative">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              className="absolute h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_20px_rgba(37,99,235,0.5)]"
+            />
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQ}
@@ -472,22 +484,29 @@ export default function ExamView() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/5 shadow-2xl">
-            <h3 className="font-black text-neutral-700 mb-8 text-[9px] uppercase tracking-[0.5em] text-center italic">Operational Map</h3>
-            <div className="grid grid-cols-4 gap-4">
+          <div className="bg-[#0a0a0a] p-10 rounded-[3rem] border border-white/10 shadow-2xl relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-1 bg-blue-600/20"></div>
+             <div className="flex items-center justify-between mb-8">
+               <h3 className="font-black text-neutral-700 text-[10px] uppercase tracking-[0.5em] italic">Deployment Grid</h3>
+               <span className="text-[10px] font-black text-blue-500/60 uppercase tracking-widest">
+                 {answeredCount}/{exam.questions.length}
+               </span>
+             </div>
+            <div className="grid grid-cols-5 gap-3">
               {exam.questions.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentQ(i)}
-                  className={`h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xs transition-all border-2 ${
+                  title={`Jump to Question ${i + 1}`}
+                  className={`h-11 w-11 rounded-xl flex items-center justify-center font-black text-[10px] transition-all border-2 ${
                     currentQ === i 
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xl shadow-blue-500/30 rotate-12 scale-110' 
-                    : answers[i] !== -1 
-                    ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' 
-                    : 'bg-white/5 text-neutral-700 border-transparent hover:border-white/10'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xl shadow-blue-500/30 scale-110 z-10' 
+                    : answers[i] !== -1 && answers[i] !== ''
+                    ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' 
+                    : 'bg-white/5 text-neutral-600 border-white/5 hover:border-white/20'
                   }`}
                 >
-                  {i + 1}
+                  {String(i + 1).padStart(2, '0')}
                 </button>
               ))}
             </div>

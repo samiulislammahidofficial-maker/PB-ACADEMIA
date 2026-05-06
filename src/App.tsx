@@ -18,6 +18,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizBlustDashboard from './components/dashboards/QuizBlustDashboard';
 import BrainTeasers from './components/BrainTeasers';
+import ScrollToTop from './components/common/ScrollToTop';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
   const { user, profile, loading } = useAuth();
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <div className="relative min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
           <Navbar />
           <SpeedInsights />
