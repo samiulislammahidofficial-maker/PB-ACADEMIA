@@ -46,11 +46,9 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      const timer = setTimeout(() => setLoading(false), 2000);
-      return () => clearTimeout(timer);
-    }
+    if (!user) return;
 
+    setLoading(true);
     // Fetch live/upcoming exams
     const q = query(
       collection(db, 'exams'),

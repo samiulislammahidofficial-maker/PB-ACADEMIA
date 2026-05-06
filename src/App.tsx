@@ -34,12 +34,6 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 
 }
 
 function AppContent() {
-  const location = useLocation();
-  const isDashboardRoute = location.pathname.startsWith('/dashboard') || 
-                          location.pathname.startsWith('/quizblust') ||
-                          location.pathname.startsWith('/exams') ||
-                          location.pathname.startsWith('/practice-exams');
-
   return (
     <div className="relative min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
       <Navbar />
@@ -48,9 +42,20 @@ function AppContent() {
       <main className="flex-1 w-full relative z-10">
         <AppRoutes />
       </main>
-      {!isDashboardRoute && <Footer />}
+      <FooterWrapper />
     </div>
   );
+}
+
+function FooterWrapper() {
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard') || 
+                          location.pathname.startsWith('/quizblust') ||
+                          location.pathname.startsWith('/exams') ||
+                          location.pathname.startsWith('/practice-exams');
+  
+  if (isDashboardRoute) return null;
+  return <Footer />;
 }
 
 export default function App() {
