@@ -3,7 +3,7 @@ import { practiceSets } from '../data/practiceQuestions';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { BookOpen, ChevronRight, Clock, Award, Brain } from 'lucide-react';
+import { BookOpen, ChevronRight, Clock, Award, Brain, ArrowLeft } from 'lucide-react';
 
 export default function PracticeExamList() {
   const { profile } = useAuth();
@@ -26,9 +26,14 @@ export default function PracticeExamList() {
     <div className="min-h-screen bg-[#050505] p-6 lg:p-20">
       <div className="max-w-6xl mx-auto">
         <header className="mb-16">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-blue-600/20 text-blue-500 border border-blue-600/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
-            <Award className="h-3 w-3" />
-            <span>Practice Hub</span>
+          <div className="flex items-center space-x-4 mb-6">
+            <Link to="/dashboard" className="h-10 w-10 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-blue-600/20 text-blue-500 border border-blue-600/30 rounded-full text-[10px] font-black uppercase tracking-widest">
+              <Award className="h-3 w-3" />
+              <span>Practice Hub</span>
+            </div>
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase mb-4">
             Practice <span className="text-blue-500">Exams</span>

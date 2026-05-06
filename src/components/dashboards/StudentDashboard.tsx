@@ -22,7 +22,8 @@ import {
   MessageSquare,
   FileText,
   Users,
-  ArrowRight
+  ArrowRight,
+  Rocket
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,6 +31,7 @@ export default function StudentDashboard() {
   const { profile, logout } = useAuth();
   const navigate = useNavigate();
   const [exams, setExams] = useState<any[]>([]);
+  const [results, setResults] = useState<any[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -37,18 +39,33 @@ export default function StudentDashboard() {
     document.title = "Student Dashboard | PB Academia";
     
     // Using startTime instead of createdAt for exams since it's more relevant for students
-    const q = query(collection(db, 'exams'), orderBy('createdAt', 'desc'), limit(5));
+    const q = query(collection(db, 'exams'), orderBy('startTime', 'desc'), limit(15));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const examData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setExams(examData);
+      // Filter explicitly for quizblust ones or global ones
+      const quizblustExams = examData.filter((e: any) => e.isQuizBlust || e.courseId === 'quizblust');
+      setExams(quizblustExams);
       setLoading(false);
     }, (err) => {
       console.error("Exam sync error:", err);
       setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
+    // Real-time results sync
+    const resultsQ = query(collection(db, 'examSubmissions'));
+    const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
+      const allResults = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const myResults = allResults.filter(r => r.studentId === profile?.id || r.studentId === profile?.uid);
+      setResults(myResults);
+    }, (err) => {
+      console.error("Results sync error:", err);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeResults();
+    };
+  }, [profile]);
 
   const menuItems = [
     { icon: LayoutDashboard, title: "OverView", link: "/dashboard", active: true },
@@ -206,11 +223,11 @@ export default function StudentDashboard() {
                     Your learning metrics are up by <span className="text-emerald-400">12%</span> this week. Keep the momentum going.
                   </p>
                   <div className="flex flex-wrap gap-4 mt-12">
-                    <button onClick={() => navigate('/practice-exams')} className="bg-blue-600 text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-blue-600/30 hover:scale-105 active:scale-95 transition-all">
+                    <button onClick={() => navigate('/practice-exams')} className="bg-blue-600 text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-blue-600/30 hover:scale-105 active:scale-95 transition-all mb-4 md:mb-0">
                       Start Practice
                     </button>
-                    <button onClick={() => navigate('/quizblust')} className="bg-white/5 backdrop-blur-md text-white border border-white/10 px-10 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all">
-                      Live Exams
+                    <button onClick={() => navigate('/quizblust')} className="bg-white/5 backdrop-blur-md text-white border border-white/10 px-10 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all flex border-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.3)]">
+                      <Rocket size={14} className="mr-2 text-indigo-400" /> Enter QuizBlust
                     </button>
                   </div>
                 </div>
@@ -345,13 +362,21 @@ export default function StudentDashboard() {
                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-10 italic">Tier-1 Member • Class {profile?.className || profile?.class || '8'}</p>
                    
                    <div className="grid grid-cols-2 gap-4 pb-10 border-b border-neutral-50 mb-10">
-                      <div className="bg-neutral-50 p-6 rounded-3xl">
-                         <div className="text-2xl font-black text-neutral-900 leading-none">84%</div>
-                         <div className="text-[8px] font-black text-neutral-400 uppercase mt-3 tracking-widest">Agg. Score</div>
+                      <div className="bg-neutral-50 p-6 rounded-3xl relative overflow-hidden group hover:bg-neutral-100 transition-colors">
+                         <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                         <div className="text-2xl font-black text-neutral-900 leading-none relative z-10">
+                           {results.filter(r => r.graded).length > 0 
+                             ? Math.round(results.filter(r => r.graded).reduce((acc, curr) => acc + (curr.marks || 0), 0) / results.filter(r => r.graded).length) 
+                             : '0'}%
+                         </div>
+                         <div className="text-[8px] font-black text-neutral-400 uppercase mt-3 tracking-widest relative z-10">Aggr. Score</div>
                       </div>
-                      <div className="bg-neutral-50 p-6 rounded-3xl">
-                         <div className="text-2xl font-black text-blue-600 leading-none">12</div>
-                         <div className="text-[8px] font-black text-neutral-400 uppercase mt-3 tracking-widest">Exams Run</div>
+                      <div className="bg-neutral-50 p-6 rounded-3xl relative overflow-hidden group hover:bg-neutral-100 transition-colors">
+                         <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors"></div>
+                         <div className="text-2xl font-black text-blue-600 leading-none relative z-10">
+                           {results.length}
+                         </div>
+                         <div className="text-[8px] font-black text-neutral-400 uppercase mt-3 tracking-widest relative z-10">Exams Run</div>
                       </div>
                    </div>
                    
