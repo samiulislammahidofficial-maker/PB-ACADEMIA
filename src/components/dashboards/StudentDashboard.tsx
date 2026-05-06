@@ -8,44 +8,48 @@ import {
   PlusCircle, FileText, Monitor, GraduationCap, BarChart2, 
   Wallet, Headphones, ArrowRight, Rocket, Brain
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 
 const sidebarItems = [
-  { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", active: true },
-  { icon: <PlusCircle className="h-5 w-5" />, label: "Add Course" },
-  { icon: <FileText className="h-5 w-5" />, label: "Course & Content" },
-  { icon: <Monitor className="h-5 w-5" />, label: "Master Class" },
-  { icon: <GraduationCap className="h-5 w-5" />, label: "Foundation Class" },
-  { icon: <Clock className="h-5 w-5" />, label: "Past Classes" },
-  { icon: <ClipboardList className="h-5 w-5" />, label: "Past Exams" },
-  { icon: <BookOpen className="h-5 w-5" />, label: "Practice Exam" },
-  { icon: <BookCheck className="h-5 w-5" />, label: "Solve Sheet" },
-  { icon: <BarChart2 className="h-5 w-5" />, label: "Performance" },
-  { icon: <MessageSquare className="h-5 w-5" />, label: "Q&A Service" },
-  { icon: <Wallet className="h-5 w-5" />, label: "Due Payment" },
-  { icon: <Headphones className="h-5 w-5" />, label: "Discussion Group" },
+  { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", active: true, link: "/dashboard" },
+  { icon: <PlusCircle className="h-5 w-5" />, label: "Add Course", link: "/courses" },
+  { icon: <FileText className="h-5 w-5" />, label: "Course & Content", link: "/courses" },
+  { icon: <Monitor className="h-5 w-5" />, label: "Master Class", link: "/courses" },
+  { icon: <GraduationCap className="h-5 w-5" />, label: "Foundation Class", link: "/courses" },
+  { icon: <Clock className="h-5 w-5" />, label: "Past Classes", link: "/dashboard" },
+  { icon: <ClipboardList className="h-5 w-5" />, label: "Past Exams", link: "/quizblust" },
+  { icon: <BookOpen className="h-5 w-5" />, label: "Practice Exam", link: "/practice-exams" },
+  { icon: <BookCheck className="h-5 w-5" />, label: "Solve Sheet", link: "/dashboard" },
+  { icon: <BarChart2 className="h-5 w-5" />, label: "Performance", link: "/dashboard" },
+  { icon: <MessageSquare className="h-5 w-5" />, label: "Q&A Service", link: "/dashboard" },
+  { icon: <Wallet className="h-5 w-5" />, label: "Due Payment", link: "/dashboard" },
+  { icon: <Headphones className="h-5 w-5" />, label: "Discussion Group", link: "/dashboard" },
 ];
 
 const features = [
   { icon: <Rocket className="h-6 w-6" />, title: "QuizBlust", color: "bg-blue-600 text-white", link: "/quizblust" },
   { icon: <Brain className="h-6 w-6" />, title: "Brain Teasers", color: "bg-indigo-600 text-white", link: "/brain-teasers" },
-  { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600" },
+  { icon: <Video className="h-6 w-6" />, title: "Live Classes", color: "bg-blue-50 text-blue-600", link: "/dashboard" },
   { icon: <ClipboardList className="h-6 w-6" />, title: "Live Exams", color: "bg-orange-50 text-orange-600", link: "/quizblust" },
-  { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600" },
-  { icon: <BookCheck className="h-6 w-6" />, title: "Solve Sheets", color: "bg-purple-50 text-purple-600" },
-  { icon: <MessageSquare className="h-6 w-6" />, title: "Q&A Service", color: "bg-pink-50 text-pink-600" },
-  { icon: <Info className="h-6 w-6" />, title: "Course Content", color: "bg-indigo-50 text-indigo-600" },
-  { icon: <Users className="h-6 w-6" />, title: "Discussion", color: "bg-teal-50 text-teal-600" }
+  { icon: <BookOpen className="h-6 w-6" />, title: "Practice Tests", color: "bg-green-50 text-green-600", link: "/practice-exams" },
+  { icon: <BookCheck className="h-6 w-6" />, title: "Solve Sheets", color: "bg-purple-50 text-purple-600", link: "/dashboard" },
+  { icon: <MessageSquare className="h-6 w-6" />, title: "Q&A Service", color: "bg-pink-50 text-pink-600", link: "/dashboard" },
+  { icon: <Info className="h-6 w-6" />, title: "Course Content", color: "bg-indigo-50 text-indigo-600", link: "/dashboard" },
+  { icon: <Users className="h-6 w-6" />, title: "Discussion", color: "bg-teal-50 text-teal-600", link: "/dashboard" }
 ];
 
 export default function StudentDashboard() {
   const { user, profile } = useAuth();
   const [loading, setLoading] = useState(true);
   const [liveExams, setLiveExams] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }
 
     // Fetch live/upcoming exams
     const q = query(
@@ -117,6 +121,7 @@ export default function StudentDashboard() {
             {sidebarItems.map((item, i) => (
               <button
                 key={i}
+                onClick={() => item.link && navigate(item.link)}
                 className={`flex-shrink-0 flex items-center space-x-4 px-6 lg:px-4 py-3 rounded-2xl transition-all group ${
                   item.active 
                     ? 'bg-blue-600 font-black text-white shadow-xl shadow-blue-600/20' 
@@ -134,12 +139,12 @@ export default function StudentDashboard() {
       </aside>
 
       {/* Main Content - Scrolls with window */}
-      <main className="flex-1 p-6 md:p-10 lg:p-16">
+      <main className="flex-1 p-6 md:p-10 lg:p-16 relative">
         <div className="max-w-6xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
           >
             {/* Immersive Welcome Banner */}
             <div className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden mb-12 border border-white/5 shadow-2xl h-[300px] md:h-[400px] flex items-center group">
