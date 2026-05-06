@@ -28,7 +28,7 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 
   
   if (loading) return (
     <div className="flex items-center justify-center h-screen bg-white">
-      <div className="h-8 w-8 border-2 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+      <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
   if (!user) return <Navigate to="/login" />;
@@ -38,9 +38,16 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: 
 }
 
 function AppContent() {
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard') || 
+                          location.pathname.startsWith('/quizblust') ||
+                          location.pathname.startsWith('/exams') ||
+                          location.pathname.startsWith('/practice-exams') ||
+                          location.pathname.startsWith('/brain-teasers');
+
   return (
-    <div className="relative min-h-screen bg-[#050505] flex flex-col selection:bg-blue-500/30">
-      <Navbar />
+    <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 ${isDashboardRoute ? 'bg-neutral-50' : 'bg-[#050505]'}`}>
+      {!isDashboardRoute && <Navbar />}
       <SpeedInsights />
       <Analytics />
       <main className="flex-1 w-full relative z-10">
@@ -56,7 +63,8 @@ function FooterWrapper() {
   const isDashboardRoute = location.pathname.startsWith('/dashboard') || 
                           location.pathname.startsWith('/quizblust') ||
                           location.pathname.startsWith('/exams') ||
-                          location.pathname.startsWith('/practice-exams');
+                          location.pathname.startsWith('/practice-exams') ||
+                          location.pathname.startsWith('/brain-teasers');
   
   if (isDashboardRoute) return null;
   return <Footer />;

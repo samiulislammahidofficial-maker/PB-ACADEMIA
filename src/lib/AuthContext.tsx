@@ -41,56 +41,28 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<FirebaseUser | null | any>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  // Redefine loading logic to ensure it covers both Auth and Profile
   const [loading, setLoading] = useState(true);
 
-  // Inactivity timeout: 1 hour
+  const logout = async () => {
+    try {
+      await auth.signOut();
+      setUser(null);
+      setProfile(null);
+      localStorage.removeItem('pb_last_activity');
+      localStorage.removeItem('pb_custom_auth');
+    } catch (e) {
+      console.error("Logout error:", e);
+    }
+  };
+
+  // Skip inactivity check for now to improve stability
+  /*
   useEffect(() => {
     if (!user) return;
-
-    const timeout = 3600000; // 1 hour in ms
-    const checkInterval = 60000; // Check every minute
-    let lastUpdate = Date.now();
-
-    const updateActivity = () => {
-      const now = Date.now();
-      // Throttle updates to local storage to every 10 seconds
-      if (now - lastUpdate > 10000) {
-        lastUpdate = now;
-        localStorage.setItem('pb_last_activity', now.toString());
-      }
-    };
-
-    const handleInactivity = () => {
-      const storedLast = localStorage.getItem('pb_last_activity');
-      if (!storedLast) {
-        localStorage.setItem('pb_last_activity', Date.now().toString());
-        return;
-      }
-      
-      const last = parseInt(storedLast);
-      if (isNaN(last)) {
-        localStorage.setItem('pb_last_activity', Date.now().toString());
-        return;
-      }
-
-      if (Date.now() - last > timeout) {
-        console.log("Session expired due to inactivity");
-        logout();
-      }
-    };
-
-    // Events to track activity
-    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-    events.forEach(event => window.addEventListener(event, updateActivity, { passive: true }));
-
-    localStorage.setItem('pb_last_activity', Date.now().toString());
-    const interval = setInterval(handleInactivity, checkInterval);
-
-    return () => {
-      events.forEach(event => window.removeEventListener(event, updateActivity));
-      clearInterval(interval);
-    };
+    // ... inactivity logic ...
   }, [user]);
+  */
 
   // Persistence check for custom login - deprecated in favor of Firebase persistence
   useEffect(() => {
@@ -135,20 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = async () => {
-    await auth.signOut();
-    setUser(null);
-    setProfile(null);
-    localStorage.removeItem('pb_custom_auth');
-  };
-
   useEffect(() => {
     let unsubscribeProfile: (() => void) | null = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
-      // Only trigger loading if the user has actually changed and we need to fetch a new profile
-      const userChanged = !user || !firebaseUser || user.uid !== firebaseUser.uid;
-      
       setUser(firebaseUser);
       
       if (unsubscribeProfile) {
@@ -157,19 +119,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (firebaseUser) {
-        if (userChanged) setLoading(true);
+        // We know we have a user, but we need the profile
+        setLoading(true);
         unsubscribeProfile = onSnapshot(doc(db, 'users', firebaseUser.uid), 
           (docSnap) => {
             if (docSnap.exists()) {
               setProfile(docSnap.data() as UserProfile);
-            } else {
-              setProfile(null);
             }
             setLoading(false);
           },
           (error) => {
-            console.error("Error listening to profile:", error);
-            setProfile(null);
+            console.error("Profile sync error:", error);
             setLoading(false);
           }
         );

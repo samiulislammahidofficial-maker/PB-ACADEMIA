@@ -1,9 +1,8 @@
 import { useAuth } from '../../lib/AuthContext';
 import { db, collection, query, getDocs, limit, onSnapshot, orderBy, where } from '../../lib/firebase';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Course } from '../../types';
-import { 
-  BookOpen, Award, Clock, ChevronRight, Video, ClipboardList, 
+import { LogOut, BookOpen, Award, Clock, ChevronRight, Video, ClipboardList, 
   MessageSquare, BookCheck, Info, Users, LayoutDashboard, 
   PlusCircle, FileText, Monitor, GraduationCap, BarChart2, 
   Wallet, Headphones, ArrowRight, Rocket, Brain
@@ -40,7 +39,7 @@ const features = [
 ];
 
 export default function StudentDashboard() {
-  const { user, profile } = useAuth();
+  const { user, profile, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [liveExams, setLiveExams] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -99,7 +98,7 @@ export default function StudentDashboard() {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-50 min-h-screen">
         <div className="flex flex-col items-center">
-          <div className="h-10 w-10 border-2 border-brand-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div className="h-10 w-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-neutral-400 font-bold uppercase tracking-widest text-[10px]">Loading Dashboard...</p>
         </div>
       </div>
@@ -118,7 +117,7 @@ export default function StudentDashboard() {
              <span className="font-extrabold tracking-tighter text-neutral-900 uppercase">PB Academia</span>
           </div>
         </div>
-        <div className="py-4 px-3">
+        <div className="py-4 px-3 flex-1">
           <div className="flex lg:flex-col overflow-x-auto lg:overflow-x-visible space-x-1 lg:space-x-0 lg:space-y-0.5 pb-2 lg:pb-0 scrollbar-hide">
             {sidebarItems.map((item, i) => (
               <button
@@ -126,17 +125,27 @@ export default function StudentDashboard() {
                 onClick={() => item.link && navigate(item.link)}
                 className={`flex-shrink-0 flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${
                   item.active 
-                    ? 'bg-neutral-100 font-bold text-brand-primary' 
+                    ? 'bg-neutral-100 font-bold text-blue-600' 
                     : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
                 }`}
               >
-                <span className={item.active ? 'text-brand-primary' : 'text-neutral-400 group-hover:text-brand-primary'}>
+                <span className={item.active ? 'text-blue-600' : 'text-neutral-400 group-hover:text-blue-600'}>
                   {React.cloneElement(item.icon as React.ReactElement, { size: 18 })}
                 </span>
                 <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">{item.label}</span>
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="p-4 mt-auto border-t border-neutral-100 hidden lg:block">
+          <button 
+            onClick={() => logout()}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-bold text-[11px] uppercase tracking-tight"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
 
@@ -174,7 +183,7 @@ export default function StudentDashboard() {
                     {feature.icon}
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg md:text-xl font-black text-neutral-800 tracking-tight group-hover:text-brand-primary transition-colors">
+                    <h3 className="text-lg md:text-xl font-black text-neutral-800 tracking-tight group-hover:text-blue-600 transition-colors">
                       {feature.title}
                     </h3>
                     {feature.badge && (
@@ -184,7 +193,7 @@ export default function StudentDashboard() {
                     )}
                   </div>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-brand-primary group-hover:text-white transition-all">
+                <div className="h-10 w-10 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </button>
