@@ -13,13 +13,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { user, loading: authLoading, loginCustom } = useAuth();
+  const { user, profile, loading: authLoading, loginCustom } = useAuth();
 
   useEffect(() => {
-    if (!authLoading && user) {
+    // Only redirect if we have both user AND profile (or we're sure no profile exists)
+    if (!authLoading && user && profile) {
       navigate('/dashboard');
     }
-  }, [user, authLoading, navigate]);
+  }, [user, profile, authLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

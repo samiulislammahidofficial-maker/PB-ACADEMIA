@@ -116,11 +116,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setProfile(data);
               // Store hint for faster loading next time
               localStorage.setItem('pb_custom_auth', JSON.stringify({ profile: data }));
+              setLoading(false);
+            } else {
+              // Doc specifically doesn't exist
+              setProfile(null);
+              setLoading(false);
             }
-            setLoading(false);
           },
           (error) => {
             console.error("Profile sync error:", error);
+            // On error, we should still stop loading but maybe we don't have a profile
             setLoading(false);
           }
         );
