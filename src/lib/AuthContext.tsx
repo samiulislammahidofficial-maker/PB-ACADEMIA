@@ -41,7 +41,6 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<FirebaseUser | null | any>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  // Redefine loading logic to ensure it covers both Auth and Profile
   const [loading, setLoading] = useState(true);
 
   const logout = async () => {
@@ -49,28 +48,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await auth.signOut();
       setUser(null);
       setProfile(null);
-      localStorage.removeItem('pb_last_activity');
       localStorage.removeItem('pb_custom_auth');
     } catch (e) {
       console.error("Logout error:", e);
     }
   };
 
-  // Skip inactivity check for now to improve stability
-  /*
+  // Skip inactivity check to avoid session instability
+  
+  // Custom auth hint for faster initial load
   useEffect(() => {
-    if (!user) return;
-    // ... inactivity logic ...
-  }, [user]);
-  */
-
-  // Persistence check for custom login - deprecated in favor of Firebase persistence
-  useEffect(() => {
-    const savedCustom = localStorage.getItem('pb_custom_auth');
-    if (savedCustom) {
-      // We still use this as a hint for initial load if Firebase is slow
-      const data = JSON.parse(savedCustom);
-      if (data.profile) setProfile(data.profile);
+    const saved = localStorage.getItem('pb_custom_auth');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.profile) setProfile(data.profile);
+      } catch (e) {}
     }
   }, []);
 
@@ -85,7 +78,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: role
       };
       
-      // Save to users collection so rules can verify role
       await setDoc(doc(db, 'users', firebaseUser.uid), {
         ...customProfile,
         identifier: identifier,
@@ -95,12 +87,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(firebaseUser);
       setProfile(customProfile);
-      localStorage.setItem('pb_custom_auth', JSON.stringify({ role, identifier }));
+      localStorage.setItem('pb_custom_auth', JSON.stringify({ role, identifier, profile: customProfile }));
     } catch (error: any) {
       console.error("Custom login failed:", error);
-      if (error.code === 'auth/operation-not-allowed') {
-        throw new Error('CONFIG_ERROR: Anonymous authentication is not enabled in the Firebase Console. Please enable it in the Authentication > Sign-in method tab.');
-      }
       throw error;
     } finally {
       setLoading(false);
@@ -119,12 +108,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (firebaseUser) {
-        // We know we have a user, but we need the profile
-        setLoading(true);
+        // Fetch real profile from Firestore
         unsubscribeProfile = onSnapshot(doc(db, 'users', firebaseUser.uid), 
           (docSnap) => {
             if (docSnap.exists()) {
-              setProfile(docSnap.data() as UserProfile);
+              const data = docSnap.data() as UserProfile;
+              setProfile(data);
+              // Store hint for faster loading next time
+              localStorage.setItem('pb_custom_auth', JSON.stringify({ profile: data }));
             }
             setLoading(false);
           },
