@@ -22,13 +22,24 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (!authLoading && user && !googleUser && step === 'account') {
-      navigate('/dashboard');
+    if (!authLoading && user) {
+      if (profile) {
+        // If they have a profile, they don't need to be here
+        navigate('/dashboard');
+      } else if (step === 'account') {
+        // If they are logged in but have no profile, skip to profile step
+        setStep('profile');
+        setFormData(prev => ({ 
+          ...prev, 
+          email: user.email || '',
+          name: user.displayName || prev.name
+        }));
+      }
     }
-  }, [user, authLoading, navigate, googleUser, step]);
+  }, [user, profile, authLoading, navigate, step]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,10 +107,10 @@ export default function RegisterPage() {
 
   const handleCompleteProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!googleUser) return;
+    if (!user) return; // Works for both Google and previously stuck Email users
     setLoading(true);
     try {
-      await createProfile(googleUser.uid, googleUser.email!, googleUser.displayName || formData.name);
+      await createProfile(user.uid, user.email!, user.displayName || formData.name);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.message);
@@ -241,7 +252,7 @@ export default function RegisterPage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
             >
-              <form onSubmit={googleUser ? handleCompleteProfile : handleRegister} className="space-y-6">
+              <form onSubmit={(googleUser || user) ? handleCompleteProfile : handleRegister} className="space-y-6">
                 <div>
                   <label className="block text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2 ml-1">School Name</label>
                   <div className="relative">
