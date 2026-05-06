@@ -122,7 +122,9 @@ export default function LandingPage() {
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1e1b4b] via-transparent to-transparent opacity-80 z-10"></div>
                       <img 
-                        src={`https://images.unsplash.com/photo-${curSlide === 0 ? '1523050854058-8df90110c9f1' : curSlide === 1 ? '1571260899304-425eee4c7efc' : curSlide === 2 ? '1580582932707-520aed937b7b' : '1434030216411-0b793f4b4173'}?w=1000&auto=format&fit=crop`} 
+                        src={curSlide === 0 
+                          ? "https://i.ibb.co.com/HTFftBh2/IMG-1378-JPG.jpg" 
+                          : `https://images.unsplash.com/photo-${curSlide === 1 ? '1571260899304-425eee4c7efc' : curSlide === 2 ? '1580582932707-520aed937b7b' : '1434030216411-0b793f4b4173'}?w=1000&auto=format&fit=crop`} 
                         className="w-full h-full object-cover grayscale opacity-90"
                         alt="Slide"
                         loading="eager"
