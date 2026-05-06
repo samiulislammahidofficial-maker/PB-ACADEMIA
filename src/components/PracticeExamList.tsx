@@ -1,6 +1,7 @@
 import { useAuth } from '../lib/AuthContext';
 import { practiceSets } from '../data/practiceQuestions';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { BookOpen, ChevronRight, Clock, Award, Brain } from 'lucide-react';
 
@@ -12,7 +13,14 @@ export default function PracticeExamList() {
   const userClass = typeof userClassRaw === 'string' ? parseInt(userClassRaw) : userClassRaw;
 
   // Default to class 8 if not specified to show something or handle empty
-  const filteredSets = practiceSets.filter(set => set.class === userClass);
+  const [selectedSubject, setSelectedSubject] = useState<string>('All');
+  
+  const classSets = practiceSets.filter(set => set.class === userClass);
+  const subjects = ['All', ...Array.from(new Set(classSets.map(set => set.subject)))];
+  
+  const filteredSets = selectedSubject === 'All' 
+    ? classSets 
+    : classSets.filter(set => set.subject === selectedSubject);
 
   return (
     <div className="min-h-screen bg-[#050505] p-6 lg:p-20">
@@ -25,9 +33,28 @@ export default function PracticeExamList() {
           <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase mb-4">
             Practice <span className="text-blue-500">Exams</span>
           </h1>
-          <p className="text-neutral-500 font-bold uppercase tracking-widest text-xs">
-            Class {userClass} • Improve your skills with board-standard MCQ sets
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <p className="text-neutral-500 font-bold uppercase tracking-widest text-xs">
+              Class {userClass} • Improve your skills with board-standard MCQ sets
+            </p>
+            
+            {/* Subject Filters */}
+            <div className="flex flex-wrap gap-2">
+              {subjects.map(subject => (
+                <button
+                  key={subject}
+                  onClick={() => setSelectedSubject(subject)}
+                  className={`px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+                    selectedSubject === subject
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                      : 'bg-white/5 text-neutral-500 hover:bg-white/10 hover:text-neutral-400'
+                  }`}
+                >
+                  {subject}
+                </button>
+              ))}
+            </div>
+          </div>
         </header>
 
         {filteredSets.length > 0 ? (
