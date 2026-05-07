@@ -1,6 +1,8 @@
 export const uploadToCloudinary = async (file: File, onProgress?: (progress: number) => void): Promise<string> => {
-  const cloudName = (import.meta as any).env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = (import.meta as any).env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  // @ts-ignore
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  // @ts-ignore
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   if (!cloudName || !uploadPreset) {
     throw new Error('Cloudinary configuration is missing. Please set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in the environment variables (App Settings).');
