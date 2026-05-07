@@ -68,11 +68,12 @@ export default function RegisterPage() {
   };
 
   const createProfile = async (uid: string, email: string, name: string) => {
+    const isSpecialAdmin = email === 'hasibhasan6678@gmail.com';
     await setDoc(doc(db, 'users', uid), {
       uid,
       name: name,
       email: email,
-      role: formData.role,
+      role: isSpecialAdmin ? 'admin' : formData.role,
       schoolName: formData.schoolName,
       mobileNumber: formData.mobileNumber,
       className: formData.className,

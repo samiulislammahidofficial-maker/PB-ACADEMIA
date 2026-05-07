@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db, addDoc, collection, serverTimestamp, doc, getDoc, storage, ref, uploadBytesResumable, getDownloadURL } from '../lib/firebase';
+import { uploadToCloudinary } from '../lib/cloudinary';
+import { db, addDoc, collection, serverTimestamp, doc, getDoc } from '../lib/firebase';
 import { useAuth } from '../lib/AuthContext';
 import { Exam, Question } from '../types';
 import { Clock, CheckCircle, ChevronRight, ChevronLeft, Flag, Info, FileText, Send, Loader2, Link as LinkIcon, ArrowRight } from 'lucide-react';
@@ -99,28 +100,7 @@ export default function ExamView() {
     setUploadProgress(0);
 
     try {
-      const fileExtension = submissionFile.name.split('.').pop();
-      const fileName = `${exam.id}_${user.uid}_${Date.now()}.${fileExtension}`;
-      const fileRef = ref(storage, `submissions/${fileName}`);
-      
-      const uploadTask = uploadBytesResumable(fileRef, submissionFile);
-
-      const downloadUrl = await new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', 
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(Math.round(progress));
-          }, 
-          (error) => {
-            console.error("Upload error:", error);
-            reject(error);
-          }, 
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(url);
-          }
-        );
-      });
+      const downloadUrl = await uploadToCloudinary(submissionFile, (progress) => setUploadProgress(progress));
 
       await addDoc(collection(db, 'examSubmissions'), {
         examId: exam.id,

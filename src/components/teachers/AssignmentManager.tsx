@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { db, storage, collection, addDoc, serverTimestamp, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
+import { uploadToCloudinary } from '../../lib/cloudinary';
+import { db, collection, addDoc, serverTimestamp } from '../../lib/firebase';
 import { useAuth } from '../../lib/AuthContext';
 import { Upload, X, FileText, CheckCircle, Calendar, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -33,28 +34,7 @@ export default function AssignmentManager({ courseId, onClose }: AssignmentManag
     try {
       let fileUrl = '';
       if (file) {
-        const fileExtension = file.name.split('.').pop();
-        const fileName = `${Date.now()}_assignment_${title.replace(/\s+/g, '_')}.${fileExtension}`;
-        const storageRef = ref(storage, `assignments/${fileName}`);
-        
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        fileUrl = await new Promise((resolve, reject) => {
-          uploadTask.on('state_changed', 
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setUploadProgress(Math.round(progress));
-            }, 
-            (error) => {
-              console.error("Upload error:", error);
-              reject(error);
-            }, 
-            async () => {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve(downloadURL);
-            }
-          );
-        });
+        fileUrl = await uploadToCloudinary(file, (progress) => setUploadProgress(progress));
       }
 
       await addDoc(collection(db, 'assignments'), {

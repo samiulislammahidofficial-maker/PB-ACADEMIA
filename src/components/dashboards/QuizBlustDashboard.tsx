@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, storage, ref, uploadBytesResumable, getDownloadURL, limit } from '../../lib/firebase';
+import { uploadToCloudinary } from '../../lib/cloudinary';
+import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, limit } from '../../lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight, Loader2 } from 'lucide-react';
 import ExamCreator from '../teachers/ExamCreator';
@@ -104,28 +105,7 @@ export default function QuizBlustDashboard() {
     setUploadProgress(0);
 
     try {
-      const fileExtension = submissionFile.name.split('.').pop();
-      const fileName = `${examId}_${user.uid}_${Date.now()}.${fileExtension}`;
-      const fileRef = ref(storage, `submissions/${fileName}`);
-      
-      const uploadTask = uploadBytesResumable(fileRef, submissionFile);
-
-      const downloadUrl = await new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', 
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(Math.round(progress));
-          }, 
-          (error) => {
-            console.error("Upload error:", error);
-            reject(error);
-          }, 
-          async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(url);
-          }
-        );
-      });
+      const downloadUrl = await uploadToCloudinary(submissionFile, (progress) => setUploadProgress(progress));
 
       await addDoc(collection(db, 'examSubmissions'), {
         examId,

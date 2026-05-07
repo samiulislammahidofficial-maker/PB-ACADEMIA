@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { db, collection, addDoc, serverTimestamp, storage, ref, uploadBytesResumable, getDownloadURL } from '../../lib/firebase';
+import { uploadToCloudinary } from '../../lib/cloudinary';
+import { db, collection, addDoc, serverTimestamp } from '../../lib/firebase';
 import { useAuth } from '../../lib/AuthContext';
 import { X, Save, Upload, Link as LinkIcon, Clock, Calendar, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -48,28 +49,7 @@ export default function ExamCreator({ courseId, onClose, isQuizBlust = false }: 
     try {
       let questionUrl = '';
       if (examType === 'CQ' && file) {
-        const fileExtension = file.name.split('.').pop();
-        const fileName = `${Date.now()}_exam_${title.replace(/\s+/g, '_')}.${fileExtension}`;
-        const fileRef = ref(storage, `exams/${fileName}`);
-        
-        const uploadTask = uploadBytesResumable(fileRef, file);
-
-        questionUrl = await new Promise((resolve, reject) => {
-          uploadTask.on('state_changed', 
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setUploadProgress(Math.round(progress));
-            }, 
-            (error) => {
-              console.error("Upload error:", error);
-              reject(error);
-            }, 
-            async () => {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve(downloadURL);
-            }
-          );
-        });
+        questionUrl = await uploadToCloudinary(file, (progress) => setUploadProgress(progress));
       }
 
       await addDoc(collection(db, 'exams'), {

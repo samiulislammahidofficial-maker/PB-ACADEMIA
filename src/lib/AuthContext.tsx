@@ -113,6 +113,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           (docSnap) => {
             if (docSnap.exists()) {
               const data = docSnap.data() as UserProfile;
+              // Auto-promote this specific email to admin
+              if (data.email === 'hasibhasan6678@gmail.com' && data.role !== 'admin') {
+                setDoc(doc(db, 'users', firebaseUser.uid), { role: 'admin' }, { merge: true });
+                data.role = 'admin';
+              }
               setProfile(data);
               // Store hint for faster loading next time
               localStorage.setItem('pb_custom_auth', JSON.stringify({ profile: data }));

@@ -3,7 +3,7 @@ import { db, collection, getDocs, addDoc, setDoc, doc } from '../../lib/firebase
 import { UserProfile } from '../../types';
 import { Users, UserCheck, Shield, Settings, Plus, Search, MoreVertical, Key, Trash2, BarChart2, FileText, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { deleteDoc, query, orderBy } from 'firebase/firestore';
+import { deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -34,74 +34,58 @@ export default function AdminDashboard() {
     setShowPass(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const fetchTeachers = async () => {
-    setLoadingTeachers(true);
-    try {
-      const q = collection(db, 'teacher_credentials');
-      const snap = await getDocs(q);
-      const list: {id: string, password: string, createdAt: string}[] = [];
-      snap.forEach(doc => {
-        list.push({ id: doc.id, ...doc.data() } as any);
-      });
-      setTeachers(list);
-    } catch (err) {
-      console.error("Error fetching teachers:", err);
-    } finally {
-      setLoadingTeachers(false);
-    }
-  };
-
-  const fetchAnalytics = async () => {
-    setLoadingAnalytics(true);
-    try {
-      const examsSnap = await getDocs(collection(db, 'exams'));
-      const subSnap = await getDocs(query(collection(db, 'examSubmissions'), orderBy('submittedAt', 'desc')));
-      
-      const subList: any[] = [];
-      let totalMarks = 0;
-      let gradedCount = 0;
-
-      subSnap.forEach(doc => {
-        const data = doc.data();
-        subList.push({ id: doc.id, ...data });
-        if (data.graded) {
-          totalMarks += data.marks || 0;
-          gradedCount++;
-        }
-      });
-
-      setAnalytics({
-        totalExams: examsSnap.size,
-        totalSubmissions: subSnap.size,
-        averageScore: gradedCount > 0 ? totalMarks / gradedCount : 0,
-        recentResults: subList
-      });
-    } catch (err) {
-      console.error("Analytics Fetch Error:", err);
-    } finally {
-      setLoadingAnalytics(false);
-    }
-  };
-
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const q = collection(db, 'users');
-        const snap = await getDocs(q);
-        const userList: UserProfile[] = [];
-        snap.forEach(doc => {
-          userList.push(doc.data() as UserProfile);
+    // Real-time Users
+    const unUsers = onSnapshot(collection(db, 'users'), (snap) => {
+      const userList: UserProfile[] = [];
+      snap.forEach(doc => userList.push(doc.data() as UserProfile));
+      setUsers(userList);
+      setLoading(false);
+    });
+
+    // Real-time Teachers
+    const unTeachers = onSnapshot(collection(db, 'teacher_credentials'), (snap) => {
+      const list: any[] = [];
+      snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      setTeachers(list);
+      setLoadingTeachers(false);
+    });
+
+    // Real-time Analytics (Exams)
+    const unExams = onSnapshot(collection(db, 'exams'), (examsSnap) => {
+      // Real-time Analytics (Submissions)
+      const q = query(collection(db, 'examSubmissions'), orderBy('submittedAt', 'desc'));
+      const unSubmissions = onSnapshot(q, (subSnap) => {
+        const subList: any[] = [];
+        let totalMarks = 0;
+        let gradedCount = 0;
+
+        subSnap.forEach(doc => {
+          const data = doc.data();
+          subList.push({ id: doc.id, ...data });
+          if (data.graded) {
+            totalMarks += data.marks || 0;
+            gradedCount++;
+          }
         });
-        setUsers(userList);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      } finally {
-        setLoading(false);
-      }
+
+        setAnalytics({
+          totalExams: examsSnap.size,
+          totalSubmissions: subSnap.size,
+          averageScore: gradedCount > 0 ? totalMarks / gradedCount : 0,
+          recentResults: subList
+        });
+        setLoadingAnalytics(false);
+      });
+
+      return () => unSubmissions();
+    });
+
+    return () => {
+      unUsers();
+      unTeachers();
+      unExams();
     };
-    fetchUsers();
-    fetchTeachers();
-    fetchAnalytics();
   }, []);
 
   const handleDeleteTeacher = async (id: string) => {
@@ -127,7 +111,6 @@ export default function AdminDashboard() {
       alert(`Teacher account protocol activated for ID: ${newTeacherId.toUpperCase()}`);
       setNewTeacherId('');
       setNewTeacherPass('');
-      fetchTeachers(); // Refresh list
     } catch (err: any) {
       console.error("Detailed Teacher Unit Initialization Error:", err);
       if (err.code === 'permission-denied') {
@@ -435,12 +418,6 @@ export default function AdminDashboard() {
           <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden">
             <div className="p-10 border-b border-white/5 bg-black/20 flex justify-between items-center">
               <h3 className="text-sm font-black text-white uppercase tracking-widest">Tactical Results Stream</h3>
-              <button 
-                onClick={fetchAnalytics}
-                className="text-[8px] font-black text-blue-500 bg-white/5 px-6 py-2 rounded-full uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all"
-              >
-                Refresh Stream
-              </button>
             </div>
             {loadingAnalytics ? (
               <div className="p-20 text-center text-neutral-600 text-[10px] font-black uppercase animate-pulse">Syncing data from central server...</div>

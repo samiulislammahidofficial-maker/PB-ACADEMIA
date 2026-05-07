@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { db, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp, storage, ref, uploadBytesResumable, getDownloadURL } from '../lib/firebase';
+import { uploadToCloudinary } from '../lib/cloudinary';
+import { db, doc, collection, query, where, addDoc, serverTimestamp, onSnapshot } from '../lib/firebase';
 import { Course, Exam, Assignment } from '../types';
 import { BookOpen, FileText, User, Calendar, Play, ClipboardList, Upload, CheckCircle, X, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -20,29 +21,38 @@ export default function CourseView() {
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      const docRef = doc(db, 'courses', id);
-      const docSnap = await getDoc(docRef);
+    if (!id) return;
+
+    // Real-time Course
+    const docRef = doc(db, 'courses', id);
+    const unCourse = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         setCourse({ id: docSnap.id, ...docSnap.data() } as Course);
       }
+    });
 
-      // Fetch exams for this course
-      const examsSnap = await getDocs(query(collection(db, 'exams'), where('courseId', '==', id)));
+    // Real-time Exams
+    const examQ = query(collection(db, 'exams'), where('courseId', '==', id));
+    const unExams = onSnapshot(examQ, (snap) => {
       const examList: Exam[] = [];
-      examsSnap.forEach(d => examList.push({ id: d.id, ...d.data() } as Exam));
+      snap.forEach(d => examList.push({ id: d.id, ...d.data() } as Exam));
       setExams(examList);
+    });
 
-      // Fetch assignments for this course
-      const assignSnap = await getDocs(query(collection(db, 'assignments'), where('courseId', '==', id)));
+    // Real-time Assignments
+    const assignQ = query(collection(db, 'assignments'), where('courseId', '==', id));
+    const unAssign = onSnapshot(assignQ, (snap) => {
       const assignList: Assignment[] = [];
-      assignSnap.forEach(d => assignList.push({ id: d.id, ...d.data() } as Assignment));
+      snap.forEach(d => assignList.push({ id: d.id, ...d.data() } as Assignment));
       setAssignments(assignList);
-
       setLoading(false);
+    });
+
+    return () => {
+      unCourse();
+      unExams();
+      unAssign();
     };
-    fetchData();
   }, [id]);
 
   const handleAssignmentSubmit = async () => {
@@ -51,28 +61,7 @@ export default function CourseView() {
     setUploadProgress(0);
 
     try {
-      const fileExtension = file.name.split('.').pop();
-      const fileName = `${user.uid}_${Date.now()}.${fileExtension}`;
-      const storageRef = ref(storage, `submissions/${fileName}`);
-      
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      const fileUrl = await new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', 
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress(Math.round(progress));
-          }, 
-          (error) => {
-            console.error("Upload error:", error);
-            reject(error);
-          }, 
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadURL);
-          }
-        );
-      });
+      const fileUrl = await uploadToCloudinary(file, (progress) => setUploadProgress(progress));
 
       await addDoc(collection(db, 'assignmentSubmissions'), {
         assignmentId: submittingAssignment.id,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db, collection, query, where, getDocs, updateDoc, doc } from '../../lib/firebase';
+import { db, collection, query, where, updateDoc, doc, onSnapshot } from '../../lib/firebase';
 import { X, Check, Save, FileText, User } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -17,18 +17,25 @@ export default function SubmissionGrader({ exam, onClose }: SubmissionGraderProp
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
-      const q = query(
-        collection(db, 'examSubmissions'), 
-        where('examId', '==', exam.id)
-      );
-      const snap = await getDocs(q);
+    const q = query(
+      collection(db, 'examSubmissions'), 
+      where('examId', '==', exam.id)
+    );
+    const unsubscribe = onSnapshot(q, (snap) => {
       const list: any[] = [];
       snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
       setSubmissions(list);
+      
+      // Update active submission if its data changed underneath us
+      if (activeSubmission) {
+        const updated = list.find(s => s.id === activeSubmission.id);
+        if (updated) {
+          setActiveSubmission(updated);
+        }
+      }
       setLoading(false);
-    };
-    fetchSubmissions();
+    });
+    return () => unsubscribe();
   }, [exam.id]);
 
   const handleSaveGrade = async () => {
@@ -41,13 +48,6 @@ export default function SubmissionGrader({ exam, onClose }: SubmissionGraderProp
         graded: true,
         gradedAt: new Date().toISOString()
       });
-      
-      setSubmissions(prev => prev.map(s => s.id === activeSubmission.id ? { 
-        ...s, 
-        marks: parseFloat(marks), 
-        feedback, 
-        graded: true 
-      } : s));
       
       setActiveSubmission(null);
       setMarks('');

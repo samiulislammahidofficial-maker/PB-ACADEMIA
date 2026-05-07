@@ -54,7 +54,7 @@ export default function StudentDashboard() {
     // Real-time results sync
     const resultsQ = query(collection(db, 'examSubmissions'));
     const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
-      const allResults = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const allResults = snap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
       const myResults = allResults.filter(r => r.studentId === profile?.id || r.studentId === profile?.uid);
       setResults(myResults);
     }, (err) => {

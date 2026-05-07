@@ -1,5 +1,5 @@
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, getDocs, query, where } from '../../lib/firebase';
+import { db, collection, getDocs, query, where, onSnapshot } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
 import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -15,15 +15,19 @@ export default function TeacherDashboard() {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      const q = query(collection(db, 'courses'), where('teacherId', '==', profile?.uid || ''));
-      const snap = await getDocs(q);
+    if (!profile?.uid) return;
+    
+    const q = query(collection(db, 'courses'), where('teacherId', '==', profile.uid));
+    const unsubscribe = onSnapshot(q, (snap) => {
       const list: any[] = [];
       snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
       setCourses(list);
-      if (list.length > 0) setSelectedCourseId(list[0].id);
-    };
-    if (profile?.uid) fetchCourses();
+      if (list.length > 0 && !selectedCourseId) {
+        setSelectedCourseId(list[0].id);
+      }
+    });
+
+    return () => unsubscribe();
   }, [profile]);
 
   return (
