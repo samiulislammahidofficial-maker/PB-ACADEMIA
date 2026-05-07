@@ -21,6 +21,7 @@ import BrainTeasers from './components/BrainTeasers';
 import PracticeExamList from './components/PracticeExamList';
 import PracticeExamSession from './components/PracticeExamSession';
 import ScrollToTop from './components/common/ScrollToTop';
+import ChatBot from './components/ChatBot';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -54,6 +55,7 @@ function AppContent() {
         <AppRoutes />
       </main>
       <FooterWrapper />
+      <ChatBot />
     </div>
   );
 }
