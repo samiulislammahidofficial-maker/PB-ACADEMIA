@@ -54,11 +54,20 @@ export default function QuizBlustDashboard() {
     });
 
     // Listen to results for the leaderboard (last 2 days)
-    const resultsQ = query(
-      collection(db, 'examSubmissions'),
-      where('graded', '==', true),
-      orderBy('submittedAt', 'desc')
-    );
+    let resultsQ;
+    if (profile?.role === 'admin' || profile?.role === 'teacher') {
+      resultsQ = query(
+        collection(db, 'examSubmissions'),
+        where('graded', '==', true),
+        orderBy('submittedAt', 'desc')
+      );
+    } else {
+      resultsQ = query(
+        collection(db, 'examSubmissions'),
+        where('studentId', '==', user.uid),
+        orderBy('submittedAt', 'desc')
+      );
+    }
 
     const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
       const list: any[] = [];

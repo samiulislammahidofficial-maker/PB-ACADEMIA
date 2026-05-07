@@ -1,5 +1,5 @@
 import { useAuth } from '../../lib/AuthContext';
-import { db, collection, query, limit, onSnapshot, orderBy } from '../../lib/firebase';
+import { db, collection, query, limit, onSnapshot, orderBy, where } from '../../lib/firebase';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -50,18 +50,23 @@ export default function StudentDashboard() {
     });
 
     // Real-time results sync
-    const resultsQ = query(collection(db, 'examSubmissions'));
-    const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
-      const allResults = snap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
-      const myResults = allResults.filter(r => r.studentId === profile?.id || r.studentId === profile?.uid);
-      setResults(myResults);
-    }, (err) => {
-      console.error("Results sync error:", err);
-    });
+    if (profile?.id || profile?.uid) {
+      const studentId = profile.id || profile.uid;
+      const resultsQ = query(collection(db, 'examSubmissions'), where('studentId', '==', studentId));
+      const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
+        const myResults = snap.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+        setResults(myResults);
+      }, (err) => {
+        console.error("Results sync error:", err);
+      });
+      return () => {
+        unsubscribe();
+        unsubscribeResults();
+      };
+    }
 
     return () => {
       unsubscribe();
-      unsubscribeResults();
     };
   }, [profile]);
 

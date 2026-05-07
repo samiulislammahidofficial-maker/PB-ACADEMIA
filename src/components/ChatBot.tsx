@@ -1,6 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
+import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+
+let ai: GoogleGenAI | null = null;
+let initError: string | null = null;
+try {
+  console.log("Initializing Gemini with key length: ", process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0);
+  ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+} catch (error: any) {
+  console.error("Failed to initialize GoogleGenAI", error);
+  initError = error?.message || String(error);
+}
 
 type Message = {
   id: string;
@@ -16,6 +27,18 @@ export default function ChatBot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<Chat | null>(null);
+
+  useEffect(() => {
+    if (ai && !chatRef.current) {
+      chatRef.current = ai.chats.create({
+        model: "gemini-3-flash-preview",
+        config: {
+          systemInstruction: "You are a helpful, knowledgeable AI assistant for an educational platform called QuizBlust. Be concise, friendly, and helpful to the students and teachers using the platform."
+        }
+      });
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,7 +50,7 @@ export default function ChatBot() {
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !ai || !chatRef.current) return;
     
     const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input.trim() };
     setMessages(prev => [...prev, userMessage]);
@@ -39,49 +62,16 @@ export default function ChatBot() {
     setMessages(prev => [...prev, { id: botMessageId, role: 'model', text: '' }]);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage.text })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      if (!response.body) throw new Error("No response body");
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      let isDone = false;
-      while (!isDone) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-            const data = line.slice(6);
-            if (data) {
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.text) {
-                  setMessages(prev => prev.map(msg => 
-                    msg.id === botMessageId 
-                      ? { ...msg, text: msg.text + parsed.text } 
-                      : msg
-                  ));
-                }
-              } catch (e) {
-                // Ignore parse errors on incomplete chunks
-              }
-            }
-          }
+      const streamResponse = await chatRef.current.sendMessageStream({ message: userMessage.text });
+      
+      for await (const chunk of streamResponse) {
+        const c = chunk as GenerateContentResponse;
+        if (c.text) {
+          setMessages(prev => prev.map(msg => 
+            msg.id === botMessageId 
+              ? { ...msg, text: msg.text + c.text } 
+              : msg
+          ));
         }
       }
     } catch (error: any) {
@@ -89,7 +79,7 @@ export default function ChatBot() {
       setMessages(prev => [...prev, { 
         id: Date.now().toString(), 
         role: 'model', 
-        text: "I'm sorry, I encountered an error while processing your request. Please try again later." 
+        text: `Error: ${error.message || String(error)}` 
       }]);
     } finally {
       setIsLoading(false);
@@ -165,25 +155,31 @@ export default function ChatBot() {
 
             {/* Input Area */}
             <div className="p-4 border-t border-white/10 bg-black/40">
-              <form 
-                onSubmit={handleSend}
-                className="flex items-center gap-2"
-              >
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  className="p-2.5 rounded-full bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500 transition-colors"
+              {!ai ? (
+                 <div className="text-xs text-red-400 text-center px-4 py-2 bg-red-400/10 rounded-lg flex-1">
+                 {initError ? `Init error: ${initError}` : 'API key is missing or invalid. Set GEMINI_API_KEY environment variable.'}
+               </div>
+              ) : (
+                <form 
+                  onSubmit={handleSend}
+                  className="flex items-center gap-2"
                 >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask me anything..."
+                    className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    className="p-2.5 rounded-full bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500 transition-colors"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </form>
+              )}
             </div>
           </motion.div>
         )}
