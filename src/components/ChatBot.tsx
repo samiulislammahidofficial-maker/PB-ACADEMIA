@@ -4,10 +4,13 @@ import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
 import { GoogleGenAI, Chat } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
+let initError: string | null = null;
 try {
+  console.log("Initializing Gemini with key length: ", process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.length : 0);
   ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-} catch (error) {
+} catch (error: any) {
   console.error("Failed to initialize GoogleGenAI", error);
+  initError = error?.message || String(error);
 }
 
 type Message = {
@@ -29,7 +32,7 @@ export default function ChatBot() {
   useEffect(() => {
     if (ai && !chatRef.current) {
       chatRef.current = ai.chats.create({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         config: {
           systemInstruction: "You are a helpful, knowledgeable AI assistant for an educational platform called QuizBlust. Be concise, friendly, and helpful to the students and teachers using the platform."
         }
@@ -151,7 +154,7 @@ export default function ChatBot() {
             <div className="p-4 border-t border-white/10 bg-black/40">
               {!ai ? (
                  <div className="text-xs text-red-400 text-center px-4 py-2 bg-red-400/10 rounded-lg flex-1">
-                 API key is missing or invalid. Set GEMINI_API_KEY environment variable.
+                 {initError ? `Init error: ${initError}` : 'API key is missing or invalid. Set GEMINI_API_KEY environment variable.'}
                </div>
               ) : (
                 <form 
