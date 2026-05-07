@@ -46,7 +46,7 @@ function AppContent() {
                           location.pathname.startsWith('/brain-teasers');
 
   return (
-    <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 ${isDashboardRoute ? 'bg-neutral-50' : 'bg-[#050505]'}`}>
+    <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 bg-[#050505]`}>
       {!isDashboardRoute && <Navbar />}
       <SpeedInsights />
       <Analytics />
