@@ -42,9 +42,7 @@ export default function StudentDashboard() {
     const q = query(collection(db, 'exams'), orderBy('startTime', 'desc'), limit(15));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const examData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Filter explicitly for quizblust ones or global ones
-      const quizblustExams = examData.filter((e: any) => e.isQuizBlust || e.courseId === 'quizblust');
-      setExams(quizblustExams);
+      setExams(examData);
       setLoading(false);
     }, (err) => {
       console.error("Exam sync error:", err);
