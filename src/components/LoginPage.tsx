@@ -120,18 +120,17 @@ export default function LoginPage() {
           </div>
           
           <div className="w-full max-w-lg mx-auto lg:mx-0 aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-[6px] md:border-8 border-neutral-100 shadow-xl relative group">
-            {/* Replace this YouTube URL with your own recorded tutorial once it's ready */}
             <iframe 
-              src="https://www.youtube.com/embed/tgbNymZ7vqY" 
-              title="QuizBlust Platform Tutorial" 
+              src="https://www.youtube.com/embed/kJQP7kiw5Fk" 
+              title="Platform Tutorial" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowFullScreen
               className="w-full h-full"
             ></iframe>
           </div>
-          <p className="mt-4 text-xs text-neutral-400 font-medium italic max-w-lg mx-auto lg:mx-0">
-            * Note: Replace this placeholder video with your actual recorded tutorial in LoginPage.tsx.
+          <p className="mt-4 text-xs text-neutral-500 font-medium italic max-w-lg mx-auto lg:mx-0">
+            টিউটোরিয়াল ভিডিওটি দেখে প্ল্যাটফর্মের ব্যবহার সম্পর্কে বিস্তারিত জানুন।
           </p>
         </motion.div>
 

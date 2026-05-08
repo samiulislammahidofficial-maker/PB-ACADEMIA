@@ -96,11 +96,11 @@ export default function ChatBot() {
   };
 
   return (
-    <>
+    <div className="chatbot-container">
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 p-4 rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-500 transition-all z-50 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-6 right-6 p-4 rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-500 transition-all z-[999] ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
         <MessageSquare className="w-6 h-6" />
       </button>
@@ -187,6 +187,6 @@ export default function ChatBot() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

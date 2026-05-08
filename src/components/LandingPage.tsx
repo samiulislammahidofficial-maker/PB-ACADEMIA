@@ -209,6 +209,47 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* ── PHILOSOPHY CARDS (QUIZBLUST / BRAIN TEASERS) ── */}
+      <section className="py-24 bg-white relative z-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12">
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-indigo-950 to-blue-900 rounded-[4rem] p-16 relative overflow-hidden group border border-white/10 shadow-3xl"
+            >
+              <div className="relative z-10">
+                <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-sm">
+                  <span>নতুন ফিচার</span>
+                </div>
+                <h3 className="text-5xl font-display font-black text-white uppercase tracking-tighter mb-4">QUIZ<span className="text-blue-500">BLUST</span></h3>
+                <p className="text-blue-100/70 font-medium text-xl leading-relaxed max-w-sm">কুইজব্লাস্ট: ক্লাস ৯ এর বন্ধুদের জন্য একদম ফ্রি সব এক্সাম সলভ ব্যাচ! আজই জয়েন করো।</p>
+                <Link to="/quizblust" className="inline-flex items-center mt-12 px-10 py-5 bg-blue-600 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl hover:bg-blue-500 transition-all group-hover:shadow-blue-500/40">
+                   ফ্রি জয়েন করো <ArrowRight className="ml-3 h-4 w-4" />
+                </Link>
+              </div>
+              <Rocket className="h-64 w-64 text-white/5 absolute -bottom-16 -right-16 rotate-12 transition-transform group-hover:translate-x-4 group-hover:-translate-y-4 duration-1000" />
+            </motion.div>
+
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-purple-950 to-indigo-900 rounded-[4rem] p-16 relative overflow-hidden group border border-white/10 shadow-3xl"
+            >
+              <div className="relative z-10">
+                <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-purple-500/20 rounded-full border border-purple-500/30 text-purple-300 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-sm">
+                  <span>ফ্রি অ্যাক্সেস</span>
+                </div>
+                <h3 className="text-5xl font-display font-black text-white uppercase tracking-tighter mb-4">BRAIN <span className="text-purple-500">TEASERS</span></h3>
+                <p className="text-purple-100/70 font-medium text-xl leading-relaxed max-w-sm">মজাদার আইকিউ প্রশ্ন ও ধাঁধার মাধ্যমে নিজেকে ঝালিয়ে নাও এবং মস্তিষ্কের কার্যক্ষমতা বাড়াও।</p>
+                <Link to="/brain-teasers" className="inline-flex items-center mt-12 px-10 py-5 bg-purple-600 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl hover:bg-purple-500 transition-all group-hover:shadow-purple-500/40">
+                   সমাধান শুরু করো <Brain className="ml-3 h-4 w-4" />
+                </Link>
+              </div>
+              <Brain className="h-64 w-64 text-white/5 absolute -bottom-16 -right-16 -rotate-12 transition-transform group-hover:-translate-x-4 group-hover:-translate-y-4 duration-1000" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ── PROGRAMS ── */}
       <section id="courses" className="py-40 bg-[#fafafa]">
         <div className="max-w-7xl mx-auto px-6">
@@ -229,7 +270,7 @@ export default function LandingPage() {
                 { id: 'c8', icon: '🎒', tag: 'Class 8', title: '৮ম শ্রেণীর একাডেমিক ব্যাচ', desc: 'পদার্থ, রসায়ন, সাধারণ গণিত, উচ্চতর গণিত ও আইসিটি। নতুন কারিকুলাম ভিত্তিক বিশেষ প্রস্তুতি।', time: 'প্রতি মাস', mode: 'অনলাইন ও অফলাইন', priceOffline: '১,৫০০', priceOnline: '১,০০০', color: 'from-blue-50 to-indigo-50', tagColor: 'bg-blue-100 text-blue-600', isPerSubject: true, isMonthly: true },
                 { id: 'c9', icon: '📐', tag: 'Class 9', title: '৯ম শ্রেণীর একাডেমিক ব্যাচ', desc: 'নতুন কারিকুলাম অনুযায়ী বিজ্ঞান শাখার পূর্ণাঙ্গ কোর্স (Phy, Chem, Math, ICT)।', time: 'প্রতি মাস', mode: 'অনলাইন ও অফলাইন', priceOffline: '১,৫০০', priceOnline: '১,০০০', color: 'from-emerald-50 to-teal-50', tagColor: 'bg-emerald-100 text-emerald-600', isPerSubject: true, isMonthly: true },
                 { id: 'c10', icon: '📝', tag: 'SSC Batch', title: '১০ম শ্রেণী ও SSC টার্গেট ব্যাচ', desc: 'SSC পরীক্ষার চূড়ান্ত প্রস্তুতির জন্য এ প্লাস ম্যাজিক ব্যাচ। বোর্ড প্রশ্ন এনালাইসিস।', time: 'প্রতি মাস', mode: 'অনলাইন ও অফলাইন', priceOffline: '১,৫০০', priceOnline: '১,০০০', color: 'from-indigo-50 to-blue-50', tagColor: 'bg-indigo-100 text-indigo-600', isPerSubject: true, isMonthly: true },
-                { id: 'qb', icon: '⚡', tag: 'FREE', title: 'QuizBlust: Class 8 Special', desc: 'ক্লাস ৮ এর বন্ধুদের জন্য একদম ফ্রি সব এক্সাম সলভ ব্যাচ! কুইজ ও সমাধান।', time: 'চলমান', mode: 'অনলাইন', price: '০', color: 'from-amber-50 to-orange-50', tagColor: 'bg-amber-100 text-amber-700' },
+                { id: 'qb', icon: '⚡', tag: 'FREE', title: 'QuizBlust: Class 9 Special', desc: 'ক্লাস ৯ এর বন্ধুদের জন্য একদম ফ্রি সব এক্সাম সলভ ব্যাচ! কুইজ ও সমাধান।', time: 'চলমান', mode: 'অনলাইন', price: '০', color: 'from-amber-50 to-orange-50', tagColor: 'bg-amber-100 text-amber-700' },
               ]
             },
             { 
@@ -492,47 +533,6 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PHILOSOPHY CARDS (QUIZBLUST / BRAIN TEASERS) ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12">
-            <motion.div 
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-indigo-950 to-blue-900 rounded-[4rem] p-16 relative overflow-hidden group border border-white/10 shadow-3xl"
-            >
-              <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-blue-500/20 rounded-full border border-blue-500/30 text-blue-300 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-sm">
-                  <span>নতুন ফিচার</span>
-                </div>
-                <h3 className="text-5xl font-display font-black text-white uppercase tracking-tighter mb-4">QUIZ<span className="text-blue-500">BLUST</span></h3>
-                <p className="text-blue-100/70 font-medium text-xl leading-relaxed max-w-sm">কুইজব্লাস্ট: ক্লাস ৮ এর বন্ধুদের জন্য একদম ফ্রি সব এক্সাম সলভ ব্যাচ! আজই জয়েন করো।</p>
-                <Link to="/quizblust" className="inline-flex items-center mt-12 px-10 py-5 bg-blue-600 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl hover:bg-blue-500 transition-all group-hover:shadow-blue-500/40">
-                   ফ্রি জয়েন করো <ArrowRight className="ml-3 h-4 w-4" />
-                </Link>
-              </div>
-              <Rocket className="h-64 w-64 text-white/5 absolute -bottom-16 -right-16 rotate-12 transition-transform group-hover:translate-x-4 group-hover:-translate-y-4 duration-1000" />
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-purple-950 to-indigo-900 rounded-[4rem] p-16 relative overflow-hidden group border border-white/10 shadow-3xl"
-            >
-              <div className="relative z-10">
-                <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-purple-500/20 rounded-full border border-purple-500/30 text-purple-300 text-[10px] font-black uppercase tracking-[0.3em] mb-8 shadow-sm">
-                  <span>ফ্রি অ্যাক্সেস</span>
-                </div>
-                <h3 className="text-5xl font-display font-black text-white uppercase tracking-tighter mb-4">BRAIN <span className="text-purple-500">TEASERS</span></h3>
-                <p className="text-purple-100/70 font-medium text-xl leading-relaxed max-w-sm">মজাদার আইকিউ প্রশ্ন ও ধাঁধার মাধ্যমে নিজেকে ঝালিয়ে নাও এবং মস্তিষ্কের কার্যক্ষমতা বাড়াও।</p>
-                <Link to="/brain-teasers" className="inline-flex items-center mt-12 px-10 py-5 bg-purple-600 text-white rounded-[2.5rem] font-black uppercase tracking-widest text-[10px] shadow-2xl hover:bg-purple-500 transition-all group-hover:shadow-purple-500/40">
-                   সমাধান শুরু করো <Brain className="ml-3 h-4 w-4" />
-                </Link>
-              </div>
-              <Brain className="h-64 w-64 text-white/5 absolute -bottom-16 -right-16 -rotate-12 transition-transform group-hover:-translate-x-4 group-hover:-translate-y-4 duration-1000" />
-            </motion.div>
           </div>
         </div>
       </section>

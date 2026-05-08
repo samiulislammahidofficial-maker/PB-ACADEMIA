@@ -23,6 +23,15 @@ export default function QuizBlustDashboard() {
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
+    if (activeExam) {
+      document.body.classList.add('hide-chatbot');
+    } else {
+      document.body.classList.remove('hide-chatbot');
+    }
+    return () => document.body.classList.remove('hide-chatbot');
+  }, [activeExam]);
+
+  useEffect(() => {
     if (!user) return;
 
     // Check registration
@@ -437,14 +446,29 @@ export default function QuizBlustDashboard() {
               <div className="flex-grow grid lg:grid-cols-2 overflow-hidden">
                 {/* Question Section */}
                 <div className="p-10 overflow-y-auto border-r border-white/5 bg-black/40">
-                  <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-widest mb-6 flex items-center">
-                    <FileText className="h-4 w-4 mr-3 text-blue-500" />
-                    প্রশ্নপত্র (Question Paper)
-                  </h3>
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center">
+                      <FileText className="h-4 w-4 mr-3 text-blue-500" />
+                      প্রশ্নপত্র (Question Paper)
+                    </h3>
+                    {activeExam.questionUrl && (
+                      <a 
+                        href={activeExam.questionUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="px-5 py-2 bg-blue-600/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl flex items-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download
+                      </a>
+                    )}
+                  </div>
                   {activeExam.examType === 'CQ' ? (
-                    <div className="aspect-[3/4] w-full bg-black rounded-3xl border border-white/5 flex items-center justify-center text-neutral-700">
+                    <div className="h-[75vh] min-h-[500px] w-full bg-black rounded-3xl border border-white/5 flex items-center justify-center text-neutral-700 overflow-hidden">
                       {activeExam.questionUrl ? (
-                        <iframe src={activeExam.questionUrl} className="w-full h-full rounded-3xl" />
+                        <object data={activeExam.questionUrl} type="application/pdf" className="w-full h-full">
+                          <iframe src={activeExam.questionUrl} className="w-full h-full" title="Question Paper" />
+                        </object>
                       ) : (
                         <p className="font-black text-xs uppercase italic">Synchronizing Tactical Data...</p>
                       )}

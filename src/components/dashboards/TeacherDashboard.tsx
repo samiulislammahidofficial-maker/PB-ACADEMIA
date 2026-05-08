@@ -32,9 +32,9 @@ export default function TeacherDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-6">
-        <Link to="/" className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-white transition-colors">
-          <Home className="w-4 h-4 mr-2" />
+      <div className="mb-10">
+        <Link to="/" className="inline-flex items-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all">
+          <Home className="w-4 h-4 mr-3" />
           Back to Home
         </Link>
       </div>

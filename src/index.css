@@ -31,4 +31,9 @@
   .animate-marquee:hover {
     animation-play-state: paused;
   }
+
+  body.hide-chatbot .chatbot-container {
+    display: none !important;
+  }
 }
+
