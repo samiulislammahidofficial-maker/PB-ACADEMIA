@@ -3,7 +3,7 @@ import { useAuth } from '../../lib/AuthContext';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { db, collection, query, where, getDocs, addDoc, serverTimestamp, onSnapshot, orderBy, updateDoc, doc, limit } from '../../lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
-import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { Rocket, Clock, CheckCircle2, AlertTriangle, FileText, Link as LinkIcon, Send, Trophy, List, PlusCircle, ArrowRight, Loader2, Download } from 'lucide-react';
 import ExamCreator from '../teachers/ExamCreator';
 import CountdownClock from '../common/CountdownClock';
 import SubmissionGrader from '../teachers/SubmissionGrader';
