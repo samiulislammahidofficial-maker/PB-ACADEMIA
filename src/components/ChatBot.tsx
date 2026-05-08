@@ -19,13 +19,7 @@ export default function ChatBot() {
 
   useEffect(() => {
     try {
-      // Vite injects this during build from process.env via vite.config.ts
-      // Note: we can't do direct string replacement without using the exact syntax we defined.
-      const apiKey = process.env.GEMINI_API_KEY || "";
-      if (!apiKey) {
-        setInitError("API key is not configured.");
-        return;
-      }
+      const apiKey = process.env.GEMINI_API_KEY;
       
       const ai = new GoogleGenAI({ apiKey });
       aiRef.current = ai;
