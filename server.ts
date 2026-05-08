@@ -10,6 +10,13 @@ async function startServer() {
 
   app.use(express.json());
 
+  app.get("/api/health", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      key: process.env.GEMINI_API_KEY
+    });
+  });
+
   // Wait for Gemini init
   app.post("/api/chat", async (req, res) => {
     try {
