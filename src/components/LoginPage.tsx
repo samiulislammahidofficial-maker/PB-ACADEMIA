@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, googleProvider, signInWithPopup, db, getDoc, doc } from '../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Mail, Lock, AlertCircle, ChevronRight } from 'lucide-react';
+import { Mail, Lock, AlertCircle, ChevronRight, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../lib/AuthContext';
 
@@ -100,12 +100,44 @@ export default function LoginPage() {
         <div className="absolute bottom-0 -right-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full bg-white rounded-[3rem] shadow-[0_32px_120px_rgba(31,38,135,0.15)] border border-neutral-100 p-10 md:p-14 relative z-20"
-      >
+      <div className="max-w-6xl w-full mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-20">
+        
+        {/* Left Side: Video Tutorial */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="hidden lg:flex flex-col items-start"
+        >
+          <div className="bg-brand-surface/10 border border-brand-primary/10 rounded-3xl p-6 mb-8 inline-flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-brand-primary flex items-center justify-center text-white">
+              <Play className="h-5 w-5 ml-1" />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-brand-primary uppercase tracking-tight">Need Help?</h3>
+              <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">Watch our quick start guide</p>
+            </div>
+          </div>
+          
+          <div className="w-full aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-8 border-neutral-100 shadow-2xl relative">
+            <iframe 
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+              title="QuizBlust Tutorial" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowFullScreen
+              className="w-full h-full"
+            ></iframe>
+          </div>
+        </motion.div>
+
+        {/* Right Side: Login Form */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="max-w-md w-full mx-auto bg-white rounded-[3rem] shadow-[0_32px_120px_rgba(31,38,135,0.15)] border border-neutral-100 p-10 md:p-14"
+        >
         <div className="text-center mb-10">
           <Link to="/" className="inline-block mb-6">
             <motion.div
@@ -219,6 +251,7 @@ export default function LoginPage() {
               </p>
             )}
           </motion.div>
+      </div>
     </div>
   );
 }

@@ -58,20 +58,21 @@ export default function QuizBlustDashboard() {
     if (profile?.role === 'admin' || profile?.role === 'teacher') {
       resultsQ = query(
         collection(db, 'examSubmissions'),
-        where('graded', '==', true),
-        orderBy('submittedAt', 'desc')
+        where('graded', '==', true)
       );
     } else {
       resultsQ = query(
         collection(db, 'examSubmissions'),
-        where('studentId', '==', user.uid),
-        orderBy('submittedAt', 'desc')
+        where('studentId', '==', user.uid)
       );
     }
 
     const unsubscribeResults = onSnapshot(resultsQ, (snap) => {
       const list: any[] = [];
       snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+      // Sort by submittedAt desc
+      list.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+      
       // Filter results within 2 days
       const twoDaysAgo = new Date();
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);

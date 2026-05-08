@@ -1,7 +1,7 @@
 import { useAuth } from '../../lib/AuthContext';
 import { db, collection, getDocs, query, where, onSnapshot } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
-import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket } from 'lucide-react';
+import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket, Home } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import ExamCreator from '../teachers/ExamCreator';
@@ -32,6 +32,12 @@ export default function TeacherDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mb-6">
+        <Link to="/" className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-neutral-500 hover:text-white transition-colors">
+          <Home className="w-4 h-4 mr-2" />
+          Back to Home
+        </Link>
+      </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-8">
         <div>
           <h1 className="text-5xl font-black text-white uppercase tracking-tighter">

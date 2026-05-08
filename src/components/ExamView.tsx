@@ -4,7 +4,7 @@ import { uploadToCloudinary } from '../lib/cloudinary';
 import { db, addDoc, collection, serverTimestamp, doc, getDoc } from '../lib/firebase';
 import { useAuth } from '../lib/AuthContext';
 import { Exam, Question } from '../types';
-import { Clock, CheckCircle, ChevronRight, ChevronLeft, Flag, Info, FileText, Send, Loader2, Link as LinkIcon, ArrowRight } from 'lucide-react';
+import { Clock, CheckCircle, ChevronRight, ChevronLeft, Flag, Info, FileText, Send, Loader2, Link as LinkIcon, ArrowRight, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function ExamView() {
@@ -181,17 +181,30 @@ export default function ExamView() {
         <div className="grid lg:grid-cols-2 gap-10">
           {/* Question Viewport */}
           <div className="bg-[#0a0a0a] rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl flex flex-col">
-            <div className="p-8 border-b border-white/5 bg-black/40 flex items-center justify-between">
+            <div className="p-8 border-b border-white/5 bg-black/40 flex items-center justify-between flex-wrap gap-4">
               <h3 className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center">
                 <FileText className="h-4 w-4 mr-3 text-blue-500" />
                 Question Paper / প্রশ্নপত্র
               </h3>
+              {exam.examType === 'CQ' && exam.questionUrl && (
+                <a 
+                  href={exam.questionUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="px-5 py-2 bg-blue-600/10 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white rounded-xl flex items-center gap-2 text-[9px] font-black uppercase tracking-widest transition-all"
+                >
+                  <Download className="w-3 h-3" />
+                  Download
+                </a>
+              )}
             </div>
             <div className="flex-grow p-1 overflow-hidden">
                {exam.examType === 'CQ' ? (
-                  <div className="h-[600px] bg-black rounded-[2.5rem] overflow-hidden">
+                  <div className="h-[75vh] min-h-[600px] bg-black rounded-[2.5rem] overflow-hidden">
                     {exam.questionUrl ? (
-                      <iframe src={exam.questionUrl} className="w-full h-full" title="Question Paper" />
+                      <object data={exam.questionUrl} type="application/pdf" className="w-full h-full">
+                        <iframe src={exam.questionUrl} className="w-full h-full" title="Question Paper" />
+                      </object>
                     ) : (
                       <div className="h-full flex items-center justify-center text-neutral-800 font-black uppercase tracking-widest text-[10px] italic">
                         Synchronizing Tactical Question Data...

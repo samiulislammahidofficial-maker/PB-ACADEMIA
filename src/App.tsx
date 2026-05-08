@@ -55,7 +55,7 @@ function AppContent() {
         <AppRoutes />
       </main>
       <FooterWrapper />
-      <ChatBot />
+      {!location.pathname.startsWith('/exams') && <ChatBot />}
     </div>
   );
 }
