@@ -6,25 +6,29 @@ import { GoogleGenAI } from "@google/genai";
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{id: string, role: 'user' | 'model', text: string}[]>([
-    { id: '1', role: 'model', text: 'Hello! I am Porar Bojha. How can I help you today?' }
+    { id: '1', role: 'model', text: 'হ্যালো! আমি পড়ার বোঝা। কিভাবে সাহায্য করতে পারি?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // We initialize the API key inside the component dynamically if possible
   const [initError, setInitError] = useState<string | null>(null);
   const aiRef = useRef<any>(null);
   const chatRef = useRef<any>(null);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
     try {
+      // Create the AI instance without passing apiKey directly if we want to rely on the injected free tier.
+      // But we can also pass process.env.GEMINI_API_KEY which might be populated.
       const apiKey = process.env.GEMINI_API_KEY;
-      
-      const ai = new GoogleGenAI({ apiKey });
+      const config = apiKey ? { apiKey } : {};
+      const ai = new GoogleGenAI(config);
       aiRef.current = ai;
       chatRef.current = ai.chats.create({
-        model: "gemini-2.5-flash",
+        model: "gemini-3-flash-preview",
         config: {
           systemInstruction: "You are a helpful, knowledgeable AI assistant for an educational platform called QuizBlust. Be concise, friendly, and helpful to the students and teachers using the platform. Your name is 'Porar Bojha'."
         }
@@ -34,10 +38,6 @@ export default function ChatBot() {
       setInitError(e.message || String(e));
     }
   }, []);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   useEffect(() => {
     scrollToBottom();
