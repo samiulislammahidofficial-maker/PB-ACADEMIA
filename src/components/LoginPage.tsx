@@ -107,7 +107,7 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="flex flex-col items-center lg:items-start text-center lg:text-left mb-8 lg:mb-0"
+          className="flex flex-col items-center lg:items-start text-center lg:text-left mb-8 lg:mb-0 w-full"
         >
           <div className="bg-brand-surface/10 border border-brand-primary/10 rounded-3xl p-5 mb-6 md:mb-8 inline-flex items-center gap-4">
             <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-brand-primary flex items-center justify-center text-white shrink-0">
@@ -119,16 +119,20 @@ export default function LoginPage() {
             </div>
           </div>
           
-          <div className="w-full max-w-lg mx-auto lg:mx-0 aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-[6px] md:border-8 border-neutral-100 shadow-xl relative">
+          <div className="w-full max-w-lg mx-auto lg:mx-0 aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-[6px] md:border-8 border-neutral-100 shadow-xl relative group">
+            {/* Replace this YouTube URL with your own recorded tutorial once it's ready */}
             <iframe 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="QuizBlust Tutorial" 
+              src="https://www.youtube.com/embed/tgbNymZ7vqY" 
+              title="QuizBlust Platform Tutorial" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowFullScreen
               className="w-full h-full"
             ></iframe>
           </div>
+          <p className="mt-4 text-xs text-neutral-400 font-medium italic max-w-lg mx-auto lg:mx-0">
+            * Note: Replace this placeholder video with your actual recorded tutorial in LoginPage.tsx.
+          </p>
         </motion.div>
 
         {/* Right Side: Login Form */}
