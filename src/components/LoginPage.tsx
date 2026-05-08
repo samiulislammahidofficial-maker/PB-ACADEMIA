@@ -107,19 +107,19 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="hidden lg:flex flex-col items-start"
+          className="flex flex-col items-center lg:items-start text-center lg:text-left mb-8 lg:mb-0"
         >
-          <div className="bg-brand-surface/10 border border-brand-primary/10 rounded-3xl p-6 mb-8 inline-flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-brand-primary flex items-center justify-center text-white">
-              <Play className="h-5 w-5 ml-1" />
+          <div className="bg-brand-surface/10 border border-brand-primary/10 rounded-3xl p-5 mb-6 md:mb-8 inline-flex items-center gap-4">
+            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-brand-primary flex items-center justify-center text-white shrink-0">
+              <Play className="h-4 w-4 md:h-5 md:w-5 ml-1" />
             </div>
-            <div>
-              <h3 className="text-xl font-black text-brand-primary uppercase tracking-tight">Need Help?</h3>
-              <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">Watch our quick start guide</p>
+            <div className="text-left">
+              <h3 className="text-lg md:text-xl font-black text-brand-primary uppercase tracking-tight">Need Help?</h3>
+              <p className="text-neutral-500 font-bold uppercase tracking-widest text-[9px] md:text-[10px]">Watch our quick start guide</p>
             </div>
           </div>
           
-          <div className="w-full aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-8 border-neutral-100 shadow-2xl relative">
+          <div className="w-full max-w-lg mx-auto lg:mx-0 aspect-video bg-neutral-900 rounded-[2rem] overflow-hidden border-[6px] md:border-8 border-neutral-100 shadow-xl relative">
             <iframe 
               src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
               title="QuizBlust Tutorial" 
