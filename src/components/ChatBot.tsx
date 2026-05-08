@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
-
-// Initialize the API outside the component
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,21 +10,6 @@ export default function ChatBot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Use a ref to persist the chat session across renders
-  const chatRef = useRef<any>(null);
-
-  useEffect(() => {
-    // Initialize the chat session once
-    if (!chatRef.current) {
-      chatRef.current = ai.chats.create({
-        model: "gemini-3-flash-preview",
-        config: {
-          systemInstruction: "You are a helpful, knowledgeable AI assistant for an educational platform called QuizBlust. Be concise, friendly, and helpful to the students and teachers using the platform. Your name is 'Porar Bojha'."
-        }
-      });
-    }
-  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,7 +21,7 @@ export default function ChatBot() {
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!input.trim() || !chatRef.current) return;
+    if (!input.trim()) return;
     
     const userMessage = { id: Date.now().toString(), role: 'user' as const, text: input.trim() };
     setMessages(prev => [...prev, userMessage]);
@@ -51,15 +32,47 @@ export default function ChatBot() {
     setMessages(prev => [...prev, { id: botMessageId, role: 'model', text: '' }]);
 
     try {
-      const responseStream = await chatRef.current.sendMessageStream({ message: userMessage.text });
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage.text })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || `HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
       
-      for await (const chunk of responseStream) {
-        if (chunk.text) {
-          setMessages(prev => prev.map(msg => 
-            msg.id === botMessageId 
-              ? { ...msg, text: msg.text + chunk.text } 
-              : msg
-          ));
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6);
+            if (dataStr === '[DONE]') continue;
+            
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.text) {
+                setMessages(prev => prev.map(msg => 
+                  msg.id === botMessageId 
+                    ? { ...msg, text: msg.text + data.text } 
+                    : msg
+                ));
+              }
+            } catch (e) {
+              console.error("Error parsing stream data:", e);
+            }
+          }
         }
       }
     } catch (error: any) {
