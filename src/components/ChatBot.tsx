@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Loader2 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,33 +10,9 @@ export default function ChatBot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [initError, setInitError] = useState<string | null>(null);
-  const aiRef = useRef<any>(null);
-  const chatRef = useRef<any>(null);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  useEffect(() => {
-    try {
-      // Create the AI instance without passing apiKey directly if we want to rely on the injected free tier.
-      // But we can also pass process.env.GEMINI_API_KEY which might be populated.
-      const apiKey = process.env.GEMINI_API_KEY;
-      const config = apiKey ? { apiKey } : {};
-      const ai = new GoogleGenAI(config);
-      aiRef.current = ai;
-      chatRef.current = ai.chats.create({
-        model: "gemini-3-flash-preview",
-        config: {
-          systemInstruction: "You are a helpful, knowledgeable AI assistant for an educational platform called QuizBlust. Be concise, friendly, and helpful to the students and teachers using the platform. Your name is 'Porar Bojha'."
-        }
-      });
-      setInitError(null);
-    } catch (e: any) {
-      setInitError(e.message || String(e));
-    }
-  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -46,11 +21,6 @@ export default function ChatBot() {
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!input.trim()) return;
-    
-    if (initError || !chatRef.current) {
-      alert(initError || "Chat not ready");
-      return;
-    }
     
     const userMessage = { id: Date.now().toString(), role: 'user' as const, text: input.trim() };
     setMessages(prev => [...prev, userMessage]);
@@ -61,14 +31,47 @@ export default function ChatBot() {
     setMessages(prev => [...prev, { id: botMessageId, role: 'model', text: '' }]);
 
     try {
-      const streamResponse = await chatRef.current.sendMessageStream({ message: userMessage.text });
-      for await (const chunk of streamResponse) {
-        if (chunk.text) {
-          setMessages(prev => prev.map(msg => 
-            msg.id === botMessageId 
-              ? { ...msg, text: msg.text + chunk.text } 
-              : msg
-          ));
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage.text })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || `HTTP error! status: ${response.status}`);
+      }
+
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6);
+            if (dataStr === '[DONE]') continue;
+            
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.text) {
+                setMessages(prev => prev.map(msg => 
+                  msg.id === botMessageId 
+                    ? { ...msg, text: msg.text + data.text } 
+                    : msg
+                ));
+              }
+            } catch (e) {
+              console.error("Error parsing stream data:", e);
+            }
+          }
         }
       }
     } catch (error: any) {
@@ -120,13 +123,6 @@ export default function ChatBot() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-              {initError && (
-                <div className="flex justify-center mb-4">
-                  <span className="text-xs text-red-400 px-3 py-1.5 bg-red-400/10 rounded-lg text-center">
-                    System Alert: {initError}
-                  </span>
-                </div>
-              )}
               {messages.map((message) => (
                 <div 
                   key={message.id} 
@@ -163,12 +159,12 @@ export default function ChatBot() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask me anything..."
-                  disabled={!!initError}
+                  disabled={isLoading}
                   className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500/50 transition-colors disabled:opacity-50"
                 />
                 <button
                   type="submit"
-                  disabled={!input.trim() || isLoading || !!initError}
+                  disabled={!input.trim() || isLoading}
                   className="p-2.5 rounded-full bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500 transition-colors"
                 >
                   <Send className="w-4 h-4" />
