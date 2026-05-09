@@ -21,7 +21,7 @@ async function startServer() {
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.includes("YOUR_")) {
-        return res.status(400).json({ error: "Invalid API Key detected. It appears you have saved the placeholder 'MY_GEMINI_API_KEY' in your AI Studio Secrets panel. Please go to Settings -> Secrets and replace it with a valid Gemini API key, or delete it to use the default environment key." });
+        return res.status(400).json({ error: "Invalid API Key detected. Please configure a valid Gemini API key in your environment variables (or AI Studio Secrets) as GEMINI_API_KEY." });
       }
       
       const ai = new GoogleGenAI({ apiKey });

@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.includes("YOUR_")) {
-      return res.status(400).json({ error: "Invalid API Key detected. Please configure a valid Gemini API key." });
+      return res.status(400).json({ error: "Invalid API Key detected. Please configure a valid Gemini API key in your hosting provider's environment variables as GEMINI_API_KEY." });
     }
     
     const ai = new GoogleGenAI({ apiKey });
