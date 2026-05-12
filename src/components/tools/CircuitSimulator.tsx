@@ -459,19 +459,40 @@ function CircuitDesigner() {
               </div>
 
               {(activeNode?.type === 'resistor' || activeNode?.type === 'capacitor' || activeNode?.type === 'battery') && (
-                <div>
-                  <label className="text-[10px] font-bold text-neutral-400 block mb-1">
-                    Value 
-                    {activeNode?.type === 'resistor' && ' (Ohms)'}
-                    {activeNode?.type === 'capacitor' && ' (μF)'}
-                    {activeNode?.type === 'battery' && ' (Volts)'}
-                  </label>
-                  <input 
-                    type="number"
-                    value={activeNode?.data.value || ''}
-                    onChange={(e) => handleUpdateSelected('value', parseFloat(e.target.value) || 0)}
-                    className="w-full p-2 bg-neutral-900 rounded font-bold text-sm outline-none border border-neutral-800 text-white focus:border-brand-primary"
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-neutral-400 block mb-1">
+                      Value 
+                      {activeNode?.type === 'resistor' && ' (Ohms)'}
+                      {activeNode?.type === 'capacitor' && ' (μF)'}
+                      {activeNode?.type === 'battery' && ' (Volts)'}
+                    </label>
+                    <input 
+                      type="number"
+                      value={activeNode?.data.value || ''}
+                      onChange={(e) => handleUpdateSelected('value', parseFloat(e.target.value) || 0)}
+                      className="w-full p-2 bg-neutral-900 rounded font-bold text-sm outline-none border border-neutral-800 text-white focus:border-brand-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-neutral-400 block mb-1">
+                      Orientation
+                    </label>
+                    <div className="flex bg-neutral-900 rounded border border-neutral-800 p-1">
+                      <button 
+                        onClick={() => handleUpdateSelected('direction', 'horizontal')}
+                        className={`flex-1 text-[10px] py-1 uppercase font-bold rounded ${activeNode?.data.direction !== 'vertical' ? 'bg-neutral-700 text-white' : 'text-neutral-500 hover:text-white'}`}
+                      >
+                        Horizontal
+                      </button>
+                      <button 
+                        onClick={() => handleUpdateSelected('direction', 'vertical')}
+                        className={`flex-1 text-[10px] py-1 uppercase font-bold rounded ${activeNode?.data.direction === 'vertical' ? 'bg-neutral-700 text-white' : 'text-neutral-500 hover:text-white'}`}
+                      >
+                        Vertical
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 

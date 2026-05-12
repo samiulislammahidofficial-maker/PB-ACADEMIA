@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
   BookOpen, 
+  Activity,
   PenTool, 
   Brain, 
   Video, 
@@ -85,6 +86,9 @@ export default function StudentDashboard() {
     { icon: Brain, title: "Brain Teasers", link: "/brain-teasers" },
     { icon: MessageSquare, title: "Q&A Box", link: "/dashboard/qa" },
     { icon: PenTool, title: "Typing Dojo", link: "/typing-practice" },
+    { icon: Box, title: "Measurement", link: "/measurement-sim" },
+    { icon: Activity, title: "Pendulum", link: "/pendulum-sim" },
+    { icon: Zap, title: "Springs", link: "/springs-sim" },
   ];
 
   const features = [
@@ -94,6 +98,9 @@ export default function StudentDashboard() {
     { icon: Brain, title: "Mental Gym", link: "/brain-teasers", color: "bg-rose-50", iconColor: "text-rose-500", desc: "Daily brain teasers" },
     { icon: MessageSquare, title: "Discussion", link: "/dashboard/qa", color: "bg-cyan-50", iconColor: "text-cyan-500", desc: "Talk with peers" },
     { icon: PenTool, title: "Typing Dojo", link: "/typing-practice", color: "bg-pink-50", iconColor: "text-pink-500", desc: "Speed typing test" },
+    { icon: Box, title: "Measurement", link: "/measurement-sim", color: "bg-cyan-50", iconColor: "text-cyan-500", desc: "Vernier & Micrometer" },
+    { icon: Activity, title: "Pendulum Sim", link: "/pendulum-sim", color: "bg-blue-50", iconColor: "text-blue-500", desc: "Energy & Time Period" },
+    { icon: Zap, title: "Springs Sim", link: "/springs-sim", color: "bg-rose-50", iconColor: "text-rose-500", desc: "Series & Parallel" },
     { icon: Calculator, title: "Sci-Calc", link: "/scientific-calculator", color: "bg-blue-50", iconColor: "text-blue-500", desc: "Advanced Calculation" },
     { icon: LineChart, title: "Graph Lab", link: "/graph-calculator", color: "bg-teal-50", iconColor: "text-teal-500", desc: "Plot equations" },
     { icon: Box, title: "3D Shapes", link: "/3d-shapes", color: "bg-purple-50", iconColor: "text-purple-500", desc: "3D object viewer" },

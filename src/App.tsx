@@ -34,6 +34,9 @@ import VocabBuilder from './components/tools/VocabBuilder';
 import Translator from './components/tools/Translator';
 import SocialPostWriter from './components/tools/SocialPostWriter';
 import TypingPractice from './components/tools/TypingPractice';
+import MeasurementSim from './components/tools/MeasurementSim';
+import PendulumSim from './components/tools/PendulumSim';
+import SpringsSim from './components/tools/SpringsSim';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -66,7 +69,10 @@ function AppContent() {
                           location.pathname.startsWith('/translator') ||
                           location.pathname.startsWith('/social-post-writer') ||
                           location.pathname.startsWith('/typing-practice') ||
-                          location.pathname.startsWith('/vocab-builder');
+                          location.pathname.startsWith('/vocab-builder') ||
+                          location.pathname.startsWith('/measurement-sim') ||
+                          location.pathname.startsWith('/pendulum-sim') ||
+                          location.pathname.startsWith('/springs-sim');
 
   return (
     <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 bg-[#050505]`}>
@@ -87,7 +93,10 @@ function AppContent() {
        !location.pathname.startsWith('/translator') &&
        !location.pathname.startsWith('/social-post-writer') &&
        !location.pathname.startsWith('/typing-practice') &&
-       !location.pathname.startsWith('/vocab-builder') && <ChatBot />}
+       !location.pathname.startsWith('/vocab-builder') &&
+       !location.pathname.startsWith('/measurement-sim') &&
+       !location.pathname.startsWith('/pendulum-sim') &&
+       !location.pathname.startsWith('/springs-sim') && <ChatBot />}
     </div>
   );
 }
@@ -105,7 +114,10 @@ function FooterWrapper() {
                           location.pathname.startsWith('/translator') ||
                           location.pathname.startsWith('/social-post-writer') ||
                           location.pathname.startsWith('/typing-practice') ||
-                          location.pathname.startsWith('/circuit-simulator');
+                          location.pathname.startsWith('/circuit-simulator') ||
+                          location.pathname.startsWith('/measurement-sim') ||
+                          location.pathname.startsWith('/pendulum-sim') ||
+                          location.pathname.startsWith('/springs-sim');
   
   if (isDashboardRoute) return null;
   return <Footer />;
@@ -210,6 +222,9 @@ function AppRoutes() {
       <Route path="/translator" element={<Translator />} />
       <Route path="/social-post-writer" element={<SocialPostWriter />} />
       <Route path="/typing-practice" element={<TypingPractice />} />
+      <Route path="/measurement-sim" element={<MeasurementSim />} />
+      <Route path="/pendulum-sim" element={<PendulumSim />} />
+      <Route path="/springs-sim" element={<SpringsSim />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
