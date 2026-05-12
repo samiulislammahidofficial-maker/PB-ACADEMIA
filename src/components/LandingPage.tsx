@@ -22,7 +22,10 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
-  Award
+  Award,
+  Calculator,
+  LineChart,
+  Box
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -70,7 +73,7 @@ export default function LandingPage() {
             >
               <div className="inline-flex items-center space-x-3 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white font-display font-bold text-xs uppercase tracking-[0.2em] mb-10">
                 <span className="h-2 w-2 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_#f59e0b]"></span>
-                <span>ভর্তি সিজন ২০২৫ শুরু হয়েছে</span>
+                <span>ভর্তি সিজন ২০২৬ শুরু হয়েছে</span>
               </div>
               
               <h1 className="text-6xl md:text-8xl font-display font-black text-white leading-[0.9] tracking-tighter mb-10">
@@ -209,6 +212,35 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* ── GRAPH CALCULATOR BANNER ── */}
+      <section className="py-20 bg-brand-dark relative z-20 border-b-2 border-white/5">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div 
+            whileHover={{ scale: 1.01 }}
+            className="bg-gradient-to-r from-emerald-900 to-teal-900 rounded-[3rem] p-12 relative overflow-hidden group border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between"
+          >
+            <div className="relative z-10 md:w-2/3 mb-8 md:mb-0">
+              <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-500/20 rounded-full border border-emerald-500/30 text-emerald-300 text-[10px] font-black uppercase tracking-[0.3em] mb-6 shadow-sm">
+                <span>স্মার্ট টুলস</span>
+              </div>
+              <h3 className="text-4xl md:text-5xl font-display font-black text-white uppercase tracking-tighter mb-4">ইন্টারেক্টিভ <span className="text-emerald-400">গ্রাফ ল্যাব</span></h3>
+              <p className="text-emerald-100/80 font-medium text-lg leading-relaxed max-w-xl">
+                গণিতের সমীকরণগুলো এখন চোখের সামনে জীবন্ত! ক্লাস ৮ থেকে ১২ এর কারিকুলাম অনুযায়ী যেকোনো ইকুয়েশনের গ্রাফ প্লট করো সহজেই।
+              </p>
+              <Link to="/graph-calculator" className="inline-flex items-center mt-8 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-emerald-500 transition-all">
+                 গ্রাফ ক্যালকুলেটর ব্যবহার করো <ArrowRight className="ml-3 h-4 w-4" />
+              </Link>
+            </div>
+            <div className="md:w-1/3 flex justify-center relative z-10">
+              <div className="w-48 h-48 bg-white/5 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center shadow-inner relative group-hover:scale-105 transition-transform duration-700">
+                <div className="absolute inset-0 rounded-full border border-emerald-500/30 animate-spin-slow"></div>
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── PHILOSOPHY CARDS (QUIZBLUST / BRAIN TEASERS) ── */}
       <section className="py-24 bg-white relative z-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -246,6 +278,85 @@ export default function LandingPage() {
               </div>
               <Brain className="h-64 w-64 text-white/5 absolute -bottom-16 -right-16 -rotate-12 transition-transform group-hover:-translate-x-4 group-hover:-translate-y-4 duration-1000" />
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FREE VIRTUAL LAB ── */}
+      <section className="py-40 bg-[#0a0a0a] text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-24">
+            <div className="inline-flex items-center space-x-3 px-5 py-2.5 bg-brand-primary/20 rounded-full border border-brand-primary/30 text-brand-primary font-display font-bold text-[10px] uppercase tracking-[0.2em] mb-8">
+              <span>✦ ১০০% সম্পূর্ণ ফ্রি</span>
+            </div>
+            <h2 className="text-5xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-tight mb-8">
+              প্র্যাকটিক্যাল <span className="text-brand-primary">ভার্চুয়াল ল্যাব</span>
+            </h2>
+            <p className="text-neutral-400 text-xl font-medium max-w-2xl mx-auto">
+              বিজ্ঞান ও গণিত এখন আরও সহজ। আমাদের ফ্রি ইন্টারেক্টিভ সিমুলেটর ব্যবহার করে আজই প্র্যাকটিস শুরু করো।
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: "Scientific Calc", icon: <Calculator className="h-10 w-10 text-emerald-400" />, link: "/scientific-calculator", desc: "Scientific calculator for all your needs.", color: "bg-emerald-500/10 border-emerald-500/20" },
+              { title: "Graph Lab", icon: <LineChart className="h-10 w-10 text-brand-primary" />, link: "/graph-calculator", desc: "Interactive graphing calculator.", color: "bg-brand-primary/10 border-brand-primary/20" },
+              { title: "3D Constructor", icon: <Box className="h-10 w-10 text-purple-400" />, link: "/3d-shapes", desc: "Visualize and interact with 3D shapes.", color: "bg-purple-500/10 border-purple-500/20" },
+              { title: "Circuit Lab", icon: <Zap className="h-10 w-10 text-amber-400" />, link: "/circuit-simulator", desc: "Build & simulate electrical circuits.", color: "bg-amber-500/10 border-amber-500/20" }
+            ].map((tool, i) => (
+              <Link 
+                key={i} 
+                to={tool.link}
+                className={`flex flex-col p-8 rounded-[2rem] border ${tool.color} hover:bg-white/5 transition-colors group relative overflow-hidden`}
+              >
+                <div className="mb-8">{tool.icon}</div>
+                <h3 className="text-2xl font-black uppercase tracking-tight mb-3 group-hover:text-white transition-colors">{tool.title}</h3>
+                <p className="text-neutral-400 text-sm leading-relaxed mb-8">{tool.desc}</p>
+                <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-brand-primary transition-colors">
+                  Try Now <ArrowRight className="ml-2 h-3 w-3" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FREE LANGUAGE TOOLS ── */}
+      <section className="py-20 bg-[#080808] text-white border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-3 px-5 py-2.5 bg-blue-500/10 rounded-full border border-blue-500/20 text-blue-400 font-display font-bold text-[10px] uppercase tracking-[0.2em] mb-8">
+              <span>✦ এআই ভাষা টুলস (ফ্রি)</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white uppercase tracking-tighter leading-tight mb-6">
+              নিজেকে এক ধাপ <span className="text-blue-500">এগিয়ে</span> রাখো 
+            </h2>
+            <p className="text-neutral-400 text-lg font-medium max-w-2xl mx-auto">
+              ইংরেজি লেখায় ভুল? শব্দভাণ্ডার বাড়াতে চাও? আমাদের এআই পাওয়ার্ড ফ্রি টুলস ব্যবহার করে শেখা শুরু করো।
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: "Grammar Fixer", icon: "✍️", link: "/grammar-checker", desc: "100% accurate grammar checking and correction with AI.", color: "bg-rose-500/10 border-rose-500/20", hoverText: "text-rose-400" },
+              { title: "Smart Paraphraser", icon: "✨", link: "/paraphraser", desc: "Rewrite your text in different tones and styles.", color: "bg-emerald-500/10 border-emerald-500/20", hoverText: "text-emerald-400" },
+              { title: "Vocab Builder", icon: "🧠", link: "/vocab-builder", desc: "Learn new words and challenge yourself with AI quizzes.", color: "bg-indigo-500/10 border-indigo-500/20", hoverText: "text-indigo-400" },
+              { title: "AI Translator", icon: "🌍", link: "/translator", desc: "Perfect translation between Bengali and English with native pronunciation.", color: "bg-blue-500/10 border-blue-500/20", hoverText: "text-blue-400" },
+              { title: "Social Captions", icon: "📱", link: "/social-post-writer", desc: "Generate witty, trendy, or professional captions for your social media.", color: "bg-fuchsia-500/10 border-fuchsia-500/20", hoverText: "text-fuchsia-400" },
+            ].map((tool, i) => (
+              <Link 
+                key={i} 
+                to={tool.link}
+                className={`flex flex-col p-8 rounded-[2rem] border ${tool.color} hover:bg-white/5 transition-colors group relative overflow-hidden`}
+              >
+                <div className="text-5xl mb-6">{tool.icon}</div>
+                <h3 className={`text-2xl font-black uppercase tracking-tight mb-3 group-hover:${tool.hoverText} transition-colors`}>{tool.title}</h3>
+                <p className="text-neutral-400 text-sm leading-relaxed mb-8">{tool.desc}</p>
+                <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-white transition-colors">
+                  Check It Out <ArrowRight className="ml-2 h-3 w-3" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

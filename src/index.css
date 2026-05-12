@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Nunito", "Hind Siliguri", sans-serif;
+  --font-sans: "Inter", "Noto Sans Bengali", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Nunito", "Noto Sans Bengali", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
   --color-brand-primary: #7c3aed;
@@ -35,5 +35,22 @@
   body.hide-chatbot .chatbot-container {
     display: none !important;
   }
+}
+
+.react-flow__controls-button {
+  background-color: #171717 !important;
+  border-bottom: 1px solid #262626 !important;
+  fill: #a3a3a3 !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #262626 !important;
+  fill: #fff !important;
+}
+
+.react-flow__controls {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
 }
 

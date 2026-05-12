@@ -139,6 +139,61 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["password"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "A question asked by a student in the Q/A section",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "subject": { "type": "string" },
+        "text": { "type": "string" },
+        "audioUrl": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "aiRequested": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["open", "answered"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId", "subject", "status"]
+    },
+    "Reply": {
+      "title": "Reply",
+      "description": "A reply to a question",
+      "type": "object",
+      "properties": {
+        "questionId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["questionId", "senderId", "senderRole", "text"]
+    },
+    "VideoClass": {
+      "title": "VideoClass",
+      "description": "A YouTube video class uploaded by a teacher",
+      "type": "object",
+      "properties": {
+        "teacherId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "subject": { "type": "string" },
+        "title": { "type": "string" },
+        "youtubeUrl": { "type": "string" },
+        "classLevel": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["teacherId", "courseId", "subject", "title", "youtubeUrl", "classLevel"]
+    },
+    "Enrollment": {
+      "title": "Enrollment",
+      "description": "A student's enrollment in a course",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "enrolledAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId", "courseId", "enrolledAt"]
     }
   },
   "firestore": {
@@ -181,6 +236,22 @@
     "/assignmentSubmissions/{submissionId}": {
       "schema": "AssignmentSubmission",
       "description": "Student assignment submissions"
+    },
+    "/questions/{questionId}": {
+      "schema": "Question",
+      "description": "Student Q/A questions"
+    },
+    "/replies/{replyId}": {
+      "schema": "Reply",
+      "description": "Replies to questions"
+    },
+    "/videoClasses/{videoId}": {
+      "schema": "VideoClass",
+      "description": "YouTube video classes"
+    },
+    "/enrollments/{enrollmentId}": {
+      "schema": "Enrollment",
+      "description": "Course enrollments"
     }
   }
 }

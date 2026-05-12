@@ -6,12 +6,14 @@ export type UserRole = 'student' | 'teacher' | 'admin';
 
 interface UserProfile {
   uid: string;
+  id?: string;
   name: string;
   email: string;
   role: UserRole;
   schoolName?: string;
   mobileNumber?: string;
   className?: string; // mapping to 'class' since class is reserved
+  class?: string;
 }
 
 interface AuthContextType {

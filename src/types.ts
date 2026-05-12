@@ -2,12 +2,14 @@ export type UserRole = 'student' | 'teacher' | 'admin';
 
 export interface UserProfile {
   uid: string;
+  id?: string;
   name: string;
   email: string;
   role: UserRole;
   schoolName?: string;
   mobileNumber?: string;
   className?: string; // 'class' in prompt, mapping to className
+  class?: string;
   createdAt?: any;
 }
 

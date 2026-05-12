@@ -89,5 +89,32 @@ service cloud.firestore {
       allow list: if isRole('admin');
       allow write: if isRole('admin');
     }
+    // Student Questions (Q/A)
+    match /questions/{questionId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isRole('student');
+      allow update: if isSignedIn() && (isRole('admin') || isRole('teacher') || resource.data.studentId == request.auth.uid);
+      allow delete: if isRole('admin') || resource.data.studentId == request.auth.uid;
+    }
+
+    // Question Replies
+    match /replies/{replyId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isRole('admin') || resource.data.senderId == request.auth.uid;
+    }
+
+    // Video Classes
+    match /videoClasses/{videoId} {
+      allow read: if isSignedIn();
+      allow write: if isRole('teacher') || isRole('admin');
+    }
+
+    // Enrollments
+    match /enrollments/{enrollmentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isRole('student') && request.resource.data.studentId == request.auth.uid;
+      allow delete: if isRole('admin') || resource.data.studentId == request.auth.uid;
+    }
   }
 }

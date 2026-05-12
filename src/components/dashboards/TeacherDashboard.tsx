@@ -1,7 +1,7 @@
 import { useAuth } from '../../lib/AuthContext';
 import { db, collection, getDocs, query, where, onSnapshot } from '../../lib/firebase';
 import { useEffect, useState } from 'react';
-import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket, Home } from 'lucide-react';
+import { FileUp, ClipboardList, TrendingUp, Users, PlusCircle, CheckCircle, BookOpen, Rocket, Home, Video } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import ExamCreator from '../teachers/ExamCreator';
@@ -58,6 +58,20 @@ export default function TeacherDashboard() {
               {courses.map(c => <option key={c.id} value={c.id} className="bg-[#0a0a0a]">{c.title}</option>)}
             </select>
           )}
+          <Link 
+            to="/dashboard/classes"
+            className="flex items-center space-x-3 px-8 py-4 bg-teal-600 text-white rounded-2xl font-black hover:bg-teal-700 transition-all shadow-2xl shadow-teal-500/20 active:scale-95 uppercase tracking-widest text-[10px]"
+          >
+            <Video className="h-4 w-4" />
+            <span>Upload Class</span>
+          </Link>
+          <Link 
+            to="/dashboard/qa"
+            className="flex items-center space-x-3 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-2xl shadow-emerald-500/20 active:scale-95 uppercase tracking-widest text-[10px]"
+          >
+            <Users className="h-4 w-4" />
+            <span>Q&A Hub</span>
+          </Link>
           <Link 
             to="/quizblust"
             className="flex items-center space-x-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-2xl shadow-indigo-500/20 active:scale-95 uppercase tracking-widest text-[10px]"

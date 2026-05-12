@@ -23,7 +23,10 @@ import {
   FileText,
   Users,
   ArrowRight,
-  Rocket
+  Rocket,
+  Calculator,
+  LineChart,
+  Box
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,20 +75,28 @@ export default function StudentDashboard() {
 
   const menuItems = [
     { icon: LayoutDashboard, title: "OverView", link: "/dashboard", active: true },
-    { icon: Video, title: "Live Classes", link: "/dashboard" },
+    { icon: Video, title: "Live Classes", link: "/dashboard/classes" },
+    { icon: Calculator, title: "Sci-Calc", link: "/scientific-calculator" },
+    { icon: LineChart, title: "Graph Lab", link: "/graph-calculator" },
+    { icon: Box, title: "3D Constructor", link: "/3d-shapes" },
+    { icon: Zap, title: "Circuit Lab", link: "/circuit-simulator" },
     { icon: ClipboardList, title: "Live Exams", link: "/quizblust" },
     { icon: BookOpen, title: "Practice Exams", link: "/practice-exams" },
     { icon: Brain, title: "Brain Teasers", link: "/brain-teasers" },
-    { icon: MessageSquare, title: "Q&A Box", link: "/dashboard" },
+    { icon: MessageSquare, title: "Q&A Box", link: "/dashboard/qa" },
   ];
 
   const features = [
-    { icon: Video, title: "Live Class", link: "/dashboard", color: "bg-green-50", iconColor: "text-green-500", desc: "Join ongoing sessions" },
+    { icon: Video, title: "Live Class", link: "/dashboard/classes", color: "bg-green-50", iconColor: "text-green-500", desc: "Join ongoing sessions" },
     { icon: ClipboardList, title: "Exams Hub", link: "/quizblust", color: "bg-indigo-50", iconColor: "text-indigo-500", desc: "Test your skills" },
     { icon: PenTool, title: "Practice Hub", link: "/practice-exams", color: "bg-amber-50", iconColor: "text-amber-500", desc: "Subject-wise prep" },
     { icon: Brain, title: "Mental Gym", link: "/brain-teasers", color: "bg-rose-50", iconColor: "text-rose-500", desc: "Daily brain teasers" },
-    { icon: MessageSquare, title: "Discussion", link: "/dashboard", color: "bg-cyan-50", iconColor: "text-cyan-500", desc: "Talk with peers" },
+    { icon: MessageSquare, title: "Discussion", link: "/dashboard/qa", color: "bg-cyan-50", iconColor: "text-cyan-500", desc: "Talk with peers" },
     { icon: FileText, title: "Materials", link: "/dashboard", color: "bg-emerald-50", iconColor: "text-emerald-500", desc: "Class notes & PDF" },
+    { icon: Calculator, title: "Sci-Calc", link: "/scientific-calculator", color: "bg-blue-50", iconColor: "text-blue-500", desc: "Advanced Calculation" },
+    { icon: LineChart, title: "Graph Lab", link: "/graph-calculator", color: "bg-teal-50", iconColor: "text-teal-500", desc: "Plot equations" },
+    { icon: Box, title: "3D Shapes", link: "/3d-shapes", color: "bg-purple-50", iconColor: "text-purple-500", desc: "3D object viewer" },
+    { icon: Zap, title: "Circuit Lab", link: "/circuit-simulator", color: "bg-orange-50", iconColor: "text-orange-500", desc: "Simulate circuits" },
   ];
 
   const handleLogout = async () => {

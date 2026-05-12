@@ -12,6 +12,8 @@ import LandingPage from './components/LandingPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import Dashboard from './components/Dashboard';
+import QAHub from './components/dashboards/QAHub';
+import VideoClasses from './components/dashboards/VideoClasses';
 import CourseView from './components/CourseView';
 import ExamView from './components/ExamView';
 import Navbar from './components/Navbar';
@@ -22,6 +24,15 @@ import PracticeExamList from './components/PracticeExamList';
 import PracticeExamSession from './components/PracticeExamSession';
 import ScrollToTop from './components/common/ScrollToTop';
 import ChatBot from './components/ChatBot';
+import GraphCalculator from './components/GraphCalculator';
+import ScientificCalculator from './components/tools/ScientificCalculator';
+import Shapes3D from './components/tools/Shapes3D';
+import CircuitSimulator from './components/tools/CircuitSimulator';
+import GrammarChecker from './components/tools/GrammarChecker';
+import Paraphraser from './components/tools/Paraphraser';
+import VocabBuilder from './components/tools/VocabBuilder';
+import Translator from './components/tools/Translator';
+import SocialPostWriter from './components/tools/SocialPostWriter';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -44,7 +55,16 @@ function AppContent() {
                           location.pathname.startsWith('/quizblust') ||
                           location.pathname.startsWith('/exams') ||
                           location.pathname.startsWith('/practice-exams') ||
-                          location.pathname.startsWith('/brain-teasers');
+                          location.pathname.startsWith('/brain-teasers') ||
+                          location.pathname.startsWith('/graph-calculator') ||
+                          location.pathname.startsWith('/scientific-calculator') ||
+                          location.pathname.startsWith('/3d-shapes') ||
+                          location.pathname.startsWith('/circuit-simulator') ||
+                          location.pathname.startsWith('/grammar-checker') ||
+                          location.pathname.startsWith('/paraphraser') ||
+                          location.pathname.startsWith('/translator') ||
+                          location.pathname.startsWith('/social-post-writer') ||
+                          location.pathname.startsWith('/vocab-builder');
 
   return (
     <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 bg-[#050505]`}>
@@ -55,7 +75,16 @@ function AppContent() {
         <AppRoutes />
       </main>
       <FooterWrapper />
-      {!location.pathname.startsWith('/exams') && <ChatBot />}
+      {!location.pathname.startsWith('/exams') && 
+       !location.pathname.startsWith('/graph-calculator') && 
+       !location.pathname.startsWith('/scientific-calculator') &&
+       !location.pathname.startsWith('/3d-shapes') &&
+       !location.pathname.startsWith('/circuit-simulator') &&
+       !location.pathname.startsWith('/grammar-checker') &&
+       !location.pathname.startsWith('/paraphraser') &&
+       !location.pathname.startsWith('/translator') &&
+       !location.pathname.startsWith('/social-post-writer') &&
+       !location.pathname.startsWith('/vocab-builder') && <ChatBot />}
     </div>
   );
 }
@@ -66,7 +95,13 @@ function FooterWrapper() {
                           location.pathname.startsWith('/quizblust') ||
                           location.pathname.startsWith('/exams') ||
                           location.pathname.startsWith('/practice-exams') ||
-                          location.pathname.startsWith('/brain-teasers');
+                          location.pathname.startsWith('/brain-teasers') ||
+                          location.pathname.startsWith('/graph-calculator') ||
+                          location.pathname.startsWith('/scientific-calculator') ||
+                          location.pathname.startsWith('/3d-shapes') ||
+                          location.pathname.startsWith('/translator') ||
+                          location.pathname.startsWith('/social-post-writer') ||
+                          location.pathname.startsWith('/circuit-simulator');
   
   if (isDashboardRoute) return null;
   return <Footer />;
@@ -94,6 +129,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/qa" 
+        element={
+          <ProtectedRoute>
+            <QAHub />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/classes" 
+        element={
+          <ProtectedRoute>
+            <VideoClasses />
           </ProtectedRoute>
         } 
       />
@@ -145,6 +196,15 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route path="/graph-calculator" element={<GraphCalculator />} />
+      <Route path="/scientific-calculator" element={<ScientificCalculator />} />
+      <Route path="/3d-shapes" element={<Shapes3D />} />
+      <Route path="/circuit-simulator" element={<CircuitSimulator />} />
+      <Route path="/grammar-checker" element={<GrammarChecker />} />
+      <Route path="/paraphraser" element={<Paraphraser />} />
+      <Route path="/vocab-builder" element={<VocabBuilder />} />
+      <Route path="/translator" element={<Translator />} />
+      <Route path="/social-post-writer" element={<SocialPostWriter />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
