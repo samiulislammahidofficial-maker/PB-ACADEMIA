@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowLeft, Save, Sparkles, Lock, Image as ImageIcon, CheckCircle2, MessageSquare, Instagram, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI, Type } from '@google/genai';
+import { generateContent } from '../../lib/gemini';
 
 export default function SocialPostWriter() {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ export default function SocialPostWriter() {
     setLoading(true);
     setResults([]);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       let contents: any[] = [];
       let fullPrompt = `You are an expert Social Media Manager and Copywriter. Create 3 distinct social media captions for ${platform}. The tone should be "${tone}". `;
       
@@ -77,18 +76,18 @@ export default function SocialPostWriter() {
 
       fullPrompt += `\nOutput strictly as a JSON array of 3 objects, each having "caption" (string) and "hashtags" (array of strings).`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-flash',
         contents: contents,
         config: {
           responseMimeType: 'application/json',
           responseSchema: {
-            type: Type.ARRAY,
+            type: "ARRAY",
             items: {
-              type: Type.OBJECT,
+              type: "OBJECT",
               properties: {
-                caption: { type: Type.STRING },
-                hashtags: { type: Type.ARRAY, items: { type: Type.STRING } }
+                caption: { type: "STRING" },
+                hashtags: { type: "ARRAY", items: { type: "STRING" } }
               },
               required: ['caption', 'hashtags']
             }
@@ -97,9 +96,9 @@ export default function SocialPostWriter() {
       });
       const data = JSON.parse(response.text?.trim() || '[]');
       setResults(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Error generating post. Please try again.');
+      alert('Error generating post: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }

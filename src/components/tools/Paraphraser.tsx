@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Wand2, CheckCircle2, ChevronRight, Hash, Save, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI } from '@google/genai';
+import { generateContent } from '../../lib/gemini';
 
 export default function Paraphraser() {
   const navigate = useNavigate();
@@ -17,20 +17,19 @@ export default function Paraphraser() {
     if (!text.trim()) return;
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = `Paraphrase the following text in a "${tone}" tone. Make it sound natural and well-written. Output ONLY the paraphrased text, nothing else.
       
 Text:
 "${text}"`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-pro',
         contents: prompt
       });
       setResult({ original: text, paraphrased: response.text?.trim() || '' });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Error fetching AI data.');
+      alert('Error fetching AI data: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }

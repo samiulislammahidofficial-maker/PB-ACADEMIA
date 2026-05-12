@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, BookOpen, Clock, PlayCircle, Hash, RefreshCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI, Type } from '@google/genai';
+import { generateContent } from '../../lib/gemini';
 
 interface VocabWord {
   word: string;
@@ -43,22 +43,21 @@ export default function VocabBuilder() {
   const generateVocab = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = `Generate ${wordCount} advanced English vocabulary words for learning. Include definition and an example sentence for each. They should be distinct from common words. Output as JSON.`;
       
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
           responseSchema: {
-            type: Type.ARRAY,
+            type: 'ARRAY',
             items: {
-              type: Type.OBJECT,
+              type: 'OBJECT',
               properties: {
-                word: { type: Type.STRING },
-                definition: { type: Type.STRING },
-                example: { type: Type.STRING },
+                word: { type: 'STRING' },
+                definition: { type: 'STRING' },
+                example: { type: 'STRING' },
               },
               required: ['word', 'definition', 'example']
             }
@@ -69,9 +68,9 @@ export default function VocabBuilder() {
       setWords(data);
       setPhase('learn');
       setCurrentWordIndex(0);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Failed to generate words.');
+      alert('Failed to generate words: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }
@@ -80,24 +79,23 @@ export default function VocabBuilder() {
   const generateQuiz = async () => {
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const wordList = words.map(w => w.word).join(', ');
       const prompt = `Create a multiple choice quiz testing the knowledge of these words: ${wordList}. 
       Create 1 question per word. Give 4 options, only 1 is correct. Output as JSON.`;
       
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
           responseSchema: {
-            type: Type.ARRAY,
+            type: 'ARRAY',
             items: {
-              type: Type.OBJECT,
+              type: 'OBJECT',
               properties: {
-                question: { type: Type.STRING },
-                options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                correctAnswer: { type: Type.STRING },
+                question: { type: 'STRING' },
+                options: { type: 'ARRAY', items: { type: 'STRING' } },
+                correctAnswer: { type: 'STRING' },
               },
               required: ['question', 'options', 'correctAnswer']
             }
@@ -111,9 +109,9 @@ export default function VocabBuilder() {
       setMistakes([]);
       setTimeLeft(wordCount * 15); // 15 seconds per word
       setPhase('quiz');
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Failed to generate quiz.');
+      alert('Failed to generate quiz: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }

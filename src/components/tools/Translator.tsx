@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Languages, Volume2, ArrowRightLeft, Save, Sparkles, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI } from '@google/genai';
+import { generateContent } from '../../lib/gemini';
 
 export default function Translator() {
   const navigate = useNavigate();
@@ -15,19 +15,18 @@ export default function Translator() {
     if (!text.trim()) return;
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = direction === 'EN_TO_BN' 
         ? `Translate the following English text to perfectly natural Bengali. Output ONLY the Bengali translation.\n\nText: "${text}"`
         : `Translate the following Bengali text to perfectly natural English. Output ONLY the English translation.\n\nText: "${text}"`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt
       });
       setTranslatedText(response.text?.trim() || '');
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Error fetching translation.');
+      alert('Error fetching translation: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }

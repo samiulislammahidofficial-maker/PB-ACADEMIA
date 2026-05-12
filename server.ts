@@ -17,6 +17,29 @@ async function startServer() {
     });
   });
 
+  app.post("/api/generate", async (req, res) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) return res.status(500).json({ error: "Missing API Key" });
+      
+      const ai = new GoogleGenAI({ apiKey });
+      const { prompt, contents, model, responseMimeType, responseSchema } = req.body;
+      
+      const response = await ai.models.generateContent({
+        model: model || 'gemini-2.5-flash',
+        contents: contents || prompt,
+        config: {
+          responseMimeType,
+          responseSchema,
+        },
+      });
+      res.json({ text: response.text });
+    } catch (e: any) {
+      console.error(e);
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   app.post("/api/chat", async (req, res) => {
     try {
       const apiKey = process.env.GEMINI_API_KEY;

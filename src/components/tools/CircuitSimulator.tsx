@@ -468,8 +468,8 @@ function CircuitDesigner() {
                   </label>
                   <input 
                     type="number"
-                    value={activeNode?.data.value as number}
-                    onChange={(e) => handleUpdateSelected('value', Number(e.target.value))}
+                    value={activeNode?.data.value || ''}
+                    onChange={(e) => handleUpdateSelected('value', parseFloat(e.target.value) || 0)}
                     className="w-full p-2 bg-neutral-900 rounded font-bold text-sm outline-none border border-neutral-800 text-white focus:border-brand-primary"
                   />
                 </div>

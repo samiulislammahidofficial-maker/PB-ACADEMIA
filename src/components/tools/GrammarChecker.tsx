@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, CheckCircle2, Sparkles, AlertTriangle, Save, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleGenAI } from '@google/genai';
+import { generateContent } from '../../lib/gemini';
 
 export default function GrammarChecker() {
   const navigate = useNavigate();
@@ -16,7 +16,6 @@ export default function GrammarChecker() {
     setLoading(true);
     setResult(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = `You are an expert English grammar checker.
       Analyze the following text for grammatical, punctuation, and spelling errors.
       Provide the corrected text and a list of specific errors found.
@@ -34,7 +33,7 @@ export default function GrammarChecker() {
       Text to check:
       "${text}"`;
 
-      const response = await ai.models.generateContent({
+      const response = await generateContent({
         model: 'gemini-2.5-pro',
         contents: prompt,
         config: {
@@ -43,9 +42,9 @@ export default function GrammarChecker() {
       });
       const data = JSON.parse(response.text?.trim() || '{}');
       setResult(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Error fetching AI data. Please try again.');
+      alert('Error fetching AI data: ' + (e?.message || e));
     } finally {
       setLoading(false);
     }
