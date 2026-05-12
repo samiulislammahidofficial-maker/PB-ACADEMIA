@@ -3,6 +3,7 @@ import { db, collection, query, limit, onSnapshot, orderBy, where } from '../../
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
+  Home,
   LayoutDashboard, 
   BookOpen, 
   Activity,
@@ -75,6 +76,7 @@ export default function StudentDashboard() {
   }, [profile]);
 
   const menuItems = [
+    { icon: Home, title: "Home", link: "/" },
     { icon: LayoutDashboard, title: "OverView", link: "/dashboard", active: true },
     { icon: Video, title: "Live Classes", link: "/dashboard/classes" },
     { icon: Calculator, title: "Sci-Calc", link: "/scientific-calculator" },
@@ -89,6 +91,7 @@ export default function StudentDashboard() {
     { icon: Box, title: "Measurement", link: "/measurement-sim" },
     { icon: Activity, title: "Pendulum", link: "/pendulum-sim" },
     { icon: Zap, title: "Springs", link: "/springs-sim" },
+    { icon: MessageSquare, title: "Grammar Tools", link: "/grammar-checker" },
   ];
 
   const features = [
@@ -105,6 +108,11 @@ export default function StudentDashboard() {
     { icon: LineChart, title: "Graph Lab", link: "/graph-calculator", color: "bg-teal-50", iconColor: "text-teal-500", desc: "Plot equations" },
     { icon: Box, title: "3D Shapes", link: "/3d-shapes", color: "bg-purple-50", iconColor: "text-purple-500", desc: "3D object viewer" },
     { icon: Zap, title: "Circuit Lab", link: "/circuit-simulator", color: "bg-orange-50", iconColor: "text-orange-500", desc: "Simulate circuits" },
+    { icon: PenTool, title: "Paraphraser", link: "/paraphraser", color: "bg-violet-50", iconColor: "text-violet-500", desc: "Rewrite text" },
+    { icon: BookOpen, title: "Vocab Builder", link: "/vocab-builder", color: "bg-emerald-50", iconColor: "text-emerald-500", desc: "Learn new words" },
+    { icon: MessageSquare, title: "Grammar Check", link: "/grammar-checker", color: "bg-rose-50", iconColor: "text-rose-500", desc: "Check grammar" },
+    { icon: Brain, title: "Translator", link: "/translator", color: "bg-amber-50", iconColor: "text-amber-500", desc: "Translate text" },
+    { icon: PenTool, title: "Social Post", link: "/social-post-writer", color: "bg-pink-50", iconColor: "text-pink-500", desc: "Write social posts" },
   ];
 
   const handleLogout = async () => {
