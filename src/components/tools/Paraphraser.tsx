@@ -24,7 +24,7 @@ Text:
 "${text}"`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-2.5-pro',
         contents: prompt
       });
       setResult({ original: text, paraphrased: response.text?.trim() || '' });

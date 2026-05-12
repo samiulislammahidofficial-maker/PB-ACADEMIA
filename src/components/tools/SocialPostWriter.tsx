@@ -78,7 +78,7 @@ export default function SocialPostWriter() {
       fullPrompt += `\nOutput strictly as a JSON array of 3 objects, each having "caption" (string) and "hashtags" (array of strings).`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-preview',
+        model: 'gemini-2.5-flash',
         contents: contents,
         config: {
           responseMimeType: 'application/json',

@@ -21,7 +21,7 @@ export default function Translator() {
         : `Translate the following Bengali text to perfectly natural English. Output ONLY the English translation.\n\nText: "${text}"`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-preview',
+        model: 'gemini-2.5-flash',
         contents: prompt
       });
       setTranslatedText(response.text?.trim() || '');

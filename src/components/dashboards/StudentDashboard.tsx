@@ -84,6 +84,7 @@ export default function StudentDashboard() {
     { icon: BookOpen, title: "Practice Exams", link: "/practice-exams" },
     { icon: Brain, title: "Brain Teasers", link: "/brain-teasers" },
     { icon: MessageSquare, title: "Q&A Box", link: "/dashboard/qa" },
+    { icon: PenTool, title: "Typing Dojo", link: "/typing-practice" },
   ];
 
   const features = [
@@ -92,7 +93,7 @@ export default function StudentDashboard() {
     { icon: PenTool, title: "Practice Hub", link: "/practice-exams", color: "bg-amber-50", iconColor: "text-amber-500", desc: "Subject-wise prep" },
     { icon: Brain, title: "Mental Gym", link: "/brain-teasers", color: "bg-rose-50", iconColor: "text-rose-500", desc: "Daily brain teasers" },
     { icon: MessageSquare, title: "Discussion", link: "/dashboard/qa", color: "bg-cyan-50", iconColor: "text-cyan-500", desc: "Talk with peers" },
-    { icon: FileText, title: "Materials", link: "/dashboard", color: "bg-emerald-50", iconColor: "text-emerald-500", desc: "Class notes & PDF" },
+    { icon: PenTool, title: "Typing Dojo", link: "/typing-practice", color: "bg-pink-50", iconColor: "text-pink-500", desc: "Speed typing test" },
     { icon: Calculator, title: "Sci-Calc", link: "/scientific-calculator", color: "bg-blue-50", iconColor: "text-blue-500", desc: "Advanced Calculation" },
     { icon: LineChart, title: "Graph Lab", link: "/graph-calculator", color: "bg-teal-50", iconColor: "text-teal-500", desc: "Plot equations" },
     { icon: Box, title: "3D Shapes", link: "/3d-shapes", color: "bg-purple-50", iconColor: "text-purple-500", desc: "3D object viewer" },

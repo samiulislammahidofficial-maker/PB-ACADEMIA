@@ -47,7 +47,7 @@ export default function VocabBuilder() {
       const prompt = `Generate ${wordCount} advanced English vocabulary words for learning. Include definition and an example sentence for each. They should be distinct from common words. Output as JSON.`;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-preview',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -86,7 +86,7 @@ export default function VocabBuilder() {
       Create 1 question per word. Give 4 options, only 1 is correct. Output as JSON.`;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-flash-preview',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',

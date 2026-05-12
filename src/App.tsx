@@ -33,6 +33,7 @@ import Paraphraser from './components/tools/Paraphraser';
 import VocabBuilder from './components/tools/VocabBuilder';
 import Translator from './components/tools/Translator';
 import SocialPostWriter from './components/tools/SocialPostWriter';
+import TypingPractice from './components/tools/TypingPractice';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -64,6 +65,7 @@ function AppContent() {
                           location.pathname.startsWith('/paraphraser') ||
                           location.pathname.startsWith('/translator') ||
                           location.pathname.startsWith('/social-post-writer') ||
+                          location.pathname.startsWith('/typing-practice') ||
                           location.pathname.startsWith('/vocab-builder');
 
   return (
@@ -84,6 +86,7 @@ function AppContent() {
        !location.pathname.startsWith('/paraphraser') &&
        !location.pathname.startsWith('/translator') &&
        !location.pathname.startsWith('/social-post-writer') &&
+       !location.pathname.startsWith('/typing-practice') &&
        !location.pathname.startsWith('/vocab-builder') && <ChatBot />}
     </div>
   );
@@ -101,6 +104,7 @@ function FooterWrapper() {
                           location.pathname.startsWith('/3d-shapes') ||
                           location.pathname.startsWith('/translator') ||
                           location.pathname.startsWith('/social-post-writer') ||
+                          location.pathname.startsWith('/typing-practice') ||
                           location.pathname.startsWith('/circuit-simulator');
   
   if (isDashboardRoute) return null;
@@ -205,6 +209,7 @@ function AppRoutes() {
       <Route path="/vocab-builder" element={<VocabBuilder />} />
       <Route path="/translator" element={<Translator />} />
       <Route path="/social-post-writer" element={<SocialPostWriter />} />
+      <Route path="/typing-practice" element={<TypingPractice />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

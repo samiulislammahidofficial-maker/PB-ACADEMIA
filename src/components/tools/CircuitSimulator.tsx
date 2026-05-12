@@ -313,6 +313,8 @@ function CircuitDesigner() {
     }
   };
 
+  const activeNode = selectedNode ? nodes.find(n => n.id === selectedNode.id) : null;
+
   return (
     <div className="flex-1 flex flex-col md:flex-row h-full">
       {/* Left Palette */}
@@ -450,23 +452,23 @@ function CircuitDesigner() {
                 </span>
                 <input 
                   type="text" 
-                  value={selectedNode.data.label as string}
+                  value={activeNode?.data.label as string}
                   onChange={(e) => handleUpdateSelected('label', e.target.value)}
                   className="flex-1 bg-transparent border-b border-dashed border-neutral-600 outline-none text-sm font-bold text-white px-1"
                 />
               </div>
 
-              {(selectedNode.type === 'resistor' || selectedNode.type === 'capacitor' || selectedNode.type === 'battery') && (
+              {(activeNode?.type === 'resistor' || activeNode?.type === 'capacitor' || activeNode?.type === 'battery') && (
                 <div>
                   <label className="text-[10px] font-bold text-neutral-400 block mb-1">
                     Value 
-                    {selectedNode.type === 'resistor' && ' (Ohms)'}
-                    {selectedNode.type === 'capacitor' && ' (μF)'}
-                    {selectedNode.type === 'battery' && ' (Volts)'}
+                    {activeNode?.type === 'resistor' && ' (Ohms)'}
+                    {activeNode?.type === 'capacitor' && ' (μF)'}
+                    {activeNode?.type === 'battery' && ' (Volts)'}
                   </label>
                   <input 
                     type="number"
-                    value={selectedNode.data.value as number}
+                    value={activeNode?.data.value as number}
                     onChange={(e) => handleUpdateSelected('value', Number(e.target.value))}
                     className="w-full p-2 bg-neutral-900 rounded font-bold text-sm outline-none border border-neutral-800 text-white focus:border-brand-primary"
                   />

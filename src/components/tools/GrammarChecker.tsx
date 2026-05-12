@@ -35,7 +35,7 @@ export default function GrammarChecker() {
       "${text}"`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-2.5-pro',
         contents: prompt,
         config: {
            responseMimeType: 'application/json',
