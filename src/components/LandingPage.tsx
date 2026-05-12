@@ -25,7 +25,8 @@ import {
   Award,
   Calculator,
   LineChart,
-  Box
+  Box,
+  Activity
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -297,12 +298,15 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[
               { title: "Scientific Calc", icon: <Calculator className="h-10 w-10 text-emerald-400" />, link: "/scientific-calculator", desc: "Scientific calculator for all your needs.", color: "bg-emerald-500/10 border-emerald-500/20" },
               { title: "Graph Lab", icon: <LineChart className="h-10 w-10 text-brand-primary" />, link: "/graph-calculator", desc: "Interactive graphing calculator.", color: "bg-brand-primary/10 border-brand-primary/20" },
               { title: "3D Constructor", icon: <Box className="h-10 w-10 text-purple-400" />, link: "/3d-shapes", desc: "Visualize and interact with 3D shapes.", color: "bg-purple-500/10 border-purple-500/20" },
-              { title: "Circuit Lab", icon: <Zap className="h-10 w-10 text-amber-400" />, link: "/circuit-simulator", desc: "Build & simulate electrical circuits.", color: "bg-amber-500/10 border-amber-500/20" }
+              { title: "Circuit Lab", icon: <Zap className="h-10 w-10 text-amber-400" />, link: "/circuit-simulator", desc: "Build & simulate electrical circuits.", color: "bg-amber-500/10 border-amber-500/20" },
+              { title: "Measurement", icon: <Box className="h-10 w-10 text-cyan-400" />, link: "/measurement-sim", desc: "Interactive Vernier & Micrometer caliper tools.", color: "bg-cyan-500/10 border-cyan-500/20" },
+              { title: "Pendulum Lab", icon: <Activity className="h-10 w-10 text-blue-400" />, link: "/pendulum-sim", desc: "Simulate pendulum physics and energy conservation.", color: "bg-blue-500/10 border-blue-500/20" },
+              { title: "Springs Lab", icon: <Activity className="h-10 w-10 text-rose-400" />, link: "/springs-sim", desc: "Test hooke's law, series, and parallel springs.", color: "bg-rose-500/10 border-rose-500/20" }
             ].map((tool, i) => (
               <Link 
                 key={i} 

@@ -9,10 +9,21 @@ export async function generateContent(options: { model?: string, contents: any, 
       responseSchema: options.config?.responseSchema,
     })
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error || 'Failed to fetch AI data');
+  
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    if (!res.ok) {
+      throw new Error(`Server returned status ${res.status}: ${text}`);
+    }
+    throw new Error(`Invalid JSON response: ${text}`);
   }
-  const data = await res.json();
-  return { text: data.text };
+
+  if (!res.ok) {
+    throw new Error(json.error || 'Failed to fetch AI data');
+  }
+  return { text: json.text };
 }
+
