@@ -23,7 +23,7 @@ Text:
 "${text}"`;
 
       const response = await generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: prompt
       });
       setResult({ original: text, paraphrased: response.text?.trim() || '' });
