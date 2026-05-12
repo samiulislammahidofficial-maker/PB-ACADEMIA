@@ -8,11 +8,18 @@ export async function generateContent(options: { model?: string, contents: any, 
   const ai = new GoogleGenAI({ apiKey });
   
   try {
-    const response = await ai.models.generateContent({
+    const fetchPromise = ai.models.generateContent({
       model: options.model || 'gemini-2.5-flash',
       contents: options.contents,
       config: options.config,
     });
+    
+    // Add a 15-second timeout
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Request timed out. The AI is taking too long to respond. Please try again.')), 15000)
+    );
+    
+    const response = await Promise.race([fetchPromise, timeoutPromise]) as any;
     
     return { text: response.text };
   } catch (error: any) {

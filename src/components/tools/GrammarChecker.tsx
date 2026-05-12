@@ -40,7 +40,11 @@ export default function GrammarChecker() {
            responseMimeType: 'application/json',
         }
       });
-      const data = JSON.parse(response.text?.trim() || '{}');
+      // Strip any markdown syntax from the response
+      const rawText = response.text?.trim() || '{}';
+      const cleanText = rawText.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+      
+      const data = JSON.parse(cleanText);
       setResult(data);
     } catch (e: any) {
       console.error(e);
