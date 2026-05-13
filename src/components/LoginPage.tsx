@@ -73,7 +73,7 @@ export default function LoginPage() {
       } else if (err.code === 'auth/network-request-failed') {
         setError('Network connectivity lost. Check your connection.');
       } else {
-        setError('Invalid credentials or access denied. Ensure Anonymous Auth is enabled if using Admin/Teacher roles.');
+        setError(`Access Denied: ${err.message || 'Ensure Anonymous Auth is enabled if using Admin/Teacher roles.'}`);
       }
     } finally {
       setSubmitting(false);
