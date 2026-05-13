@@ -37,6 +37,10 @@ import TypingPractice from './components/tools/TypingPractice';
 import MeasurementSim from './components/tools/MeasurementSim';
 import PendulumSim from './components/tools/PendulumSim';
 import SpringsSim from './components/tools/SpringsSim';
+import PhysicsLibrary from './components/tools/PhysicsLibrary';
+import ProjectileSim from './components/tools/ProjectileSim';
+import GravitySim from './components/tools/GravitySim';
+import VectorsSim from './components/tools/VectorsSim';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -72,7 +76,11 @@ function AppContent() {
                           location.pathname.startsWith('/vocab-builder') ||
                           location.pathname.startsWith('/measurement-sim') ||
                           location.pathname.startsWith('/pendulum-sim') ||
-                          location.pathname.startsWith('/springs-sim');
+                          location.pathname.startsWith('/springs-sim') ||
+                          location.pathname.startsWith('/physics-labs') ||
+                          location.pathname.startsWith('/projectile-sim') ||
+                          location.pathname.startsWith('/gravity-sim') ||
+                          location.pathname.startsWith('/vectors-sim');
 
   return (
     <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 bg-[#050505]`}>
@@ -96,7 +104,11 @@ function AppContent() {
        !location.pathname.startsWith('/vocab-builder') &&
        !location.pathname.startsWith('/measurement-sim') &&
        !location.pathname.startsWith('/pendulum-sim') &&
-       !location.pathname.startsWith('/springs-sim') && <ChatBot />}
+       !location.pathname.startsWith('/springs-sim') &&
+       !location.pathname.startsWith('/physics-labs') &&
+       !location.pathname.startsWith('/projectile-sim') &&
+       !location.pathname.startsWith('/gravity-sim') &&
+       !location.pathname.startsWith('/vectors-sim') && <ChatBot />}
     </div>
   );
 }
@@ -117,7 +129,11 @@ function FooterWrapper() {
                           location.pathname.startsWith('/circuit-simulator') ||
                           location.pathname.startsWith('/measurement-sim') ||
                           location.pathname.startsWith('/pendulum-sim') ||
-                          location.pathname.startsWith('/springs-sim');
+                          location.pathname.startsWith('/springs-sim') ||
+                          location.pathname.startsWith('/physics-labs') ||
+                          location.pathname.startsWith('/projectile-sim') ||
+                          location.pathname.startsWith('/gravity-sim') ||
+                          location.pathname.startsWith('/vectors-sim');
   
   if (isDashboardRoute) return null;
   return <Footer />;
@@ -225,6 +241,10 @@ function AppRoutes() {
       <Route path="/measurement-sim" element={<MeasurementSim />} />
       <Route path="/pendulum-sim" element={<PendulumSim />} />
       <Route path="/springs-sim" element={<SpringsSim />} />
+      <Route path="/physics-labs" element={<PhysicsLibrary />} />
+      <Route path="/projectile-sim" element={<ProjectileSim />} />
+      <Route path="/gravity-sim" element={<GravitySim />} />
+      <Route path="/vectors-sim" element={<VectorsSim />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -306,7 +306,8 @@ export default function LandingPage() {
               { title: "Circuit Lab", icon: <Zap className="h-10 w-10 text-amber-400" />, link: "/circuit-simulator", desc: "Build & simulate electrical circuits.", color: "bg-amber-500/10 border-amber-500/20" },
               { title: "Measurement", icon: <Box className="h-10 w-10 text-cyan-400" />, link: "/measurement-sim", desc: "Interactive Vernier & Micrometer caliper tools.", color: "bg-cyan-500/10 border-cyan-500/20" },
               { title: "Pendulum Lab", icon: <Activity className="h-10 w-10 text-blue-400" />, link: "/pendulum-sim", desc: "Simulate pendulum physics and energy conservation.", color: "bg-blue-500/10 border-blue-500/20" },
-              { title: "Springs Lab", icon: <Activity className="h-10 w-10 text-rose-400" />, link: "/springs-sim", desc: "Test hooke's law, series, and parallel springs.", color: "bg-rose-500/10 border-rose-500/20" }
+              { title: "Springs Lab", icon: <Activity className="h-10 w-10 text-rose-400" />, link: "/springs-sim", desc: "Test hooke's law, series, and parallel springs.", color: "bg-rose-500/10 border-rose-500/20" },
+              { title: "Phy Labs", icon: <Activity className="h-10 w-10 text-indigo-400" />, link: "/physics-labs", desc: "Interactive physics simulations powered by PhET.", color: "bg-indigo-500/10 border-indigo-500/20" }
             ].map((tool, i) => (
               <Link 
                 key={i} 
