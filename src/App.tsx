@@ -41,6 +41,12 @@ import PhysicsLibrary from './components/tools/PhysicsLibrary';
 import ProjectileSim from './components/tools/ProjectileSim';
 import GravitySim from './components/tools/GravitySim';
 import VectorsSim from './components/tools/VectorsSim';
+import ElectrostaticsSim from './components/tools/ElectrostaticsSim';
+import OpticsSim from './components/tools/OpticsSim';
+import ThermoSim from './components/tools/ThermoSim';
+import PhotoelectricSim from './components/tools/PhotoelectricSim';
+import RadioactivitySim from './components/tools/RadioactivitySim';
+import WavesSim from './components/tools/WavesSim';
 import { useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ children, role }: { children: React.ReactNode, role?: string }) {
@@ -80,7 +86,13 @@ function AppContent() {
                           location.pathname.startsWith('/physics-labs') ||
                           location.pathname.startsWith('/projectile-sim') ||
                           location.pathname.startsWith('/gravity-sim') ||
-                          location.pathname.startsWith('/vectors-sim');
+                          location.pathname.startsWith('/electrostatics-sim') ||
+                          location.pathname.startsWith('/vectors-sim') ||
+                          location.pathname.startsWith('/optics-sim') ||
+                          location.pathname.startsWith('/thermodynamics-sim') ||
+                          location.pathname.startsWith('/photoelectric-sim') ||
+                          location.pathname.startsWith('/radioactivity-sim') ||
+                          location.pathname.startsWith('/waves-sim');
 
   return (
     <div className={`relative min-h-screen flex flex-col selection:bg-blue-500/30 bg-[#050505]`}>
@@ -108,7 +120,13 @@ function AppContent() {
        !location.pathname.startsWith('/physics-labs') &&
        !location.pathname.startsWith('/projectile-sim') &&
        !location.pathname.startsWith('/gravity-sim') &&
-       !location.pathname.startsWith('/vectors-sim') && <ChatBot />}
+       !location.pathname.startsWith('/electrostatics-sim') &&
+       !location.pathname.startsWith('/vectors-sim') &&
+       !location.pathname.startsWith('/optics-sim') &&
+       !location.pathname.startsWith('/thermodynamics-sim') &&
+       !location.pathname.startsWith('/photoelectric-sim') &&
+       !location.pathname.startsWith('/radioactivity-sim') &&
+       !location.pathname.startsWith('/waves-sim') && <ChatBot />}
     </div>
   );
 }
@@ -133,7 +151,13 @@ function FooterWrapper() {
                           location.pathname.startsWith('/physics-labs') ||
                           location.pathname.startsWith('/projectile-sim') ||
                           location.pathname.startsWith('/gravity-sim') ||
-                          location.pathname.startsWith('/vectors-sim');
+                          location.pathname.startsWith('/electrostatics-sim') ||
+                          location.pathname.startsWith('/vectors-sim') ||
+                          location.pathname.startsWith('/optics-sim') ||
+                          location.pathname.startsWith('/thermodynamics-sim') ||
+                          location.pathname.startsWith('/photoelectric-sim') ||
+                          location.pathname.startsWith('/radioactivity-sim') ||
+                          location.pathname.startsWith('/waves-sim');
   
   if (isDashboardRoute) return null;
   return <Footer />;
@@ -245,6 +269,12 @@ function AppRoutes() {
       <Route path="/projectile-sim" element={<ProjectileSim />} />
       <Route path="/gravity-sim" element={<GravitySim />} />
       <Route path="/vectors-sim" element={<VectorsSim />} />
+      <Route path="/electrostatics-sim" element={<ElectrostaticsSim />} />
+      <Route path="/optics-sim" element={<OpticsSim />} />
+      <Route path="/thermodynamics-sim" element={<ThermoSim />} />
+      <Route path="/photoelectric-sim" element={<PhotoelectricSim />} />
+      <Route path="/radioactivity-sim" element={<RadioactivitySim />} />
+      <Route path="/waves-sim" element={<WavesSim />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -18,7 +18,7 @@ import '@xyflow/react/dist/style.css';
 import { ArrowLeft, Zap, Battery, Activity, PlayCircle, ShieldAlert, CircleDot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { solveMNA } from '../../lib/mna';
-import { ResistorNode, CapacitorNode, BatteryNode, JunctionNode, GroundNode } from './CustomNodes';
+import { ResistorNode, CapacitorNode, BatteryNode, JunctionNode, GroundNode, VoltmeterNode, AmmeterNode } from './CustomNodes';
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
@@ -43,7 +43,9 @@ function CircuitDesigner() {
     capacitor: CapacitorNode,
     battery: BatteryNode,
     junction: JunctionNode,
-    ground: GroundNode
+    ground: GroundNode,
+    voltmeter: VoltmeterNode,
+    ammeter: AmmeterNode
   }), []);
 
   const onNodesChange = useCallback(
@@ -58,7 +60,7 @@ function CircuitDesigner() {
 
   const onConnect = useCallback(
     (params: Connection | Edge) => {
-      setEdges((eds) => addEdge({ ...params, type: 'smoothstep', animated: true, style: { stroke: '#a3a3a3', strokeWidth: 2 } } as any, eds));
+      setEdges((eds) => addEdge({ ...params, type: 'step', animated: false, style: { stroke: '#a3a3a3', strokeWidth: 2 } } as any, eds));
     },
     []
   );
@@ -222,6 +224,9 @@ function CircuitDesigner() {
           } else if (n.type === 'battery') {
              // Short circuit batteries
             voltageSources.push({ n1: t1, n2: t2, V: 0, ref: n.id });
+          } else if (n.type === 'ammeter') {
+            // Short circuit
+            voltageSources.push({ n1: t1, n2: t2, V: 0, ref: n.id });
           }
         } else if (calcMode === 'eq_cap') {
           if (n.type === 'capacitor') {
@@ -249,6 +254,8 @@ function CircuitDesigner() {
           // So T1 to T2 means Voltage drop? A voltage source in MNA: V_n1 - V_n2 = V.
           // T1 is +, T2 is -. So n1=T1, n2=T2.
           voltageSources.push({ n1: t1, n2: t2, V: val, ref: n.id });
+        } else if (n.type === 'ammeter') {
+          voltageSources.push({ n1: t1, n2: t2, V: 0, ref: n.id });
         }
       });
       // Pick an arbitrary ground if none exists
@@ -304,6 +311,15 @@ function CircuitDesigner() {
             const I = currents[idx] || 0;
             return { ...n, data: { ...n.data, current: Math.abs(I) } };
           }
+          if (n.type === 'ammeter') {
+            const idx = trVs.findIndex(vs => vs.ref === n.id);
+            const I = currents[idx] || 0;
+            return { ...n, data: { ...n.data, current: Math.abs(I) } };
+          }
+          if (n.type === 'voltmeter') {
+            const diff = Math.abs(v1 - v2);
+            return { ...n, data: { ...n.data, voltage: diff } };
+          }
           return n;
         }));
         setCalcResult("Simulation successful. See labels on components.");
@@ -346,6 +362,22 @@ function CircuitDesigner() {
             <Zap className="mr-2" size={14} /> Battery
           </div>
 
+          <div 
+            className="px-3 py-2 border border-white/5 bg-white/5 rounded-lg cursor-grab text-pink-500 font-bold text-xs flex items-center hover:bg-white/10 transition-colors"
+            onDragStart={(e) => e.dataTransfer.setData('application/reactflow', 'voltmeter')}
+            draggable
+          >
+            <Activity className="mr-2" size={14} /> Voltmeter
+          </div>
+
+          <div 
+            className="px-3 py-2 border border-white/5 bg-white/5 rounded-lg cursor-grab text-yellow-500 font-bold text-xs flex items-center hover:bg-white/10 transition-colors"
+            onDragStart={(e) => e.dataTransfer.setData('application/reactflow', 'ammeter')}
+            draggable
+          >
+            <Activity className="mr-2" size={14} /> Ammeter
+          </div>
+          
           <div 
             className="px-3 py-2 border border-white/5 bg-white/5 rounded-lg cursor-grab text-purple-400 font-bold text-xs flex items-center hover:bg-white/10 transition-colors"
             onDragStart={(e) => e.dataTransfer.setData('application/reactflow', 'junction')}
@@ -469,11 +501,35 @@ function CircuitDesigner() {
                     </label>
                     <input 
                       type="number"
-                      value={activeNode?.data.value || ''}
+                      value={(activeNode?.data.value as number) || ''}
                       onChange={(e) => handleUpdateSelected('value', parseFloat(e.target.value) || 0)}
                       className="w-full p-2 bg-neutral-900 rounded font-bold text-sm outline-none border border-neutral-800 text-white focus:border-brand-primary"
                     />
                   </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-neutral-400 block mb-1">
+                      Orientation
+                    </label>
+                    <div className="flex bg-neutral-900 rounded border border-neutral-800 p-1">
+                      <button 
+                        onClick={() => handleUpdateSelected('direction', 'horizontal')}
+                        className={`flex-1 text-[10px] py-1 uppercase font-bold rounded ${activeNode?.data.direction !== 'vertical' ? 'bg-neutral-700 text-white' : 'text-neutral-500 hover:text-white'}`}
+                      >
+                        Horizontal
+                      </button>
+                      <button 
+                        onClick={() => handleUpdateSelected('direction', 'vertical')}
+                        className={`flex-1 text-[10px] py-1 uppercase font-bold rounded ${activeNode?.data.direction === 'vertical' ? 'bg-neutral-700 text-white' : 'text-neutral-500 hover:text-white'}`}
+                      >
+                        Vertical
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeNode?.type === 'voltmeter' || activeNode?.type === 'ammeter') && (
+                <div className="space-y-4">
                   <div>
                     <label className="text-[10px] font-bold text-neutral-400 block mb-1">
                       Orientation

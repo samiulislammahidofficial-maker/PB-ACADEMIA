@@ -14,7 +14,7 @@ export default function PendulumSim() {
   
   // Animation state
   const timeRef = useRef(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const [currentTheta, setCurrentTheta] = useState((30 * Math.PI) / 180);
   const [velocity, setVelocity] = useState(0);
 

@@ -104,3 +104,43 @@ export function GroundNode({ isConnectable, selected }: any) {
     </div>
   );
 }
+
+export function VoltmeterNode({ data, isConnectable, selected }: any) {
+  const isVertical = data.direction === 'vertical';
+  return (
+    <div className={`flex flex-col items-center ${selected ? 'drop-shadow-[0_0_15px_rgba(236,72,153,0.5)]' : ''}`}>
+      <span className="text-[10px] font-bold text-pink-500 mb-1">Voltmeter</span>
+      <div className={`relative flex items-center justify-center text-pink-500 bg-black/40 rounded-full border border-pink-500/50 transition-all ${isVertical ? 'w-[40px] h-[40px]' : 'w-[40px] h-[40px]'}`}>
+        <Handle type="source" position={isVertical ? Position.Top : Position.Left} id="T1" style={isVertical ? {...HStyle, top: -5} : {...HStyle, left: -5}} isConnectable={isConnectable} />
+        <span className="font-black text-xs">V</span>
+        <Handle type="source" position={isVertical ? Position.Bottom : Position.Right} id="T2" style={isVertical ? {...HStyle, bottom: -5} : {...HStyle, right: -5}} isConnectable={isConnectable} />
+      </div>
+      <span className="text-[9px] text-neutral-400 mt-1">{data.label}</span>
+      {data.voltage !== undefined && (
+        <div className="text-[10px] text-pink-400 font-bold mt-1 bg-black/80 border border-pink-500/30 px-2 py-0.5 rounded shadow-lg">
+          {Math.abs(data.voltage).toFixed(2)} Volts
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AmmeterNode({ data, isConnectable, selected }: any) {
+  const isVertical = data.direction === 'vertical';
+  return (
+    <div className={`flex flex-col items-center ${selected ? 'drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]' : ''}`}>
+      <span className="text-[10px] font-bold text-amber-500 mb-1">Ammeter</span>
+      <div className={`relative flex items-center justify-center text-amber-500 bg-black/40 rounded-full border border-amber-500/50 transition-all ${isVertical ? 'w-[40px] h-[40px]' : 'w-[40px] h-[40px]'}`}>
+        <Handle type="source" position={isVertical ? Position.Top : Position.Left} id="T1" style={isVertical ? {...HStyle, top: -5} : {...HStyle, left: -5}} isConnectable={isConnectable} />
+        <span className="font-black text-xs">A</span>
+        <Handle type="source" position={isVertical ? Position.Bottom : Position.Right} id="T2" style={isVertical ? {...HStyle, bottom: -5} : {...HStyle, right: -5}} isConnectable={isConnectable} />
+      </div>
+      <span className="text-[9px] text-neutral-400 mt-1">{data.label}</span>
+      {data.current !== undefined && (
+        <div className="text-[10px] text-amber-400 font-bold mt-1 bg-black/80 border border-amber-500/30 px-2 py-0.5 rounded shadow-lg">
+          {Math.abs(data.current).toFixed(3)} Amps
+        </div>
+      )}
+    </div>
+  );
+}

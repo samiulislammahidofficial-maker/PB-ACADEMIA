@@ -1,93 +1,63 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Grid, Line, Html } from '@react-three/drei';
+import * as THREE from 'three';
+
+const VectorArrow = ({ start, end, color }) => {
+  const dir = new THREE.Vector3().subVectors(end, start).normalize();
+  const length = start.distanceTo(end);
+  return (
+    <arrowHelper args={[dir, start, length, color, 0.5, 0.5]} />
+  );
+};
+
+const VectorScene = ({ v1, v2 }) => {
+  const v1Vec = new THREE.Vector3(v1.x, v1.y, v1.z);
+  const v2Vec = new THREE.Vector3(v2.x, v2.y, v2.z);
+  const vResult = new THREE.Vector3().addVectors(v1Vec, v2Vec);
+  
+  const origin = new THREE.Vector3(0,0,0);
+
+  return (
+    <>
+      <OrbitControls makeDefault enableDamping dampingFactor={0.05} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
+      
+      {/* 3D Grid / Axes */}
+      <axesHelper args={[20]} />
+      <Grid args={[40, 40]} infiniteGrid fadeDistance={40} cellColor="#555" sectionColor="#888" />
+
+      {/* Vector 1 */}
+      {v1Vec.length() > 0 && <VectorArrow start={origin} end={v1Vec} color={0x3b82f6} />}
+
+      {/* Vector 2 (Head to Tail) */}
+      {v2Vec.length() > 0 && <VectorArrow start={v1Vec} end={vResult} color={0xef4444} />}
+
+      {/* Resultant */}
+      {vResult.length() > 0 && <VectorArrow start={origin} end={vResult} color={0x10b981} />}
+      
+      <Html position={[v1Vec.x/2, v1Vec.y/2, v1Vec.z/2]} center>
+         <div className="text-blue-500 font-bold px-1 bg-black/50 backdrop-blur-md border border-neutral-700/50 rounded select-none pointer-events-none">v₁</div>
+      </Html>
+      <Html position={[v1Vec.x + v2Vec.x/2, v1Vec.y + v2Vec.y/2, v1Vec.z + v2Vec.z/2]} center>
+         <div className="text-red-500 font-bold px-1 bg-black/50 backdrop-blur-md border border-neutral-700/50 rounded select-none pointer-events-none">v₂</div>
+      </Html>
+      <Html position={[vResult.x/2, vResult.y/2, vResult.z/2]} center>
+         <div className="text-emerald-500 font-bold px-1 bg-black/50 backdrop-blur-md border border-neutral-700/50 rounded select-none pointer-events-none">R</div>
+      </Html>
+    </>
+  );
+};
 
 export default function VectorsSim() {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  const [v1, setV1] = useState({ mag: 10, angle: 0 }); // angle in degrees
-  const [v2, setV2] = useState({ mag: 10, angle: 90 });
-
-  const drawArrow = (ctx: CanvasRenderingContext2D, fromX: number, fromY: number, toX: number, toY: number, color: string) => {
-    const headlen = 10; // length of head in pixels
-    const dx = toX - fromX;
-    const dy = toY - fromY;
-    const angle = Math.atan2(dy, dx);
-    
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = 3;
-    
-    ctx.beginPath();
-    ctx.moveTo(fromX, fromY);
-    ctx.lineTo(toX, toY);
-    ctx.stroke();
-    
-    ctx.beginPath();
-    ctx.moveTo(toX, toY);
-    ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-    ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
-    ctx.fill();
-  };
-
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const scale = 15; // 1 unit = 15 pixels
-
-    // Grid
-    ctx.strokeStyle = '#e5e5e5';
-    ctx.lineWidth = 1;
-    for(let i=0; i<canvas.width; i+=scale) {
-        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-    }
-    for(let i=0; i<canvas.height; i+=scale) {
-        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
-    }
-    // Axes
-    ctx.strokeStyle = '#9ca3af';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(centerX, 0); ctx.lineTo(centerX, canvas.height); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, centerY); ctx.lineTo(canvas.width, centerY); ctx.stroke();
-
-    // Calculate components
-    const r1 = v1.angle * Math.PI / 180;
-    const v1x = v1.mag * Math.cos(r1);
-    const v1y = v1.mag * Math.sin(r1);
-
-    const r2 = v2.angle * Math.PI / 180;
-    const v2x = v2.mag * Math.cos(r2);
-    const v2y = v2.mag * Math.sin(r2);
-
-    const sumX = v1x + v2x;
-    const sumY = v1y + v2y;
-
-    // Head-to-tail method
-    // Draw V1
-    const endV1X = centerX + v1x * scale;
-    const endV1Y = centerY - v1y * scale; // negative because canvas Y is down
-    drawArrow(ctx, centerX, centerY, endV1X, endV1Y, '#3b82f6'); // blue
-    
-    // Draw V2 starting from end of V1
-    const endV2X = endV1X + v2x * scale;
-    const endV2Y = endV1Y - v2y * scale;
-    drawArrow(ctx, endV1X, endV1Y, endV2X, endV2Y, '#ef4444'); // red
-
-    // Draw Sum (Resultant)
-    drawArrow(ctx, centerX, centerY, endV2X, endV2Y, '#10b981'); // emerald
-  };
-
-  useEffect(() => {
-    draw();
-  }, [v1, v2]);
+  const [v1, setV1] = useState({ x: 5, y: 0, z: 0 });
+  const [v2, setV2] = useState({ x: 0, y: 5, z: 0 });
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 font-sans">
@@ -105,47 +75,57 @@ export default function VectorsSim() {
       
       <main className="p-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
         <div className="flex-1 bg-white rounded-[2rem] border border-neutral-200 p-4 shadow-sm overflow-hidden flex flex-col">
-            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-[#f8fafc] overflow-hidden" style={{ minHeight: '500px' }}>
-                <canvas ref={canvasRef} width={800} height={500} className="w-full h-full object-contain" />
+            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-[#050505] overflow-hidden" style={{ minHeight: '500px' }}>
+                <Canvas camera={{ position: [10, 10, 15], fov: 45 }}>
+                   <VectorScene v1={v1} v2={v2} />
+                </Canvas>
             </div>
             
-            <div className="mt-6 flex gap-6">
+            <div className="mt-6 flex flex-col lg:flex-row gap-6">
                <div className="flex-1 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4">Vector 1 (v₁)</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4">Vector 1 (v₁) Components</h3>
                     <div className="space-y-4">
                         <div>
                             <div className="flex justify-between text-xs font-bold mb-1">
-                                <label>Magnitude</label>
-                                <span>{v1.mag.toFixed(1)}</span>
+                                <label>X: {v1.x}</label>
                             </div>
-                            <input type="range" min="0" max="25" step="0.5" value={v1.mag} onChange={(e) => setV1({...v1, mag: Number(e.target.value)})} className="w-full accent-blue-600" />
+                            <input type="range" min="-10" max="10" step="1" value={v1.x} onChange={(e) => setV1({...v1, x: Number(e.target.value)})} className="w-full accent-blue-600" />
                         </div>
                         <div>
                             <div className="flex justify-between text-xs font-bold mb-1">
-                                <label>Angle</label>
-                                <span>{v1.angle}°</span>
+                                <label>Y: {v1.y}</label>
                             </div>
-                            <input type="range" min="0" max="360" value={v1.angle} onChange={(e) => setV1({...v1, angle: Number(e.target.value)})} className="w-full accent-blue-600" />
+                            <input type="range" min="-10" max="10" step="1" value={v1.y} onChange={(e) => setV1({...v1, y: Number(e.target.value)})} className="w-full accent-blue-600" />
+                        </div>
+                        <div>
+                            <div className="flex justify-between text-xs font-bold mb-1">
+                                <label>Z: {v1.z}</label>
+                            </div>
+                            <input type="range" min="-10" max="10" step="1" value={v1.z} onChange={(e) => setV1({...v1, z: Number(e.target.value)})} className="w-full accent-blue-600" />
                         </div>
                     </div>
                </div>
                
                <div className="flex-1 p-4 bg-red-50 border border-red-100 rounded-2xl">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-red-500 mb-4">Vector 2 (v₂)</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-red-500 mb-4">Vector 2 (v₂) Components</h3>
                     <div className="space-y-4">
                         <div>
                             <div className="flex justify-between text-xs font-bold mb-1">
-                                <label>Magnitude</label>
-                                <span>{v2.mag.toFixed(1)}</span>
+                                <label>X: {v2.x}</label>
                             </div>
-                            <input type="range" min="0" max="25" step="0.5" value={v2.mag} onChange={(e) => setV2({...v2, mag: Number(e.target.value)})} className="w-full accent-red-500" />
+                            <input type="range" min="-10" max="10" step="1" value={v2.x} onChange={(e) => setV2({...v2, x: Number(e.target.value)})} className="w-full accent-red-500" />
                         </div>
                         <div>
                             <div className="flex justify-between text-xs font-bold mb-1">
-                                <label>Angle</label>
-                                <span>{v2.angle}°</span>
+                                <label>Y: {v2.y}</label>
                             </div>
-                            <input type="range" min="0" max="360" value={v2.angle} onChange={(e) => setV2({...v2, angle: Number(e.target.value)})} className="w-full accent-red-500" />
+                            <input type="range" min="-10" max="10" step="1" value={v2.y} onChange={(e) => setV2({...v2, y: Number(e.target.value)})} className="w-full accent-red-500" />
+                        </div>
+                        <div>
+                            <div className="flex justify-between text-xs font-bold mb-1">
+                                <label>Z: {v2.z}</label>
+                            </div>
+                            <input type="range" min="-10" max="10" step="1" value={v2.z} onChange={(e) => setV2({...v2, z: Number(e.target.value)})} className="w-full accent-red-500" />
                         </div>
                     </div>
                </div>
@@ -154,19 +134,13 @@ export default function VectorsSim() {
 
         <div className="lg:w-80 space-y-6">
           <div className="bg-white rounded-3xl border border-neutral-200 p-6 shadow-sm">
-             <h2 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-6">Resultant Vector Output</h2>
+             <h2 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-6">Resultant Vector (3D)</h2>
              
              {(() => {
-                 const v1x = v1.mag * Math.cos(v1.angle * Math.PI / 180);
-                 const v1y = v1.mag * Math.sin(v1.angle * Math.PI / 180);
-                 const v2x = v2.mag * Math.cos(v2.angle * Math.PI / 180);
-                 const v2y = v2.mag * Math.sin(v2.angle * Math.PI / 180);
-                 
-                 const rx = v1x + v2x;
-                 const ry = v1y + v2y;
-                 const rMag = Math.sqrt(rx*rx + ry*ry);
-                 let rAngle = Math.atan2(ry, rx) * 180 / Math.PI;
-                 if (rAngle < 0) rAngle += 360;
+                 const rx = v1.x + v2.x;
+                 const ry = v1.y + v2.y;
+                 const rz = v1.z + v2.z;
+                 const rMag = Math.sqrt(rx*rx + ry*ry + rz*rz);
 
                  return (
                      <div className="space-y-4 font-mono text-sm">
@@ -175,16 +149,16 @@ export default function VectorsSim() {
                             <span className="font-bold text-neutral-900">{rMag.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between border-b border-neutral-100 pb-2">
-                            <span className="text-emerald-600 font-bold">Sum Angle θ</span>
-                            <span className="font-bold text-neutral-900">{rAngle.toFixed(1)}°</span>
-                        </div>
-                        <div className="flex justify-between border-b border-neutral-100 pb-2">
-                            <span className="text-neutral-500">R_x (Horizontal)</span>
+                            <span className="text-neutral-500">R_x</span>
                             <span className="font-bold text-neutral-900">{rx.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between pb-2">
-                            <span className="text-neutral-500">R_y (Vertical)</span>
+                        <div className="flex justify-between border-b border-neutral-100 pb-2">
+                            <span className="text-neutral-500">R_y</span>
                             <span className="font-bold text-neutral-900">{ry.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between pb-2">
+                            <span className="text-neutral-500">R_z</span>
+                            <span className="font-bold text-neutral-900">{rz.toFixed(2)}</span>
                         </div>
                      </div>
                  );

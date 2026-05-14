@@ -13,10 +13,14 @@ const simulations = [
   { id: '/projectile-sim', title: "Projectile Motion", desc: "Kinematics & Trajectory", icon: Navigation, color: "bg-purple-50", iconColor: "text-purple-500" },
   { id: '/gravity-sim', title: "Gravity Force Lab", desc: "Mass & Distance Relations", icon: Activity, color: "bg-indigo-50", iconColor: "text-indigo-500" },
   { id: '/vectors-sim', title: "Vector Addition", desc: "Math & Physics Vectors", icon: Navigation, color: "bg-emerald-50", iconColor: "text-emerald-500" },
+  { id: '/electrostatics-sim', title: "Electrostatics", desc: "Charges, Fields & Potential", icon: Zap, color: "bg-yellow-50", iconColor: "text-yellow-600" },
   
   // Placeholders for advanced ones requested
-  { id: '#', title: "Faraday's Law", desc: "Electromagnetic (Coming Soon)", icon: Zap, color: "bg-yellow-50", iconColor: "text-yellow-600", disabled: true },
-  { id: '#', title: "Wave Interference", desc: "Water & Light (Coming Soon)", icon: Wind, color: "bg-teal-50", iconColor: "text-teal-500", disabled: true },
+  { id: '/optics-sim', title: "Optics Lab", desc: "Refraction & Lenses", icon: Activity, color: "bg-blue-50", iconColor: "text-blue-500" },
+  { id: '/thermodynamics-sim', title: "Thermodynamics", desc: "Gas Laws & Engines", icon: Zap, color: "bg-orange-50", iconColor: "text-orange-500" },
+  { id: '/photoelectric-sim', title: "Photoelectric Effect", desc: "Modern Physics", icon: Beaker, color: "bg-purple-50", iconColor: "text-purple-500" },
+  { id: '/radioactivity-sim', title: "Radioactivity", desc: "Nuclear Decay", icon: Activity, color: "bg-green-50", iconColor: "text-green-500" },
+  { id: '/waves-sim', title: "Wave Interference", desc: "Water & Light", icon: Wind, color: "bg-teal-50", iconColor: "text-teal-500" },
 ];
 
 export default function PhysicsLibrary() {
@@ -42,9 +46,9 @@ export default function PhysicsLibrary() {
       </header>
 
       <main className="max-w-7xl mx-auto p-6 lg:p-12">
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-           <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-neutral-900">Explore The Universe</h2>
-           <p className="text-neutral-500 text-sm font-medium">Immerse yourself in interactive physics simulations built from scratch natively for max performance. No external dependencies, just pure physics and react.</p>
+         <div className="mb-10 text-center max-w-2xl mx-auto">
+           <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-neutral-900">Explore The Universe in 3D</h2>
+           <p className="text-neutral-500 text-sm font-medium">Immerse yourself in interactive physics 3D simulations built from scratch natively for max performance. No external dependencies, just pure immersive physics powered by React Three Fiber.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

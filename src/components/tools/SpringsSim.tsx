@@ -16,7 +16,7 @@ export default function SpringsSim() {
   const [amplitude, setAmplitude] = useState(0.5); // Initial displacement
   
   const timeRef = useRef(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const [displacement, setDisplacement] = useState(0.5);
   const [velocity, setVelocity] = useState(0);
 

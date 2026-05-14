@@ -1,6 +1,62 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Sphere, Html, Line, Stars } from '@react-three/drei';
+import * as THREE from 'three';
+
+const GravityScene = ({ mass1, mass2, distance, force }) => {
+  const m1Radius = 0.5 + (mass1 * 0.02);
+  const m2Radius = 0.5 + (mass2 * 0.02);
+  
+  const dScale = 2; // scale up distance for visual
+  const m1X = -(distance * dScale) / 2;
+  const m2X = (distance * dScale) / 2;
+
+  const arrowLen = Math.max(0.5, Math.min(3, Math.log10(force * 1e12 + 1) * 0.5));
+
+  return (
+    <>
+      <OrbitControls makeDefault enableZoom={true} />
+      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
+      
+      {/* Mass 1 */}
+      <Sphere args={[m1Radius, 32, 32]} position={[m1X, 0, 0]}>
+        <meshStandardMaterial color="#3b82f6" metalness={0.5} roughness={0.5} />
+        <Html position={[0, m1Radius + 1, 0]} center>
+          <div className="bg-neutral-900/80 text-white text-xs px-2 py-1 rounded font-mono whitespace-nowrap">
+            F: {force.toExponential(3)} N
+          </div>
+        </Html>
+      </Sphere>
+      
+      {/* Mass 2 */}
+      <Sphere args={[m2Radius, 32, 32]} position={[m2X, 0, 0]}>
+        <meshStandardMaterial color="#ef4444" metalness={0.5} roughness={0.5} />
+        <Html position={[0, m2Radius + 1, 0]} center>
+          <div className="bg-neutral-900/80 text-white text-xs px-2 py-1 rounded font-mono whitespace-nowrap">
+            F: {force.toExponential(3)} N
+          </div>
+        </Html>
+      </Sphere>
+
+      {/* Distance Line */}
+      <Line points={[[m1X, -m1Radius - 0.5, 0], [m2X, -m1Radius - 0.5, 0]]} color="#9ca3af" lineWidth={2} dashed dashScale={10} dashSize={1} gapSize={0.5} />
+      <Html position={[0, -Math.max(m1Radius, m2Radius) - 1, 0]} center>
+        <div className="bg-neutral-900/80 text-white text-xs px-2 py-1 rounded font-mono">
+          {distance} km
+        </div>
+      </Html>
+      
+      {/* Force Arrow 1 -> 2 */}
+      <arrowHelper args={[new THREE.Vector3(1,0,0), new THREE.Vector3(m1X + m1Radius + 0.1, 0, 0), arrowLen, 0x3b82f6, 0.2, 0.2]} />
+      {/* Force Arrow 2 -> 1 */}
+      <arrowHelper args={[new THREE.Vector3(-1,0,0), new THREE.Vector3(m2X - m2Radius - 0.1, 0, 0), arrowLen, 0xef4444, 0.2, 0.2]} />
+    </>
+  );
+};
 
 export default function GravitySim() {
   const navigate = useNavigate();
@@ -14,102 +70,6 @@ export default function GravitySim() {
   // Calculate Force = G * m1 * m2 / r^2
   const G = 6.674e-11;
   const force = (G * mass1 * mass2) / (distance * distance);
-
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    const centerY = canvas.height / 2;
-    // Scale distance 1m = 100px
-    const pxDistance = distance * 40; 
-    
-    // Centers of the two masses
-    const m1X = (canvas.width - pxDistance) / 2;
-    const m2X = m1X + pxDistance;
-
-    // Draw ruler line
-    ctx.strokeStyle = '#e5e5e5';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(m1X, centerY + 100);
-    ctx.lineTo(m2X, centerY + 100);
-    ctx.stroke();
-
-    // Ticks
-    for(let i=0; i<=distance; i++) {
-        const tickX = m1X + (i * 40);
-        ctx.beginPath();
-        ctx.moveTo(tickX, centerY + 90);
-        ctx.lineTo(tickX, centerY + 110);
-        ctx.stroke();
-    }
-    
-    ctx.fillStyle = '#9ca3af';
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${distance} meters`, canvas.width / 2, centerY + 130);
-
-    // Radii of circles based on mass (scaled)
-    const m1Radius = 20 + (mass1 * 0.5);
-    const m2Radius = 20 + (mass2 * 0.5);
-
-    // Draw Mass 1
-    ctx.fillStyle = '#3b82f6';
-    ctx.beginPath();
-    ctx.arc(m1X, centerY, m1Radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw Mass 2
-    ctx.fillStyle = '#ef4444';
-    ctx.beginPath();
-    ctx.arc(m2X, centerY, m2Radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw Force Arrows
-    // Arrow length based on force magnitude (logarithmic scaling for visuals)
-    const arrowLen = Math.max(20, Math.min(100, Math.log10(force * 1e12 + 1) * 15));
-    
-    ctx.strokeStyle = '#111827';
-    ctx.fillStyle = '#111827';
-    ctx.lineWidth = 3;
-    
-    // Force on m1 (towards m2)
-    ctx.beginPath();
-    ctx.moveTo(m1X, centerY - m1Radius - 20);
-    ctx.lineTo(m1X + arrowLen, centerY - m1Radius - 20);
-    ctx.stroke();
-    // Arrowhead
-    ctx.beginPath();
-    ctx.moveTo(m1X + arrowLen + 5, centerY - m1Radius - 20);
-    ctx.lineTo(m1X + arrowLen - 5, centerY - m1Radius - 25);
-    ctx.lineTo(m1X + arrowLen - 5, centerY - m1Radius - 15);
-    ctx.fill();
-
-    // Force on m2 (towards m1)
-    ctx.beginPath();
-    ctx.moveTo(m2X, centerY - m2Radius - 20);
-    ctx.lineTo(m2X - arrowLen, centerY - m2Radius - 20);
-    ctx.stroke();
-    // Arrowhead
-    ctx.beginPath();
-    ctx.moveTo(m2X - arrowLen - 5, centerY - m2Radius - 20);
-    ctx.lineTo(m2X - arrowLen + 5, centerY - m2Radius - 25);
-    ctx.lineTo(m2X - arrowLen + 5, centerY - m2Radius - 15);
-    ctx.fill();
-    
-    // Draw force text
-    ctx.font = 'bold 14px monospace';
-    ctx.fillText(`${force.toExponential(3)} N`, m1X, centerY - m1Radius - 40);
-    ctx.fillText(`${force.toExponential(3)} N`, m2X, centerY - m2Radius - 40);
-  };
-
-  useEffect(() => {
-    draw();
-  }, [mass1, mass2, distance]);
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 font-sans">
@@ -133,8 +93,10 @@ export default function GravitySim() {
                 <span>G = 6.674 × 10⁻¹¹ N·m²/kg²</span>
             </div>
             
-            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-[#f8fafc] overflow-hidden" style={{ minHeight: '400px' }}>
-                <canvas ref={canvasRef} width={800} height={400} className="w-full h-full object-contain" />
+            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-[#050505] overflow-hidden" style={{ minHeight: '400px' }}>
+                <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+                   <GravityScene mass1={mass1} mass2={mass2} distance={distance} force={force} />
+                </Canvas>
             </div>
             
             <div className="mt-6 flex justify-around">

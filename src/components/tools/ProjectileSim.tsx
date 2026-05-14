@@ -1,6 +1,80 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, Play, Square, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Grid, Line, Box, Sphere, useTexture, Sky, Environment } from '@react-three/drei';
+import * as THREE from 'three';
+
+const ProjectileScene = ({ velocity, angle, gravity, isPlaying, setIsPlaying, time, setTime, onReset }) => {
+  const ballRef = useRef<THREE.Mesh>(null);
+  
+  // Physics constants
+  const rad = angle * Math.PI / 180;
+  const v0x = velocity * Math.cos(rad);
+  const v0y = velocity * Math.sin(rad);
+
+  useFrame((state, delta) => {
+    if (isPlaying) {
+      const scale = 5; // time multiplier if needed, let's keep 1x or 2x
+      const dt = delta * 2;
+      const newTime = time + dt;
+      
+      const currentX = (v0x * newTime);
+      const currentY = (v0y * newTime) - (0.5 * gravity * newTime * newTime);
+      
+      if (currentY < 0) {
+        setIsPlaying(false);
+      } else {
+        setTime(newTime);
+      }
+    }
+  });
+
+  // Calculate trajectory line for visualization
+  const trajectoryPoints = useMemo(() => {
+    const points: THREE.Vector3[] = [];
+    let t = 0;
+    while(true) {
+        const trajX = (v0x * t);
+        const trajY = (v0y * t) - (0.5 * gravity * t * t);
+        if(trajY < 0) {
+            points.push(new THREE.Vector3(trajX, 0, 0));
+            break;
+        }
+        points.push(new THREE.Vector3(trajX, trajY, 0));
+        t += 0.1;
+    }
+    return points;
+  }, [velocity, angle, gravity, v0x, v0y]);
+
+  const currentX = (v0x * time);
+  const currentY = Math.max(0, (v0y * time) - (0.5 * gravity * time * time));
+
+  return (
+    <>
+      <OrbitControls makeDefault target={[15, 0, 0]} />
+      <Sky distance={450000} sunPosition={[0, 1, 0]} inclination={0} azimuth={0.25} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 20, 10]} intensity={1.5} castShadow />
+      
+      {/* Ground/Grid */}
+      <Grid args={[100, 100]} position={[50, -0.01, 0]} infiniteGrid fadeDistance={100} cellColor="#555" sectionColor="#888" />
+      
+      {/* Cannon / Launcher base */}
+      <Box args={[1, 1, 1]} position={[0, 0.5, 0]}>
+        <meshStandardMaterial color="#333" />
+      </Box>
+
+      {/* Trajectory */}
+      <Line points={trajectoryPoints} color="red" lineWidth={2} dashed dashScale={10} dashSize={1} gapSize={0.5} />
+
+      {/* Projectile */}
+      <Sphere ref={ballRef} args={[0.5, 32, 32]} position={[currentX, currentY + 0.5, 0]} castShadow>
+        <meshStandardMaterial color="#3b82f6" roughness={0.2} metalness={0.8} />
+      </Sphere>
+    </>
+  );
+};
 
 export default function ProjectileSim() {
   const navigate = useNavigate();
@@ -12,97 +86,6 @@ export default function ProjectileSim() {
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState(0);
-  
-  const animationRef = useRef<number>();
-
-  useEffect(() => {
-    if (isPlaying) {
-      animationRef.current = requestAnimationFrame(updateAnimation);
-    }
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, [isPlaying, time]);
-
-  const updateAnimation = () => {
-    setTime(t => t + 0.05); // slightly faster than real-time for better ux
-  };
-
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    const scale = 20; // 1 meter = 20 pixels
-    const startX = 50;
-    const startY = canvas.height - 50;
-
-    // Draw Grid and axes
-    ctx.strokeStyle = '#e5e5e5';
-    ctx.lineWidth = 1;
-    for(let i=0; i<canvas.width; i+=scale) {
-        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
-    }
-    for(let i=0; i<canvas.height; i+=scale) {
-        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
-    }
-    
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(startX, 0);
-    ctx.lineTo(startX, canvas.height);
-    ctx.moveTo(0, startY);
-    ctx.lineTo(canvas.width, startY);
-    ctx.stroke();
-
-    // Physics calculations
-    const rad = angle * Math.PI / 180;
-    const v0x = velocity * Math.cos(rad);
-    const v0y = velocity * Math.sin(rad);
-
-    // Draw trajectory
-    ctx.strokeStyle = 'rgba(59, 130, 246, 0.5)'; // blue-500 with opacity
-    ctx.lineWidth = 2;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    let t = 0;
-    while(true) {
-        t += 0.1;
-        const trajX = startX + (v0x * t) * scale;
-        const trajY = startY - ((v0y * t) - (0.5 * gravity * t * t)) * scale;
-        if(trajY > startY) break;
-        ctx.lineTo(trajX, trajY);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]); // reset
-
-    // Current position
-    const currentX = startX + (v0x * time) * scale;
-    let currentY = startY - ((v0y * time) - (0.5 * gravity * time * time)) * scale;
-    
-    if (currentY > startY) {
-      currentY = startY;
-      setIsPlaying(false);
-    }
-
-    // Draw Projectile
-    ctx.fillStyle = '#3b82f6'; // blue-500
-    ctx.beginPath();
-    ctx.arc(currentX, currentY, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#1d4ed8'; // blue-700
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  };
-
-  useEffect(() => {
-    draw();
-  }, [velocity, angle, gravity, time]);
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 font-sans">
@@ -120,8 +103,19 @@ export default function ProjectileSim() {
       
       <main className="p-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
         <div className="flex-1 bg-white rounded-[2rem] border border-neutral-200 p-4 shadow-sm overflow-hidden flex flex-col">
-            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-neutral-50/50 overflow-hidden" style={{ minHeight: '500px' }}>
-                <canvas ref={canvasRef} width={800} height={500} className="w-full h-full object-contain" />
+            <div className="flex-1 relative w-full rounded-xl border border-neutral-100 bg-neutral-900 overflow-hidden" style={{ minHeight: '500px' }}>
+                <Canvas shadows camera={{ position: [10, 10, 20], fov: 45 }}>
+                   <ProjectileScene 
+                      velocity={velocity} 
+                      angle={angle} 
+                      gravity={gravity} 
+                      isPlaying={isPlaying} 
+                      setIsPlaying={setIsPlaying} 
+                      time={time} 
+                      setTime={setTime}
+                      onReset={() => { setIsPlaying(false); setTime(0); }}
+                   />
+                </Canvas>
             </div>
             
             <div className="mt-6 flex justify-center space-x-4">
