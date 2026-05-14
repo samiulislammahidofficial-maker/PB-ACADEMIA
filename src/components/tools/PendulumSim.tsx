@@ -38,9 +38,12 @@ export default function PendulumSim() {
   }, [theta0, isPlaying]);
 
   useEffect(() => {
+    let lastTime = performance.now();
     const updateAnimation = (timeStr: number) => {
-      // time in seconds
-      timeRef.current += 1/60; 
+      const dt = Math.min((timeStr - lastTime) / 1000, 0.05);
+      lastTime = timeStr;
+      
+      timeRef.current += dt;
       const t = timeRef.current;
       
       const newTheta = maxThetaRad * Math.cos(omega * t);

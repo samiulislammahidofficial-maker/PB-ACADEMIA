@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Thermometer, Wind, Settings2 } from 'lucide-react';
+import { ArrowLeft, Thermometer, Wind, Settings2, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Particle {
@@ -18,7 +18,7 @@ export default function ThermoSim() {
   const [moles, setMoles] = useState(50); // Number of particles
   
   const particlesRef = useRef<Particle[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
   const [pressure, setPressure] = useState(0);
 
   // Initialize or re-init particles when moles change

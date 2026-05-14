@@ -14,7 +14,7 @@ export default function RadioactivitySim() {
   const [atoms, setAtoms] = useState<boolean[]>([]);
   const [decayCount, setDecayCount] = useState(0);
 
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(0);
 
   const initAtoms = () => {
@@ -33,7 +33,7 @@ export default function RadioactivitySim() {
       lastUpdateRef.current = performance.now();
       
       const update = (timestamp: number) => {
-         const dt = (timestamp - lastUpdateRef.current) / 1000;
+         const dt = Math.min((timestamp - lastUpdateRef.current) / 1000, 0.1);
          lastUpdateRef.current = timestamp;
          
          setTime(t => {

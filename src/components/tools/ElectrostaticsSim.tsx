@@ -19,7 +19,7 @@ const VectorArrow = ({ start, end, color }) => {
 };
 
 // Main 3D Scene
-const ElectrostaticsScene = ({ charges, testPoint }) => {
+const ElectrostaticsScene = ({ charges, testPoint, onTestPointMove }) => {
   
   // Calculate field vectors for visual field lines/arrows (a grid of arrows)
   const fieldArrows = useMemo(() => {
@@ -57,6 +57,31 @@ const ElectrostaticsScene = ({ charges, testPoint }) => {
     return arrows;
   }, [charges]);
 
+  // Calculate Field at Test Point
+  const testPointField = useMemo(() => {
+     let Ex = 0, Ey = 0;
+     charges.forEach(q => {
+        const dx = testPoint.x - q.x;
+        const dy = testPoint.y - q.y;
+        const r2 = dx*dx + dy*dy;
+        const r = Math.sqrt(r2);
+        if (r > 0.1) {
+           const E = (K * q.q * 1e-6) / r2;
+           Ex += E * (dx / r);
+           Ey += E * (dy / r);
+        }
+     });
+     const mag = Math.sqrt(Ex*Ex + Ey*Ey);
+     let displayLen = 0;
+     if (mag > 0) {
+        // Logarithmic scale so it doesn't get ridiculously huge
+        displayLen = Math.min(Math.max(Math.log10(mag) * 0.5, 0.5), 5);
+     }
+     const start = new THREE.Vector3(testPoint.x, testPoint.y, 0);
+     const end = mag > 0 ? new THREE.Vector3(testPoint.x + (Ex/mag)*displayLen, testPoint.y + (Ey/mag)*displayLen, 0) : start.clone();
+     return { start, end };
+  }, [charges, testPoint]);
+
   return (
     <>
       <OrbitControls makeDefault enableDamping dampingFactor={0.05} />
@@ -66,12 +91,25 @@ const ElectrostaticsScene = ({ charges, testPoint }) => {
       {/* 2D Plane Grid */}
       <Grid args={[40, 40]} infiniteGrid fadeDistance={40} cellColor="#555" sectionColor="#888" rotation={[Math.PI/2, 0, 0]} />
 
+      {/* Invisible plane for picking/clicking the test point */}
+      <mesh 
+         position={[0, 0, 0]} 
+         visible={false} 
+         onPointerDown={(e) => {
+             e.stopPropagation();
+             onTestPointMove({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) });
+         }}
+      >
+         <planeGeometry args={[100, 100]} />
+         <meshBasicMaterial />
+      </mesh>
+
       {/* Charges */}
       {charges.map((c, i) => (
          <Sphere key={`q-${i}`} args={[0.5, 32, 32]} position={[c.x, c.y, 0]}>
             <meshStandardMaterial color={c.q > 0 ? '#ef4444' : (c.q < 0 ? '#3b82f6' : '#9ca3af')} metalness={0.4} roughness={0.5} />
             <Html position={[0, 0.8, 0]} center>
-               <div className="bg-neutral-900/80 text-white font-bold text-[10px] px-2 py-1 rounded-md border border-neutral-700/50 backdrop-blur whitespace-nowrap">
+               <div className="bg-neutral-900/80 text-white font-bold text-[10px] px-2 py-1 rounded-md border border-neutral-700/50 backdrop-blur whitespace-nowrap pointer-events-none">
                   q{i+1}: {c.q} μC
                </div>
             </Html>
@@ -79,14 +117,19 @@ const ElectrostaticsScene = ({ charges, testPoint }) => {
       ))}
 
       {/* Test Point */}
-      <Sphere args={[0.2, 16, 16]} position={[testPoint.x, testPoint.y, 0]}>
-         <meshStandardMaterial color="#10b981" />
-         <Html position={[0, 0.6, 0]} center>
-            <div className="bg-emerald-900/80 text-emerald-100 font-bold text-[10px] px-2 py-1 rounded-md border border-emerald-700/50 backdrop-blur whitespace-nowrap drop-shadow-lg">
-               Test Point
+      <Sphere args={[0.3, 16, 16]} position={[testPoint.x, testPoint.y, 0]}>
+         <meshStandardMaterial color="#10b981" emissive="#10b981" emissiveIntensity={0.5} />
+         <Html position={[0, -0.8, 0]} center>
+            <div className="bg-emerald-900/80 text-emerald-100 font-bold text-[10px] px-2 py-1 rounded-md border border-emerald-700/50 backdrop-blur whitespace-nowrap drop-shadow-lg pointer-events-none">
+               Test Point (Click anywhere to move)
             </div>
          </Html>
       </Sphere>
+      
+      {/* Test Point Vector */}
+      {testPointField.start.distanceTo(testPointField.end) > 0 && (
+         <VectorArrow start={testPointField.start} end={testPointField.end} color={0x10b981} />
+      )}
 
       {/* Field Vectors */}
       {fieldArrows.map((a, i) => (
@@ -222,7 +265,7 @@ export default function ElectrostaticsSim() {
          {/* 3D View */}
          <div className="flex-1 relative bg-[#0a0a0a]">
             <Canvas camera={{ position: [0, -5, 10], fov: 45 }}>
-               <ElectrostaticsScene charges={charges} testPoint={testPoint} />
+               <ElectrostaticsScene charges={charges} testPoint={testPoint} onTestPointMove={setTestPoint} />
             </Canvas>
          </div>
 
@@ -257,14 +300,26 @@ export default function ElectrostaticsSim() {
                         
                         <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
                            <div>
-                              <span className="text-neutral-500 mb-1 block">X: {c.x}m</span>
+                              <div className="flex justify-between items-center mb-1">
+                                 <span className="text-neutral-500">X (m)</span>
+                                 <input type="number" step="0.1" className="w-16 bg-[#050505] border border-neutral-700 rounded px-1 py-0.5 text-right text-white" value={c.x} onChange={e => {
+                                    const newVal = parseFloat(e.target.value);
+                                    setCharges(cs => cs.map(ch => ch.id === c.id ? {...ch, x: isNaN(newVal) ? 0 : newVal} : ch));
+                                 }} />
+                              </div>
                               <input type="range" min="-10" max="10" step="0.5" value={c.x} onChange={e => {
                                  const newVal = Number(e.target.value);
                                  setCharges(cs => cs.map(ch => ch.id === c.id ? {...ch, x: newVal} : ch));
                               }} className="w-full" />
                            </div>
                            <div>
-                              <span className="text-neutral-500 mb-1 block">Y: {c.y}m</span>
+                              <div className="flex justify-between items-center mb-1">
+                                 <span className="text-neutral-500">Y (m)</span>
+                                 <input type="number" step="0.1" className="w-16 bg-[#050505] border border-neutral-700 rounded px-1 py-0.5 text-right text-white" value={c.y} onChange={e => {
+                                    const newVal = parseFloat(e.target.value);
+                                    setCharges(cs => cs.map(ch => ch.id === c.id ? {...ch, y: isNaN(newVal) ? 0 : newVal} : ch));
+                                 }} />
+                              </div>
                               <input type="range" min="-10" max="10" step="0.5" value={c.y} onChange={e => {
                                  const newVal = Number(e.target.value);
                                  setCharges(cs => cs.map(ch => ch.id === c.id ? {...ch, y: newVal} : ch));
@@ -282,11 +337,17 @@ export default function ElectrostaticsSim() {
                </h3>
                <div className="grid grid-cols-2 gap-4 text-xs font-bold mb-4 bg-neutral-900 border border-neutral-800 rounded-xl p-4">
                   <div>
-                     <span className="text-neutral-500 mb-1 block">Test X: {testPoint.x}m</span>
+                     <div className="flex justify-between items-center mb-1">
+                        <span className="text-neutral-500">Test X (m)</span>
+                        <input type="number" step="0.1" className="w-16 bg-[#050505] border border-neutral-700 rounded px-1 py-0.5 text-right text-white" value={testPoint.x} onChange={e => setTestPoint({...testPoint, x: isNaN(parseFloat(e.target.value)) ? 0 : parseFloat(e.target.value)})} />
+                     </div>
                      <input type="range" min="-10" max="10" step="0.5" value={testPoint.x} onChange={e => setTestPoint({...testPoint, x: Number(e.target.value)})} className="w-full" />
                   </div>
                   <div>
-                     <span className="text-neutral-500 mb-1 block">Test Y: {testPoint.y}m</span>
+                     <div className="flex justify-between items-center mb-1">
+                        <span className="text-neutral-500">Test Y (m)</span>
+                        <input type="number" step="0.1" className="w-16 bg-[#050505] border border-neutral-700 rounded px-1 py-0.5 text-right text-white" value={testPoint.y} onChange={e => setTestPoint({...testPoint, y: isNaN(parseFloat(e.target.value)) ? 0 : parseFloat(e.target.value)})} />
+                     </div>
                      <input type="range" min="-10" max="10" step="0.5" value={testPoint.y} onChange={e => setTestPoint({...testPoint, y: Number(e.target.value)})} className="w-full" />
                   </div>
                   <div className="col-span-2 mt-2 border-t border-neutral-800 pt-3">

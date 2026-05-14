@@ -10,13 +10,13 @@ export default function WavesSim() {
   const [separation, setSeparation] = useState(50); // distance between sources
   
   const timeRef = useRef(0);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
 
   useEffect(() => {
     let lastTime = performance.now();
 
     const animate = (time: number) => {
-      const dt = (time - lastTime) / 1000;
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
       timeRef.current += dt * frequency; // phase speed
       

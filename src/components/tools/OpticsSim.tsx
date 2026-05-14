@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Lightbulb, Focus, Maximize } from 'lucide-react';
+import { ArrowLeft, Lightbulb, Focus, Maximize, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OpticsSim() {

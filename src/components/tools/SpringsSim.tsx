@@ -38,8 +38,12 @@ export default function SpringsSim() {
   }, [amplitude, isPlaying]);
 
   useEffect(() => {
-    const updateAnimation = () => {
-      timeRef.current += 1/60;
+    let lastTime = performance.now();
+    const updateAnimation = (timeStr: number) => {
+      const dt = Math.min((timeStr - lastTime) / 1000, 0.05);
+      lastTime = timeStr;
+      
+      timeRef.current += dt;
       const t = timeRef.current;
       
       const newD = amplitude * Math.cos(omega * t);

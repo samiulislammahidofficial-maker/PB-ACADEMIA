@@ -1,9 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
 
 export async function generateContent(options: { model?: string, contents: any, config?: { responseMimeType?: string, responseSchema?: any } }) {
-  const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('Missing Gemini API Key. Please configure VITE_GEMINI_API_KEY in your deployment environment.');
+    throw new Error('Missing Gemini API Key. Please configure GEMINI_API_KEY in your deployment environment.');
   }
   const ai = new GoogleGenAI({ apiKey });
   

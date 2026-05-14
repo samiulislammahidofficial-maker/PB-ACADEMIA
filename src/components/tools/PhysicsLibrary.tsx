@@ -58,18 +58,16 @@ export default function PhysicsLibrary() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               key={i}
-              onClick={() => {
-                if (!sim.disabled) navigate(sim.id);
-              }}
-              className={`bg-white border \${sim.disabled ? 'border-neutral-200 opacity-50 cursor-not-allowed' : 'border-neutral-200 hover:shadow-2xl hover:shadow-neutral-200/50 hover:-translate-y-1 transition-all cursor-pointer group'} rounded-[2rem] p-8 flex flex-col items-start`}
+              onClick={() => navigate(sim.id)}
+              className="bg-white border border-neutral-200 hover:shadow-2xl hover:shadow-neutral-200/50 hover:-translate-y-1 transition-all cursor-pointer group rounded-[2rem] p-8 flex flex-col items-start"
             >
-              <div className={`\${sim.color} h-16 w-16 rounded-[1.5rem] flex items-center justify-center mb-6 \${sim.disabled ? '' : 'group-hover:scale-110 transition-transform'}`}>
+              <div className={`${sim.color} h-16 w-16 rounded-[1.5rem] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                 <sim.icon size={28} className={sim.iconColor} />
               </div>
               <h3 className="text-lg font-black uppercase tracking-tight mb-2 text-neutral-900 leading-tight">{sim.title}</h3>
               <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-8">{sim.desc}</p>
               
-              <div className={`mt-auto w-full flex items-center justify-between \${sim.disabled ? 'opacity-0' : 'opacity-50 group-hover:opacity-100 transition-opacity'}`}>
+              <div className="mt-auto w-full flex items-center justify-between opacity-50 group-hover:opacity-100 transition-opacity">
                  <span className="text-[10px] font-black tracking-widest uppercase text-blue-600">Launch Lab</span>
                  <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                     <Activity size={14} />

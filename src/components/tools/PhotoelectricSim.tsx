@@ -29,7 +29,7 @@ export default function PhotoelectricSim() {
   const K_max = E_photon - phi;
   const isEmitting = K_max > 0;
   
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(0);
   const particlesRef = useRef<{x:number, y:number, v:number}[]>([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function PhotoelectricSim() {
     let emitTimer = 0;
 
     const animate = (time: number) => {
-      const dt = (time - lastTime) / 1000;
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
       
       const canvas = canvasRef.current;
